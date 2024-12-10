@@ -189,7 +189,7 @@ C         Multidomains-> skipping elems which are not on current domain
             ENDIF  
           ID_LOCAL = SET_USRTOS(N,MAP,MAPSIZE)
           IF(ID_LOCAL == 0) THEN
-            CALL ANCMSG(MSGID=69, MSGTYPE=MSGERROR,ANMODE=ANINFO,I1=ITHGRP(1),C1=TITR1,I2=N)
+            CALL ANCMSG(MSGID=69, MSGTYPE=MSGWARNING,ANMODE=ANINFO,I1=ITHGRP(1),C1=TITR1,I2=N)
             ITHBUF(IAD)=0
           ELSE
             ITHBUF(IAD)=MAP(ID_LOCAL,2)

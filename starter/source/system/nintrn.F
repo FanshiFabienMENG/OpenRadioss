@@ -72,7 +72,7 @@ C-----------------------------------------------
       ENDDO
       NINTRN=0                       
       CALL ANCMSG(MSGID=69,
-     .            MSGTYPE=MSGERROR,
+     .            MSGTYPE=MSGWARNING,
      .            ANMODE=ANINFO,
      .            I1=ID,
      .            C1=TITR,

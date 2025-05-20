@@ -40,7 +40,8 @@ Copyright>        commercial version may interest you: https://www.altair.com/ra
      .   VXA, VYA, VZA, VA2, VNEW,IPARTS ,
      .   GRESAV,GRTH,IGRTH,OFF,IEXPAN,EINTTH,
      .   FILL  ,XX, YY, ZZ,
-     .   XX2,YY2,ZZ2,XY,YZ,ZX,ITASK,IPARG,SENSORS)
+     .   XX2,YY2,ZZ2,XY,YZ,ZX,ITASK,IPARG,SENSORS,
+     .   NEL, G_WPLA, WPLA)
 C-----------------------------------------------
 C   M o d u l e s
 C-----------------------------------------------
@@ -69,6 +70,8 @@ C     REAL
      .  XX(MVSIZ), YY(MVSIZ), ZZ(MVSIZ),
      .  XX2(MVSIZ), YY2(MVSIZ), ZZ2(MVSIZ),
      .  XY(MVSIZ), YZ(MVSIZ), ZX(MVSIZ)
+      INTEGER, INTENT(IN) :: NEL,G_WPLA
+      my_real,DIMENSION(NEL*G_WPLA), INTENT(IN) :: WPLA
       INTEGER IEXPAN,ITASK,
      .  IPARTS(*),GRTH(*),IGRTH(*),IPARG(*)
       type (sensors_),INTENT(INOUT) :: SENSORS
@@ -116,6 +119,7 @@ C
           PARTSAV(4,M)=PARTSAV(4,M) + YM(I)
           PARTSAV(5,M)=PARTSAV(5,M) + ZM(I)
           IF(OFF(I) >= ONE) PARTSAV(6,M)=PARTSAV(6,M) + XMAS(I)
+          PARTSAV(29,M)=PARTSAV(29,M) + WPLA(I)
         END DO
       ELSE
         DO I=LFT,LLT
@@ -127,6 +131,7 @@ C
           PARTSAV(4,M)=PARTSAV(4,M) + YM(I)
           PARTSAV(5,M)=PARTSAV(5,M) + ZM(I)
           PARTSAV(6,M)=PARTSAV(6,M) + XMAS(I)
+          PARTSAV(29,M)=PARTSAV(29,M) + WPLA(I)
         END DO
       END IF
 C
@@ -180,6 +185,7 @@ C
             PARTSAV(20,M)=PARTSAV(20,M) + IZX(I)
             PARTSAV(21,M)=PARTSAV(21,M) + REI(I)
             PARTSAV(22,M)=PARTSAV(22,M) + REK(I) 
+            PARTSAV(29,M)=PARTSAV(29,M) + WPLA(I)
 C           PARTSAV(8,M)=PARTSAV(8,M) + EHOU(I)
           END DO
         ELSE
@@ -200,6 +206,7 @@ C           PARTSAV(8,M)=PARTSAV(8,M) + EHOU(I)
             PARTSAV(20,M)=PARTSAV(20,M) + IZX(I)
             PARTSAV(21,M)=PARTSAV(21,M) + REI(I)
             PARTSAV(22,M)=PARTSAV(22,M) + REK(I) 
+            PARTSAV(29,M)=PARTSAV(29,M) + WPLA(I)
 C           PARTSAV(8,M)=PARTSAV(8,M) + EHOU(I)
           END DO
         END IF

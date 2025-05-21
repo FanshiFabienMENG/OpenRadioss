@@ -268,7 +268,6 @@ C
             PARTSAV(20,M)=PARTSAV(20,M) + IZX(I)
             PARTSAV(21,M)=PARTSAV(21,M) + REI(I)
             PARTSAV(22,M)=PARTSAV(22,M) + REK(I) 
-            PARTSAV(29,M)=PARTSAV(29,M) + WPLA(I)
           ENDDO
         ELSE
           DO I=1,NEL
@@ -287,7 +286,6 @@ C
               PARTSAV(20,M)=PARTSAV(20,M) + IZX(I)
               PARTSAV(21,M)=PARTSAV(21,M) + REI(I)
               PARTSAV(22,M)=PARTSAV(22,M) + REK(I)
-              PARTSAV(29,M)=PARTSAV(29,M) + WPLA(I)
           ENDDO
         END IF
       ENDIF

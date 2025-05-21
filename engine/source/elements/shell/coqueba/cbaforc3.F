@@ -1002,7 +1002,7 @@ C--------------------------
      B   Z2G,        Z3G,        Z4G,        IBID,
      C   IEXPAN,     GBUF%EINTTH,ITASK,      GBUF%VOL,
      D   ACTIFXFEM,  IGRE,       SENSORS,    NEL,
-     E   GBUF%WPLA )
+     E   GBUF%G_WPLA, GBUF%WPLA )
 C----------------------------
 C     CALCUL  DT
 C----------------------------

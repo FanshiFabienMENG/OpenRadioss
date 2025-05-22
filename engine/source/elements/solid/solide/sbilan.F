@@ -153,7 +153,7 @@ C
           PARTSAV(4,M)=PARTSAV(4,M) + YM(I)
           PARTSAV(5,M)=PARTSAV(5,M) + ZM(I)
           IF (OFF(I) >= ONE) PARTSAV(6,M)=PARTSAV(6,M) + XMAS(I)
-          PARTSAV(29,M)=PARTSAV(29,M) + WPLA(I)
+          IF (G_WPLA > 0)  PARTSAV(29,M)=PARTSAV(29,M) + WPLA(I)
         ENDDO
       ELSE
         DO I=1,NEL
@@ -164,7 +164,7 @@ C
             PARTSAV(4,M)=PARTSAV(4,M) + YM(I)
             PARTSAV(5,M)=PARTSAV(5,M) + ZM(I)
             PARTSAV(6,M)=PARTSAV(6,M) + XMAS(I)
-            PARTSAV(29,M)=PARTSAV(29,M) + WPLA(I)
+            IF (G_WPLA > 0)  PARTSAV(29,M)=PARTSAV(29,M) + WPLA(I)
         ENDDO
       END IF
 C

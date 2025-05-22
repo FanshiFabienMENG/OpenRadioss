@@ -142,7 +142,7 @@ C-----------------------------------------------
         PARTSAV(4,M)=PARTSAV(4,M) + XMAS(I)*VYA(I)*FOURTH
         PARTSAV(5,M)=PARTSAV(5,M) + XMAS(I)*VZA(I)*FOURTH
         PARTSAV(6,M)=PARTSAV(6,M) + XMAS(I)
-        PARTSAV(29,M)=PARTSAV(29,M) + WPLA(I)
+        IF (G_WPLA > 0)  PARTSAV(29,M)=PARTSAV(29,M) + WPLA(I)
       ENDDO
 
       IF(JTUR/=0)THEN

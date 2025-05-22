@@ -178,7 +178,7 @@ c
             SIGOXX    = ELBUF_STR%BUFLY(1)%LBUF(1,1,J)%SIG(II(1)+I)
             SIGOXY    = ELBUF_STR%BUFLY(1)%LBUF(1,1,J)%SIG(II(2)+I)
             SIGOXZ    = ELBUF_STR%BUFLY(1)%LBUF(1,1,J)%SIG(II(3)+I) 
-            VM0(I,J)  = SIGOXX**2 + THREE*(SIGOXY**2 + SIGOXZ**2)
+            VM0(I,J)  = SQRT(SIGOXX**2 + THREE*(SIGOXY**2 + SIGOXZ**2))
           ENDDO
         ENDDO
       ENDIF
@@ -214,7 +214,7 @@ c---------------------------
             SIGNXX = ELBUF_STR%BUFLY(1)%LBUF(1,1,J)%SIG(II(1)+I)
             SIGNXY = ELBUF_STR%BUFLY(1)%LBUF(1,1,J)%SIG(II(2)+I)
             SIGNXZ = ELBUF_STR%BUFLY(1)%LBUF(1,1,J)%SIG(II(3)+I)
-            VM(I,J) = SIGNXX**2 + THREE*(SIGNXY**2 + SIGNXZ**2)
+            VM(I,J) = SQRT(SIGNXX**2 + THREE*(SIGNXY**2 + SIGNXZ**2))
             ELBUF_STR%GBUF%WPLA(I) = ELBUF_STR%GBUF%WPLA(I) + 
      .             HALF*(VM(I,J)+VM0(I,J))*DPLA(I,J)*AL(I)*AREA/NPT
           ENDDO

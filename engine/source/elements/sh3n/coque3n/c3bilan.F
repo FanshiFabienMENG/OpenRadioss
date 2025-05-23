@@ -278,7 +278,7 @@ C
             IF (ICRACK3D > 0 .AND. IXFEM > 0 .AND. ACTIFXFEM > 0) THEN
               IF(OFF(I)/=ZERO)THEN
                 PARTSAV(1,MX)=PARTSAV(1,MX) + EI(I)
-                PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
+                IF (G_WPLA > 0) PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
                 PARTSAV(2,MX)=PARTSAV(2,MX) + EK(I)
                 PARTSAV(3,MX)=PARTSAV(3,MX) + XM(I)
                 PARTSAV(4,MX)=PARTSAV(4,MX) + YM(I)
@@ -286,7 +286,7 @@ C
               ENDIF
             ELSE 
               PARTSAV(1,MX)=PARTSAV(1,MX) + EI(I)
-              PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
+              IF (G_WPLA > 0) PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
               PARTSAV(2,MX)=PARTSAV(2,MX) + EK(I)
               PARTSAV(3,MX)=PARTSAV(3,MX) + XM(I)
               PARTSAV(4,MX)=PARTSAV(4,MX) + YM(I)
@@ -318,7 +318,7 @@ C
                 IF (ICRACK3D > 0 .AND. IXFEM > 0 .AND. ACTIFXFEM > 0) THEN
                   IF(OFF(I)/=ZERO)THEN
                     PARTSAV(1,MX)=PARTSAV(1,MX) + EI(I)
-                    PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
+                    IF (G_WPLA > 0) PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
                     PARTSAV(2,MX)=PARTSAV(2,MX) + EK(I)
                     PARTSAV(3,MX)=PARTSAV(3,MX) + XM(I)
                     PARTSAV(4,MX)=PARTSAV(4,MX) + YM(I)
@@ -326,7 +326,7 @@ C
                   ENDIF
                 ELSE 
                   PARTSAV(1,MX)=PARTSAV(1,MX) + EI(I)
-                  PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
+                  IF (G_WPLA > 0) PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
                   PARTSAV(2,MX)=PARTSAV(2,MX) + EK(I)
                   PARTSAV(3,MX)=PARTSAV(3,MX) + XM(I)
                   PARTSAV(4,MX)=PARTSAV(4,MX) + YM(I)
@@ -355,7 +355,7 @@ C
                 IF (ICRACK3D > 0 .AND. IXFEM > 0 .AND. ACTIFXFEM > 0) THEN
                   IF(OFF(I)/=ZERO)THEN
                     PARTSAV(1,MX)=PARTSAV(1,MX) + EI(I)
-                    PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
+                    IF (G_WPLA > 0) PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
                     PARTSAV(2,MX)=PARTSAV(2,MX) + EK(I)
                     PARTSAV(3,MX)=PARTSAV(3,MX) + XM(I)
                     PARTSAV(4,MX)=PARTSAV(4,MX) + YM(I)
@@ -363,7 +363,7 @@ C
                   ENDIF
                 ELSE 
                   PARTSAV(1,MX)=PARTSAV(1,MX) + EI(I)
-                  PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
+                  IF (G_WPLA > 0) PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
                   PARTSAV(2,MX)=PARTSAV(2,MX) + EK(I)
                   PARTSAV(3,MX)=PARTSAV(3,MX) + XM(I)
                   PARTSAV(4,MX)=PARTSAV(4,MX) + YM(I)
@@ -408,7 +408,7 @@ C
             IF (ICRACK3D > 0 .AND. IXFEM > 0 .AND. ACTIFXFEM > 0) THEN
               IF(OFF(I)/=ZERO)THEN
                 PARTSAV(1,MX)=PARTSAV(1,MX) + EI(I)
-                PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
+                IF (G_WPLA > 0) PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
                 PARTSAV(2,MX)=PARTSAV(2,MX) + EK(I)
                 PARTSAV(3,MX)=PARTSAV(3,MX) + XM(I)
                 PARTSAV(4,MX)=PARTSAV(4,MX) + YM(I)
@@ -416,7 +416,7 @@ C
               ENDIF
             ELSE 
               PARTSAV(1,MX)=PARTSAV(1,MX) + EI(I)
-              PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
+              IF (G_WPLA > 0) PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
               PARTSAV(2,MX)=PARTSAV(2,MX) + EK(I)
               PARTSAV(3,MX)=PARTSAV(3,MX) + XM(I)
               PARTSAV(4,MX)=PARTSAV(4,MX) + YM(I)
@@ -434,7 +434,7 @@ C
                 IF (ICRACK3D > 0 .AND. IXFEM > 0 .AND. ACTIFXFEM > 0) THEN
                   IF(OFF(I)/=ZERO)THEN
                     PARTSAV(1,MX)=PARTSAV(1,MX) + EI(I)
-                    PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
+                    IF (G_WPLA > 0) PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
                     PARTSAV(2,MX)=PARTSAV(2,MX) + EK(I)
                     PARTSAV(3,MX)=PARTSAV(3,MX) + XM(I)
                     PARTSAV(4,MX)=PARTSAV(4,MX) + YM(I)
@@ -442,7 +442,7 @@ C
                   ENDIF
                 ELSE 
                   PARTSAV(1,MX)=PARTSAV(1,MX) + EI(I)
-                  PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
+                  IF (G_WPLA > 0) PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
                   PARTSAV(2,MX)=PARTSAV(2,MX) + EK(I)
                   PARTSAV(3,MX)=PARTSAV(3,MX) + XM(I)
                   PARTSAV(4,MX)=PARTSAV(4,MX) + YM(I)
@@ -457,7 +457,7 @@ C
                 IF (ICRACK3D > 0 .AND. IXFEM > 0 .AND. ACTIFXFEM > 0) THEN
                   IF(OFF(I)/=ZERO)THEN
                     PARTSAV(1,MX)=PARTSAV(1,MX) + EI(I)
-                    PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
+                    IF (G_WPLA > 0) PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
                     PARTSAV(2,MX)=PARTSAV(2,MX) + EK(I)
                     PARTSAV(3,MX)=PARTSAV(3,MX) + XM(I)
                     PARTSAV(4,MX)=PARTSAV(4,MX) + YM(I)
@@ -465,7 +465,7 @@ C
                   ENDIF
                 ELSE 
                   PARTSAV(1,MX)=PARTSAV(1,MX) + EI(I)
-                  PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
+                  IF (G_WPLA > 0) PARTSAV(29,MX)=PARTSAV(29,MX) + WPLA(I)
                   PARTSAV(2,MX)=PARTSAV(2,MX) + EK(I)
                   PARTSAV(3,MX)=PARTSAV(3,MX) + XM(I)
                   PARTSAV(4,MX)=PARTSAV(4,MX) + YM(I)

@@ -902,7 +902,7 @@ C----------------------------
      6   LBUF%VOL,   GBUF%VOL,   GBUF%G_PLA, GBUF%G_EPSD,
      7   LBUF%EINTTH,GBUF%EINTTH,IEXPAN,     NEL,
      8   CONDE,      CONDEN,SVIS,GLOB_THERM%NODADT_THERM,
-     9   GBUF%WPLA,  LBUF%WPLA  )
+     9   GBUF%WPLA,  LBUF%WPLA, GBUF%G_WPLA)
 c-------------------------
 c     Virtual internal forces of regularized non local ddl 
 c--------------------------

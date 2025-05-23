@@ -231,7 +231,7 @@ c---------------------------
         
         IF (IPLA > 0) THEN
           DO I = 1,NEL
-            ELBUF_STR%GBUF%WPLA(I) = ELBUF_STR%GBUF%WPLA(I) + 
+            IF (ELBUF_STR%GBUF%G_WPLA > 0)   ELBUF_STR%GBUF%WPLA(I) = ELBUF_STR%GBUF%WPLA(I) + 
      .             HALF*(SVM(I)+SVM0(I))*DPLA(I)*AREA*AL(I)
           ENDDO
         ENDIF 

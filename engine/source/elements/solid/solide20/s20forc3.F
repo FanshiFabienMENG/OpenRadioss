@@ -488,7 +488,7 @@ c
      7   WI,        VOLG,      LBUF%VOL,  GBUF%VOL,
      8   GBUF%G_PLA,NEL,       CONDE,     DELTAX,
      9   CONDEG,    ISRAT     ,SVIS      ,GLOB_THERM%NODADT_THERM,
-     1   GBUF%WPLA,  LBUF%WPLA)
+     1   GBUF%WPLA,  LBUF%WPLA,GBUF%G_WPLA)
 C
 C-------------------------
 c    finite element heat transfert  

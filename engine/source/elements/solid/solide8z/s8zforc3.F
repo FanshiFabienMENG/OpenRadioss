@@ -1268,7 +1268,7 @@ C
      8   GBUF%G_EPSD,JFAC(1,IP), LBUF%EINTTH,GBUF%EINTTH,
      9   IEXPAN,     NEL,        IDEG,       CONDE,
      A   CONDEN,     MTN,        ISMSTR,SVIS,GLOB_THERM%NODADT_THERM,
-     B   GBUF%WPLA,  LBUF%WPLA  )
+     B   GBUF%WPLA,  LBUF%WPLA,  GBUF%G_WPLA)
        ELSE
 C----------------------------
 C     INTERNAL FORCES
@@ -1319,7 +1319,7 @@ C----------------------------
      8   GBUF%G_EPSD,JFAC(1,IP), LBUF%EINTTH,GBUF%EINTTH,
      9   IEXPAN,     NEL,        IDEG,       CONDE,
      A   CONDEN,     MTN,        ISMSTR,     SVIS,GLOB_THERM%NODADT_THERM,
-     B   GBUF%WPLA,  LBUF%WPLA  )
+     B   GBUF%WPLA,  LBUF%WPLA,  GBUF%G_WPLA)
       ENDIF
 c-------------------------
 c     Virtual internal forces of regularized non local ddl 

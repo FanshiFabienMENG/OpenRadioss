@@ -215,7 +215,7 @@ c---------------------------
             SIGNXY = ELBUF_STR%BUFLY(1)%LBUF(1,1,J)%SIG(II(2)+I)
             SIGNXZ = ELBUF_STR%BUFLY(1)%LBUF(1,1,J)%SIG(II(3)+I)
             VM(I,J) = SQRT(SIGNXX**2 + THREE*(SIGNXY**2 + SIGNXZ**2))
-            ELBUF_STR%GBUF%WPLA(I) = ELBUF_STR%GBUF%WPLA(I) + 
+            IF (ELBUF_STR%GBUF%G_WPLA > 0) ELBUF_STR%GBUF%WPLA(I) = ELBUF_STR%GBUF%WPLA(I) + 
      .             HALF*(VM(I,J)+VM0(I,J))*DPLA(I,J)*AL(I)*AREA/NPT
           ENDDO
         ENDDO

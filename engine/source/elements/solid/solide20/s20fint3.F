@@ -36,7 +36,7 @@ Copyright>        commercial version may interest you: https://www.altair.com/ra
      7   WI,      VOLG,    VOL0,    VOL0G,
      8   G_PLA,   NEL,     CONDE,   DELTAX,
      9   CONDEG,  ISRAT,   SVIS ,   NODADT_THERM,
-     B   G_WPLA,  L_WPLA)
+     B   G_WPLA,  L_WPLA,  G_WPLA_FLAG)
 C-----------------------------------------------
 C   I m p l i c i t   T y p e s
 C-----------------------------------------------
@@ -58,9 +58,10 @@ C-----------------------------------------------
      .  SIGG(NEL,6),EINTG(NEL),RHOG(*),QG(*),WI,STIG(MVSIZ,*),EPSD(*),
      .  EPSDG(*),STIN(MVSIZ,*),VOLG(*),VOL0(*),VOL0G(*),CONDE(MVSIZ),
      .  DELTAX(MVSIZ), CONDEG(MVSIZ,*)
+      INTEGER, INTENT(IN) :: G_WPLA_FLAG
       my_real, DIMENSION(MVSIZ,6), INTENT(INOUT) :: SVIS
-      my_real,DIMENSION(NEL), INTENT(INOUT) :: G_WPLA
-      my_real,DIMENSION(NEL), INTENT(IN) :: L_WPLA
+      my_real,DIMENSION(NEL*G_WPLA_FLAG), INTENT(INOUT) :: G_WPLA
+      my_real,DIMENSION(NEL*G_WPLA_FLAG), INTENT(IN) :: L_WPLA
 C-----------------------------------------------
 C   C o m m o n   B l o c k s
 C-----------------------------------------------
@@ -85,7 +86,7 @@ C=======================================================================
         SIGG(I,6) = SIGG(I,6) + WIP(I) * SIG(I,6)          
         RHOG(I)   = RHOG(I)   + WIP(I) * RHO(I)                       
         EINTG(I)  = EINTG(I)  + EINT(I) * VOL0(I)/VOL0G(I)         
-        G_WPLA(I) = G_WPLA(I) + L_WPLA(I)
+        IF (G_WPLA_FLAG > 0) G_WPLA(I) = G_WPLA(I) + L_WPLA(I)
         QG(I)     = QG(I)     + WIP(I) * Q(I)                         
         S1(I)=(SIG(I,1)+SVIS(I,1)-QVIS(I))*VOL(I)       
         S2(I)=(SIG(I,2)+SVIS(I,2)-QVIS(I))*VOL(I)       

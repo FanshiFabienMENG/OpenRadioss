@@ -1083,7 +1083,7 @@ C
      8   L_EPSD,          FAC,             LBUF%EINTTH,     GBUF%EINTTH,
      9   IEXPAN,          NEL,             IDEG,            CONDE,
      A   CONDEN,          MTN,             ISMSTR,          SVIS ,GLOB_THERM%NODADT_THERM,
-     B   GBUF%WPLA,       LBUF%WPLA  )
+     B   GBUF%WPLA,       LBUF%WPLA,       GBUF%G_WPLA       )
         ELSE
 C----------------------------
 C         INTERNAL FORCES
@@ -1134,7 +1134,7 @@ C----------------------------
      8   L_EPSD,     FAC,        LBUF%EINTTH,GBUF%EINTTH,
      9   IEXPAN,     NEL,        IDEG,       CONDE,
      A   CONDEN,     MTN,        ISMSTR,     SVIS,GLOB_THERM%NODADT_THERM,
-     B   GBUF%WPLA,  LBUF%WPLA  )
+     B   GBUF%WPLA,  LBUF%WPLA,  GBUF%G_WPLA  )
         ENDIF
         DO I=LFT,LLT                                        
           OFFL(I)=MIN(OFFL(I),OFF(I))                        

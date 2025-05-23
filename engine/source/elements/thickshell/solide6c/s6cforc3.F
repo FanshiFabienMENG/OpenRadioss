@@ -755,7 +755,7 @@ C----------------------------
      I   GBUF%QVIS,  GBUF%PLA,   ZT,         WT,
      J   VOLG,       OFF,        NU1,        LBUF%VOL,
      K   GBUF%VOL,   L_PLA,      L_EPSD,     NEL,
-     L   SVIS )
+     L   SVIS,       GBUF%WPLA,  LBUF%WPLA,   GBUF%G_WPLA    )
         ELSE
          CALL S6CFINT3(
      1   LBUF%SIG,          PX1,               PX2,               PX3,
@@ -778,7 +778,7 @@ C----------------------------
      I   GBUF%QVIS,         GBUF%PLA,          A_GAUSS(ILAY,NLAY),W_GAUSS(ILAY,NLAY),
      J   VOLG,              OFF,               NU1,               LBUF%VOL,
      K   GBUF%VOL,          L_PLA,             L_EPSD,            NEL,
-     L   SVIS,              GBUF%WPLA,         LBUF%WPLA     )
+     L   SVIS,              GBUF%WPLA,         LBUF%WPLA,         GBUF%G_WPLA     )
         ENDIF ! IF (ISORTH > 0)
 C-------------------------
 C Finite element heat transfert  

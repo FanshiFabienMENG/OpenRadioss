@@ -836,7 +836,7 @@ C----------------------------
      .        GBUF%SIG,EINTM,EINTO,RHOM,GBUF%QVIS,GBUF%PLA,
      .        NU1,ZT  ,WT   ,VOLG,MM,OFF,
      .        LBUF%VOL,GBUF%VOL,L_PLA,L_EPSD,NEL,SVIS,
-     .        GBUF%WPLA, LBUF%WPLA )
+     .        GBUF%WPLA, LBUF%WPLA, GBUF%G_WPLA )
         ELSE
           CALL SCFINT3(LBUF%SIG,
      .        PX1, PX2, PX3, PX4,
@@ -855,7 +855,7 @@ C----------------------------
      .        GBUF%SIG,EINTM,EINTO,RHOM,GBUF%QVIS,GBUF%PLA,
      .        NU1,A_GAUSS(ILAY,NLAY),W_GAUSS(ILAY,NLAY),VOLG,MM,OFF,
      .        LBUF%VOL,GBUF%VOL,L_PLA,L_EPSD,NEL,SVIS,
-     .        GBUF%WPLA, LBUF%WPLA )
+     .        GBUF%WPLA, LBUF%WPLA, GBUF%G_WPLA )
         ENDIF
 C-------------------------
 C Finite element heat transfert  

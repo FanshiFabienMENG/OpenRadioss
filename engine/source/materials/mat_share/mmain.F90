@@ -2170,13 +2170,15 @@
 !     Computation of the Plastic Work
 !------------------------------------------------------------
           if (.not.l_mulaw_called)  then
-            !< Reset plastic work in case of fully integrated element
-            if ((npg > 1) .and. (ipg == 1)) then 
-              do i = 1,nel
-                gbuf%wpla(i) = zero
-              enddo
-            endif
+
             if (elbuf_tab(ng)%bufly(ilay)%l_pla > 0) then  
+              !< Reset plastic work in case of fully integrated element
+              if ((npg > 1) .and. (ipg == 1)) then 
+                do i = 1,nel
+                  gbuf%wpla(i) = zero
+                enddo
+              endif
+
               !< Case where equivalent stress is computed in the material law
               if (elbuf_tab(ng)%bufly(ilay)%l_seq > 0) then
                 do i = 1,nel 

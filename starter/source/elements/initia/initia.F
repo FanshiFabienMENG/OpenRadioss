@@ -1089,6 +1089,20 @@ C Case total strain
           IGTYP =  NINT(GEO(NPROPG*(IPROP-1)+12))
           NUVAR =  NINT(GEO(NPROPG*(IPROP-1)+25))
           ISTRAIN = IPARG(44,NG)
+          IF (JHBE == 24 .AND. ISOLNOD == 6) THEN 
+          CALL S6INIT3(
+     .             ELBUF_TAB(NG),MS       ,IXS      ,PM         ,X    ,
+     .             DETONATORS   ,GEO      ,ALE_CONNECTIVITY      ,IPARG(1,NG),
+     .             DTELEM       ,SIGI     ,NEL      ,SKEW       ,IGEO       ,
+     .             STIFN        ,PARTSAV  ,V        ,IPART(I15A),MSS,
+     .             IPART        ,GLOB_THERM,
+     .             SIGSP        ,NSIGI    ,IPM      ,IUSER      ,NSIGS   ,
+     .             VOLNOD       ,BVOLNOD  ,VNS      ,BNS        ,PTSOL   ,
+     .             BUFMAT       ,MCP      ,MCPS     ,TEMP    ,
+     .             NPC          ,PLD      ,STRSGLOB(NF1),STRAGLOB(NF1),MSSA    ,
+     .             ORTHOGLOB    ,FAIL_INI ,ILOADP   ,FACLOAD   ,PERTURB  ,
+     .             RNOISE       ,MAT_PARAM,DEFAULTS%SOLID)
+          ENDIF  
           IF (JHBE == 15) THEN
            !Thick shells PA6 / HQEPH
             IF (ISOLNOD == 6)THEN

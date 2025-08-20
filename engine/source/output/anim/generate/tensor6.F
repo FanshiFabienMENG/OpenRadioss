@@ -4313,7 +4313,7 @@ c
                  GAMA(6)=ZERO
                END IF
              END IF
-             DO J=1,8
+             DO J=1,ISOLNOD 
                KSI = A_HEPH(1,J)
                ETA = A_HEPH(2,J)
                ZETA = A_HEPH(3,J)

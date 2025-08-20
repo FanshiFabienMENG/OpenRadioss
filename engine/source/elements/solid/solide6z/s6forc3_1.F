@@ -20,82 +20,103 @@ Copyright>
 Copyright>        As an alternative to this open-source version, Altair also offers Altair Radioss
 Copyright>        software under a commercial license.  Contact Altair to discuss further if the
 Copyright>        commercial version may interest you: https://www.altair.com/radioss/.
-!||====================================================================
-!||    s6cforc3               ../engine/source/elements/thickshell/solide6c/s6cforc3.F
-!||--- called by ------------------------------------------------------
-!||    forint                 ../engine/source/elements/forint.F
-!||--- calls      -----------------------------------------------------
-!||    csmall3                ../engine/source/elements/solid/solide/csmall3.F
-!||    mmain                  ../engine/source/materials/mat_share/mmain.F90
-!||    s6cbilan               ../engine/source/elements/thickshell/solide6c/s6cbilan.F
-!||    s6cdefc3               ../engine/source/elements/thickshell/solide6c/s6cdefo3.F
-!||    s6cderi3               ../engine/source/elements/thickshell/solide6c/s6cderi3.F
-!||    s6cfint3               ../engine/source/elements/thickshell/solide6c/s6cfint3.F
-!||    s6cfint_reg            ../engine/source/elements/thickshell/solide6c/s6cfint_reg.F
-!||    s6chour3               ../engine/source/elements/thickshell/solide6c/s6chourg3.F
-!||    s6chour_ctl            ../engine/source/elements/thickshell/solide6c/s6chour_ctl.F90
-!||    s6ctherm               ../engine/source/elements/thickshell/solide6c/s6ctherm.F
-!||    s6cumu3                ../engine/source/elements/thickshell/solide6c/s6cumu3.F
-!||    s6cumu3p               ../engine/source/elements/thickshell/solide6c/s6cumu3p.F
-!||    s6czero3               ../engine/source/elements/thickshell/solide6c/s6czero3.F
-!||    s6fillopt              ../engine/source/elements/thickshell/solide6c/s6fillopt.F
-!||    s6for_distor           ../engine/source/elements/thickshell/solide6c/s6for_distor.F90
-!||    s6get_xv               ../engine/source/elements/thickshell/solide6c/s6get_xv.F90
-!||    s6proj3                ../engine/source/elements/thickshell/solide6c/s6proj3.F
-!||    s6rcoor3               ../engine/source/elements/thickshell/solide6c/s6rcoor3.F
-!||    s6sav3                 ../engine/source/elements/thickshell/solide6c/s6sav3.F
-!||    s8csigp3               ../engine/source/elements/thickshell/solide8c/s8csigp3.F
-!||    scdefo3                ../engine/source/elements/thickshell/solidec/scdefo3.F
-!||    scordef3               ../engine/source/elements/thickshell/solidec/scordef3.F
-!||    scroto_sig             ../engine/source/elements/thickshell/solidec/scroto_sig.F
-!||    scumualpha6            ../engine/source/elements/thickshell/solidec/scumualpha6.F
-!||    sdistor_ini            ../engine/source/elements/solid/solide/sdistror_ini.F90
-!||    sdlen3                 ../engine/source/elements/solid/solide/sdlen3.F
-!||    sdlensh3n              ../engine/source/elements/thickshell/solidec/sdlensh3n.F
-!||    sdlensh3n2             ../engine/source/elements/thickshell/solide6c/sdlensh3n2.F
-!||    sgetdir3               ../engine/source/elements/thickshell/solidec/sgetdir3.F
-!||    sgparav3               ../engine/source/elements/solid/solide/sgparav3.F
-!||    smallb3                ../engine/source/elements/solid/solide/smallb3.F
-!||    srho3                  ../engine/source/elements/solid/solide/srho3.F
-!||    sstra3                 ../engine/source/elements/solid/solide/sstra3.F
-!||    tshgeodel3             ../engine/source/elements/thickshell/solidec/tshgeodel3.F
-!||    vrrota3                ../engine/source/elements/thickshell/solide6c/vrrota3.F
-!||--- uses       -----------------------------------------------------
-!||    ale_connectivity_mod   ../common_source/modules/ale/ale_connectivity_mod.F
-!||    dt_mod                 ../engine/source/modules/dt_mod.F
-!||    elbufdef_mod           ../common_source/modules/mat_elem/elbufdef_mod.F90
-!||    glob_therm_mod         ../common_source/modules/mat_elem/glob_therm_mod.F90
-!||    mat_elem_mod           ../common_source/modules/mat_elem/mat_elem_mod.F90
-!||    mmain_mod              ../engine/source/materials/mat_share/mmain.F90
-!||    nlocal_reg_mod         ../common_source/modules/nlocal_reg_mod.F
-!||    output_mod             ../common_source/modules/output/output_mod.F90
-!||    s6chour_ctl_mod        ../engine/source/elements/thickshell/solide6c/s6chour_ctl.F90
-!||    s6for_distor_mod       ../engine/source/elements/thickshell/solide6c/s6for_distor.F90
-!||    s6get_xv_mod           ../engine/source/elements/thickshell/solide6c/s6get_xv.F90
-!||    sdistor_ini_mod        ../engine/source/elements/solid/solide/sdistror_ini.F90
-!||    sensor_mod             ../common_source/modules/sensor_mod.F90
-!||    table_mod              ../engine/share/modules/table_mod.F
-!||    timer_mod              ../engine/source/system/timer_mod.F90
-!||====================================================================
-      SUBROUTINE S6CFORC3(TIMERS, OUTPUT, ELBUF_TAB,NG     , 
+      !||====================================================================
+      !||    s6cforc3               ../engine/source/elements/thickshell/solide6c/s6cforc3.F
+      !||--- called by ------------------------------------------------------
+      !||    forint                 ../engine/source/elements/forint.F
+      !||--- calls      -----------------------------------------------------
+      !||    csmall3                ../engine/source/elements/solid/solide/csmall3.F
+      !||    mmain                  ../engine/source/materials/mat_share/mmain.F90
+      !||    s6cbilan               ../engine/source/elements/thickshell/solide6c/s6cbilan.F
+      !||    s6cdefc3               ../engine/source/elements/thickshell/solide6c/s6cdefo3.F
+      !||    s6cderi3               ../engine/source/elements/thickshell/solide6c/s6cderi3.F
+      !||    s6cfint3               ../engine/source/elements/thickshell/solide6c/s6cfint3.F
+      !||    s6cfint_reg            ../engine/source/elements/thickshell/solide6c/s6cfint_reg.F
+      !||    s6chour3               ../engine/source/elements/thickshell/solide6c/s6chourg3.F
+      !||    s6chour_ctl            ../engine/source/elements/thickshell/solide6c/s6chour_ctl.F90
+      !||    s6ctherm               ../engine/source/elements/thickshell/solide6c/s6ctherm.F
+      !||    s6cumu3                ../engine/source/elements/thickshell/solide6c/s6cumu3.F
+      !||    s6cumu3p               ../engine/source/elements/thickshell/solide6c/s6cumu3p.F
+      !||    s6czero3               ../engine/source/elements/thickshell/solide6c/s6czero3.F
+      !||    s6fillopt              ../engine/source/elements/thickshell/solide6c/s6fillopt.F
+      !||    s6for_distor           ../engine/source/elements/thickshell/solide6c/s6for_distor.F90
+      !||    s6get_xv               ../engine/source/elements/thickshell/solide6c/s6get_xv.F90
+      !||    s6proj3                ../engine/source/elements/thickshell/solide6c/s6proj3.F
+      !||    s6rcoor3               ../engine/source/elements/thickshell/solide6c/s6rcoor3.F
+      !||    s6sav3                 ../engine/source/elements/thickshell/solide6c/s6sav3.F
+      !||    s8csigp3               ../engine/source/elements/thickshell/solide8c/s8csigp3.F
+      !||    scdefo3                ../engine/source/elements/thickshell/solidec/scdefo3.F
+      !||    scordef3               ../engine/source/elements/thickshell/solidec/scordef3.F
+      !||    scroto_sig             ../engine/source/elements/thickshell/solidec/scroto_sig.F
+      !||    scumualpha6            ../engine/source/elements/thickshell/solidec/scumualpha6.F
+      !||    sdistor_ini            ../engine/source/elements/solid/solide/sdistror_ini.F90
+      !||    sdlen3                 ../engine/source/elements/solid/solide/sdlen3.F
+      !||    sdlensh3n              ../engine/source/elements/thickshell/solidec/sdlensh3n.F
+      !||    sdlensh3n2             ../engine/source/elements/thickshell/solide6c/sdlensh3n2.F
+      !||    sgetdir3               ../engine/source/elements/thickshell/solidec/sgetdir3.F
+      !||    sgparav3               ../engine/source/elements/solid/solide/sgparav3.F
+      !||    smallb3                ../engine/source/elements/solid/solide/smallb3.F
+      !||    srho3                  ../engine/source/elements/solid/solide/srho3.F
+      !||    sstra3                 ../engine/source/elements/solid/solide/sstra3.F
+      !||    tshgeodel3             ../engine/source/elements/thickshell/solidec/tshgeodel3.F
+      !||    vrrota3                ../engine/source/elements/thickshell/solide6c/vrrota3.F
+      !||--- uses       -----------------------------------------------------
+      !||    ale_connectivity_mod   ../common_source/modules/ale/ale_connectivity_mod.F
+      !||    dt_mod                 ../engine/source/modules/dt_mod.F
+      !||    elbufdef_mod           ../common_source/modules/mat_elem/elbufdef_mod.F90
+      !||    glob_therm_mod         ../common_source/modules/mat_elem/glob_therm_mod.F90
+      !||    mat_elem_mod           ../common_source/modules/mat_elem/mat_elem_mod.F90
+      !||    mmain_mod              ../engine/source/materials/mat_share/mmain.F90
+      !||    nlocal_reg_mod         ../common_source/modules/nlocal_reg_mod.F
+      !||    s6chour_ctl_mod        ../engine/source/elements/thickshell/solide6c/s6chour_ctl.F90
+      !||    s6for_distor_mod       ../engine/source/elements/thickshell/solide6c/s6for_distor.F90
+      !||    s6get_xv_mod           ../engine/source/elements/thickshell/solide6c/s6get_xv.F90
+      !||    sdistor_ini_mod        ../engine/source/elements/solid/solide/sdistror_ini.F90
+      !||    sensor_mod             ../common_source/modules/sensor_mod.F90
+      !||    table_mod              ../engine/share/modules/table_mod.F
+      !||    timer_mod              ../engine/source/system/timer_mod.F90
+      !||====================================================================
+
+  !     CALL S6FORC3_1(TIMERS, ELBUF_TAB,NG         ,
+  !   1         PM       ,GEO   ,IXS    ,X            ,
+  !   2         A        ,V    ,W      ,WA          ,
+  !   3         VAL2     ,ALE_CONNECT        ,IPARG       ,
+  !   4         TF       ,NPC    ,BUFMAT       ,PARTSAV     ,
+  !   5         DT2T     ,NELTST,ITYPTST,STIFN        ,FSKY        ,
+  !   6         IADS     ,OFFSET  ,IPARTS(NF1) ,
+  !   7         FX(1,1)  ,FY(1,1) ,FZ(1,1) ,FX(1,2) ,FY(1,2) ,
+  !   8         FZ(1,2)  ,FX(1,3) ,FY(1,3) ,FZ(1,3) ,FX(1,4) ,
+  !   9         FY(1,4)  ,FZ(1,4) ,FX(1,5) ,FY(1,5) ,FZ(1,5) ,
+  !   A         FX(1,6)  ,FY(1,6) ,FZ(1,6) ,NEL     ,
+  !   B         ICP      ,NLOC_DMG,
+  !   C         IPM      ,ISTRA   ,IGEO    ,GRESAV  ,GRTH       ,
+  !   D         IGRTH(NF1),TABLE ,MSSA(NF1),DMELS(NF1)  ,VOLN  ,
+  !   E         ITASK ,IPRI      ,MAT_ELEM ,IBID,TEMP       ,
+  !   F         FTHE  ,FTHESKY   ,CONDN    ,CONDNSKY ,
+  !   G         IEXPAN,IFTHE ,ICONDN    ,DT      ,SNPC,STF,
+  !   H         SBUFMAT,SVIS,NSVOIS, IRESP, 
+  !   I         IDEL7NOK,MAXFUNC, IMON_MAT, USERL_AVAIL, 
+  !   J         GLOB_THERM,XDP,SENSORS )
+
+      SUBROUTINE S6FORC3_1(TIMERS, OUTPUT, ELBUF_TAB,NG     , 
      1                   PM       ,GEO     ,IXS     ,X      ,
-     2                   A        ,V       ,MS      ,W      ,FLUX   ,
-     3                   FLU1     ,VEUL    ,FV      ,ALE_CONNECT  ,IPARG  ,
+     2                   A        ,V       ,W      ,FLUX   ,
+     3                   FLU1     ,ALE_CONNECT  ,IPARG  ,
      4                   TF       ,NPF     ,BUFMAT  ,PARTSAV,
      5                   DT2T     ,NELTST  ,ITYPTST ,STIFN  ,FSKY   ,
-     6                   IADS     ,OFFSET  ,EANI    ,IPARTS ,
+     6                   IADS     ,OFFSET  ,IPARTS ,
      7                   F11      ,F21     ,F31     ,F12    ,F22    ,
      8                   F32      ,F13     ,F23     ,F33    ,F14    ,
      9                   F24      ,F34     ,F15     ,F25    ,F35    ,
      A                   F16      ,F26     ,F36     ,NEL    ,
-     B                   ICP      ,ICSIG   ,NLOC_DMG,
+     B                   ICP      ,NLOC_DMG,
      C                   IPM      ,ISTRAIN ,IGEO    ,GRESAV ,GRTH   ,
      D                   IGRTH    ,TABLE   ,MSSA    ,DMELS  ,VOLN   ,
      E                   ITASK    ,IOUTPRT ,MAT_ELEM,H3D_STRAIN ,
      F                   TEMP     ,FTHE    ,FTHESKY ,CONDN  ,CONDNSKY,
      G                   IEXPAN   ,IFTHE   ,ICONDN  ,DT     ,SNPC,STF,
-     H                   SBUFMAT  ,SVIS    ,NSVOIS  ,IDTMINS,IRESP,
-     I                   IDEL7NG  ,IDEL7NOK,MAXFUNC, IMON_MAT, USERL_AVAIL, 
+     H                   SBUFMAT  ,SVIS    ,NSVOIS  ,IRESP,
+     I                   IDEL7NOK,MAXFUNC, IMON_MAT, USERL_AVAIL, 
      J                   GLOB_THERM,XDP,SENSORS    )
 C-----------------------------------------------
 C   M o d u l e s
@@ -144,24 +165,22 @@ C-----------------------------------------------
       INTEGER,INTENT(IN):: STF
       INTEGER, INTENT(IN) :: SBUFMAT
       INTEGER, INTENT(IN) :: NSVOIS
-      INTEGER, INTENT(IN) :: IDTMINS
       INTEGER ,INTENT(IN) :: IRESP
-      INTEGER ,INTENT(IN) :: IDEL7NG
       INTEGER ,INTENT(INOUT) :: IDEL7NOK
       INTEGER ,INTENT(IN) :: MAXFUNC
       INTEGER, INTENT(IN) :: USERL_AVAIL
       INTEGER, INTENT(IN) :: IMON_MAT
       INTEGER IXS(NIXS,*),IPARG(NPARG,NGROUP),NPF(*),IADS(8,*),GRTH(*),
      .  IPARTS(*),IPM(NPROPMI,*),IGEO(NPROPGI,*),IGRTH(*), ITASK,IOUTPRT
-      INTEGER NELTST,ITYPTST,OFFSET,NG,NEL,ICP,ICSIG,ISTRAIN,H3D_STRAIN
+      INTEGER NELTST,ITYPTST,OFFSET,NG,NEL,ICP,ISTRAIN,H3D_STRAIN
       INTEGER, INTENT(IN) :: IEXPAN,IFTHE,ICONDN
       my_real
      .   DT2T
       my_real
-     .   PM(NPROPM,*),  X(*), A(*), V(*), MS(*), W(*),
+     .   PM(NPROPM,*),  X(*), A(*), V(*),  W(*),
      .   FLUX(6,*),GEO(NPROPG,*),
-     .   FLU1(*), VEUL(*), FV(*), TF(*), BUFMAT(*),
-     .   PARTSAV(*),STIFN(*), FSKY(*),EANI(*),
+     .   FLU1(*), TF(*), BUFMAT(*),
+     .   PARTSAV(*),STIFN(*), FSKY(*),
      .   F11(MVSIZ),F21(MVSIZ),F31(MVSIZ),
      .   F12(MVSIZ),F22(MVSIZ),F32(MVSIZ),
      .   F13(MVSIZ),F23(MVSIZ),F33(MVSIZ),
@@ -185,9 +204,9 @@ C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
       INTEGER I,J,LCO,NF1,IFLAG,NUVAR,CURRENT_LAYER,IMAT,
-     .   ILAY,NLAY,IR,IS,IT,IP,IBID,MX,L_PLA,L_EPSD
+     .   ILAY,NLAY,IR,IS,IT,IP,IBID,MX,L_PLA,L_EPSD,Flag_write,hourglass
       INTEGER MXT(MVSIZ),NGL(MVSIZ),NGEO(MVSIZ),IBIDON(1)
-c     variables used only in solid routines (as arguments).
+c     Variables utilisees dans les routines solides uniquement (en arguments).
       INTEGER NC1(MVSIZ), NC2(MVSIZ), NC3(MVSIZ), NC4(MVSIZ), 
      .        NC5(MVSIZ), NC6(MVSIZ), NC7(MVSIZ), NC8(MVSIZ)
 C----------
@@ -349,15 +368,26 @@ C-----------------------------------------------
 C-----------------------------------------------
 C   S o u r c e  L i n e s
 C=======================================================================
+!      write(*,*) 'In subroutine s6cforc3_1'
       MTN0 = 0
       NLYMAX= 0
       IPANG = 0
       IPTHK = 0 
       IPPOS = 0                                 
       IPMAT = 0 
-
+      
+      !flag for print
+      Flag_write = 0
+      hourglass = 1
       GBUF => ELBUF_TAB(NG)%GBUF
       NLAY = ELBUF_TAB(NG)%NLAY
+!      write(*,*) 'NLAY', NLAY
+!      write(*,*) 'With Hourglass_New'
+!      DO I=1,NEL
+!          write(*,*) 'Au debut'
+!          write(*,*) 'DXX(I)', DXX(I), 'DYY(I)', DYY(I), 'DZZ(I)', DZZ(I)
+!          write(*,*) 'D4(I)', D4(I), 'D5(I)', D5(I), 'D6(I)', D6(I)
+!      ENDDO
       IR = 1
       IS = 1
       IT = 1
@@ -385,7 +415,21 @@ C-----------
 C-----------------------------------------------------------
 C Gather nodal variables and compute intinsic rotations
 C-----------------------------------------------------------
-       CALL S6RCOOR3(X,IXS(1,NF1),V,W,GBUF%GAMA,GAMA,
+!       CALL S6RCOOR3(X,IXS(1,NF1),V,W,GBUF%GAMA,GAMA,
+!     .   X1, X2, X3, X4, X5, X6,
+!     .   Y1, Y2, Y3, Y4, Y5, Y6, 
+!     .   Z1, Z2, Z3, Z4, Z5, Z6, 
+!     .   VX1, VX2, VX3, VX4, VX5, VX6, 
+!     .   VY1, VY2, VY3, VY4, VY5, VY6, 
+!     .   VZ1, VZ2, VZ3, VZ4, VZ5, VZ6, 
+!     .   VD2,VIS,GBUF%OFF,OFFG,GBUF%SMSTR,GBUF%RHO,RHOO,
+!     .   R11, R12, R13, R21, R22, R23, R31, R32, R33, 
+!     .   NC1,NC2,NC3,NC4,NC5,NC6,NGL,MXT,NGEO,
+!     .   IOUTPRT, VGXA, VGYA, VGZA, VGA2,DD,
+!     .   NEL, XGXA, XGYA, XGZA,XGXA2,XGYA2,XGZA2,
+!     .   XGXYA,XGYZA,XGZXA,IPARG(1,NG),GBUF%GAMA_R) 
+
+        CALL S6RCOOR3_1(X,IXS(1,NF1),V,GBUF%GAMA,GAMA,
      .   X1, X2, X3, X4, X5, X6,
      .   Y1, Y2, Y3, Y4, Y5, Y6, 
      .   Z1, Z2, Z3, Z4, Z5, Z6, 
@@ -398,6 +442,64 @@ C-----------------------------------------------------------
      .   IOUTPRT, VGXA, VGYA, VGZA, VGA2,DD,
      .   NEL, XGXA, XGYA, XGZA,XGXA2,XGYA2,XGZA2,
      .   XGXYA,XGYZA,XGZXA,IPARG(1,NG),GBUF%GAMA_R) 
+
+      if (Flag_write == 1) then
+      DO I=LFT,LLT
+      write(*,*) 'S6FORC3_1 After rotation'
+      write(*,*) 'I = ', I
+      write(*,*) 'X1(I) = ', X1(I)
+      write(*,*) 'X2(I) = ', X2(I)
+      write(*,*) 'X3(I) = ', X3(I)
+      write(*,*) 'X4(I) = ', X4(I)
+      write(*,*) 'X5(I) = ', X5(I)
+      write(*,*) 'X6(I) = ', X6(I)
+      write(*,*) 'Y1(I) = ', Y1(I)
+      write(*,*) 'Y2(I) = ', Y2(I)
+      write(*,*) 'Y3(I) = ', Y3(I)
+      write(*,*) 'Y4(I) = ', Y4(I)
+      write(*,*) 'Y5(I) = ', Y5(I)
+      write(*,*) 'Y6(I) = ', Y6(I)
+      write(*,*) 'Z1(I) = ', Z1(I)
+      write(*,*) 'Z2(I) = ', Z2(I)
+      write(*,*) 'Z3(I) = ', Z3(I)
+      write(*,*) 'Z4(I) = ', Z4(I)
+      write(*,*) 'Z5(I) = ', Z5(I)
+      write(*,*) 'Z6(I) = ', Z6(I)     
+      write(*,*) 'VX1(I) = ', VX1(I)
+      write(*,*) 'VX2(I) = ', VX2(I)
+      write(*,*) 'VX3(I) = ', VX3(I)
+      write(*,*) 'VX4(I) = ', VX4(I)
+      write(*,*) 'VX5(I) = ', VX5(I)
+      write(*,*) 'VX6(I) = ', VX6(I)
+      write(*,*) 'VY1(I) = ', VY1(I)
+      write(*,*) 'VY2(I) = ', VY2(I)
+      write(*,*) 'VY3(I) = ', VY3(I)
+      write(*,*) 'VY4(I) = ', VY4(I)
+      write(*,*) 'VY5(I) = ', VY5(I)
+      write(*,*) 'VY6(I) = ', VY6(I)
+      write(*,*) 'VZ1(I) = ', VZ1(I)
+      write(*,*) 'VZ2(I) = ', VZ2(I)
+      write(*,*) 'VZ3(I) = ', VZ3(I)
+      write(*,*) 'VZ4(I) = ', VZ4(I)
+      write(*,*) 'VZ5(I) = ', VZ5(I)
+      write(*,*) 'VZ6(I) = ', VZ6(I)     
+      write(*,*) 'R11(I)', R11(I)
+      write(*,*) 'R12(I)', R12(I)
+      write(*,*) 'R13(I)', R13(I)
+      write(*,*) 'R21(I)', R21(I)
+      write(*,*) 'R22(I)', R22(I)
+      write(*,*) 'R23(I)', R23(I)
+      write(*,*) 'R31(I)', R31(I)
+      write(*,*) 'R32(I)', R32(I)
+      write(*,*) 'R33(I)', R33(I)
+      write(*,*)  'I = ', I
+      !pause
+      ENDDO
+     
+      Endif
+
+      
+C
 C
       NN_DEL = 0
       PID = NGEO(1)
@@ -407,7 +509,9 @@ C
       MX = MXT(1)
       C1 =PM(32,MX)
       IPRES = MAT_ELEM%MAT_PARAM(MX)%IPRES
+      IPRES = 0  ! for Fanshi : remove constant Szz treatment for thick-shell
       ISCTL = IGEO(97,PID)
+  !    write(*,*) 'ISCTL',ISCTL
       DO I=1,NEL
         SIGZM(I) = ZERO
         VOLM(I) = ZERO
@@ -433,7 +537,7 @@ C
          ENDDO                                           
       ENDIF                                             
 C
-      CALL S6CDERI3(
+      CALL S6CDERI3_1(
      1   OFFG,      VOLN,      NGL,       X1,
      2   X2,        X3,        X4,        X5,
      3   X6,        Y1,        Y2,        Y3,
@@ -451,7 +555,9 @@ C
      F   B1121,     B1XH,      B1YH,      B2XH,
      G   B2YH,      B1122H,    B1221H,    B2212H,
      H   B1121H,    VZL,       VOLG,      GBUF%SMSTR,
-     I   GBUF%OFF,  NEL,       ISMSTR)
+     I   GBUF%OFF,  NEL,       ISMSTR,
+     J   PX5,     PY5,     PZ5,
+     K   PX6,     PY6,     PZ6 )
       CALL SDLEN3(
      1   VOLG,    DELTAX,  X1,      X2,
      2   X5,      X4,      X3,      X3,
@@ -478,7 +584,8 @@ C
           DELTAX(I)=MAX(LLSH(I),DELTAX(I))
         ENDDO
       END IF        
-      CALL S6CDEFC3(
+      
+      CALL S6CDEFC3_1(
      1   PX1,     PX2,     PX3,     PX4,
      2   PY1,     PY2,     PY3,     PY4,
      3   PZ1,     PZ2,     PZ3,     PZ4,
@@ -488,19 +595,30 @@ C
      7   VZ1,     VZ2,     VZ3,     VZ4,
      8   VZ5,     VZ6,     DCXX,    DCXY,
      9   DCXZ,    DCYX,    DCYY,    DCYZ,
-     A   DCZX,    DCZY,    DCZZ,    DC4,
-     B   DC5,     DC6,     WXX,     WYY,
+     A   DCZX,    DCZY,    DCZZ,    
+     B   WXX,     WYY,
      C   WZZ,     DHXX,    DHXY,    DHXZ,
      D   DHYX,    DHYY,    DHYZ,    DHZX,
-     E   DHZY,    DHZZ,    DH4,     DH5,
-     F   DH6,     PX1H,    PX2H,    PX3H,
+     E   DHZY,    DHZZ,    
+     F   PX1H,    PX2H,    PX3H,
      G   PY1H,    PY2H,    PY3H,    PZ1H,
      H   PZ2H,    PZ3H,    JACI33,  B1X,
      I   B1Y,     B2Y,     B2X,     B1122,
      J   B1221,   B2212,   B1121,   B1XH,
      K   B1YH,    B2XH,    B2YH,    B1122H,
      L   B1221H,  B2212H,  B1121H,  DDHV,
-     M   NU1,     NEL)
+     M   NU1,     NEL,
+     N   PX5,     PY5,     PZ5,
+     O   PX6,     PY6,     PZ6 )
+
+
+!      If (Flag_write) then
+!      DO I=1,NEL
+!        write(*,*) 'DCXX(I)', DCXX(I), 'DCYY(I)', DCYY(I), 'DCZZ(I)', DCZZ(I)
+!        write(*,*) 'DCXY(I)', DCXY(I), 'DCXZ(I)', DCXZ(I), 'DCYX(I)', DCYX(I)
+!        write(*,*) 'DCYZ(I)', DCYZ(I), 'DCZX(I)', DCZX(I), 'DCZY(I)', DCZY(I)
+!      ENDDO
+!      endif
       CALL S6CZERO3(
      1   F11,        F21,        F31,        F12,
      2   F22,        F32,        F13,        F23,
@@ -623,20 +741,20 @@ C---------------------------------------------
           WT = W_GAUSS(ILAY,NLAY)
         ENDIF
 C
-        CALL SCDEFO3(
+        CALL SCDEFO3_1(
      1   DXX,        DXY,        DXZ,        DYX,
      2   DYY,        DYZ,        DZX,        DZY,
      3   DZZ,        D4,         D5,         D6,
      4   DCXX,       DCXY,       DCXZ,       DCYX,
      5   DCYY,       DCYZ,       DCZX,       DCZY,
-     6   DCZZ,       DC4,        DC5,        DC6,
+     6   DCZZ,       
      7   DHXX,       DHXY,       DHXZ,       DHYX,
      8   DHYY,       DHYZ,       DHZX,       DHZY,
-     9   DHZZ,       DH4,        DH5,        DH6,
+     9   DHZZ,      
      A   ZT,         WT,         VZL,        VOLN,
      B   VOLG,       LBUF%VOL,   DDHV,       LBUF%SIG,
      C   SIGZM,      VOLM,       USB,        LBUF%EINT,
-     D   OFF,        OFFG,       DTI,        GBUF%OFF,
+     D   OFF,        OFFG,       GBUF%OFF,
      E   DSV,        LBUF%VOL0DP,VOLDP,      IPRES,
      F   NEL    )
         DO I=1,NEL
@@ -674,6 +792,20 @@ C------------------------------------------------------
 C Compute new stresses according to constitutive laws
 C------------------------------------------------------
         CURRENT_LAYER=ILAY         ! one treatment pass LAY to negative
+         
+       ! If (Flag_write==1) then
+       ! DO I=1,NEL
+       !   write(*,*) 'Avant MMAIN'
+       !   write(*,*) 'I = ', I
+       !   write(*,*) 'DXX(I)', DXX(I), 'DYY(I)', DYY(I), 'DZZ(I)', DZZ(I)
+       !   write(*,*) 'D4(I)', D4(I), 'D5(I)', D5(I), 'D6(I)', D6(I)
+       !   write(*,*) 'DT2T',DT2T  
+       !   write(*,*) 'DT1',DT1
+       !   pause
+       ! ENDDO
+       !  endif 
+
+
         CALL MMAIN(TIMERS, OUTPUT,
      1   ELBUF_TAB,   NG,          PM,          GEO,
      2                ALE_CONNECT, IXS,         IPARG,
@@ -761,7 +893,7 @@ C----------------------------
      L   SVIS,       GBUF%WPLA,  LBUF%WPLA,   GBUF%G_WPLA,
      M   NLAY    )
         ELSE
-         CALL S6CFINT3(
+         CALL S6CFINT3_1(
      1   LBUF%SIG,          PX1,               PX2,               PX3,
      2   PX4,               PY1,               PY2,               PY3,
      3   PY4,               PZ1,               PZ2,               PZ3,
@@ -779,11 +911,92 @@ C----------------------------
      F   F36,               VOLN,              QVIS,              LBUF%EINT,
      G   LBUF%RHO,          LBUF%QVIS,         LBUF%PLA,          LBUF%EPSD,
      H   GBUF%EPSD,         GBUF%SIG,          GBUF%EINT,         GBUF%RHO,
-     I   GBUF%QVIS,         GBUF%PLA,          A_GAUSS(ILAY,NLAY),W_GAUSS(ILAY,NLAY),
+     I   GBUF%QVIS,         GBUF%PLA,          A_GAUSS(ILAY,NLAY),
      J   VOLG,              OFF,               NU1,               LBUF%VOL,
      K   GBUF%VOL,          L_PLA,             L_EPSD,            NEL,
-     L   SVIS,              GBUF%WPLA,         LBUF%WPLA,         GBUF%G_WPLA ,
-     M   NLAY    )
+     L   SVIS , NLAY,
+     M   PX5, PY5, PZ5,              
+     N   PX6, PY6, PZ6)
+
+!      DO I = 1,NEL
+!      write(*,*) 'Before Fint'
+      !F11(I) = 0.
+      !F21(I) = 0.
+      !F31(I) = 0. 
+
+      !F12(I) = 0.
+      !F22(I) = 0.
+      !F32(I) = 0. 
+
+      !F13(I) = 0.
+      !F23(I) = 0.
+      !F33(I) = 0. 
+
+      !F14(I) = 0.
+      !F24(I) = 0.
+      !F34(I) = 0. 
+
+      !F15(I) = 0.
+      !F25(I) = 0.
+      !F35(I) = 0. 
+
+      !F16(I) = 0.
+      !F26(I) = 0.
+      !F36(I) = 0. 
+
+      !write(*,*) 'F11(I) = ', F11(I)
+      !write(*,*) 'F21(I) = ', F21(I)
+      !write(*,*) 'F31(I) = ', F31(I) 
+
+      !write(*,*) 'F12(I) = ', F12(I)
+      !write(*,*) 'F22(I) = ', F22(I)
+      !write(*,*) 'F32(I) = ', F32(I) 
+
+      !write(*,*) 'F13(I) = ', F13(I)
+      !write(*,*) 'F23(I) = ', F23(I)
+      !write(*,*) 'F33(I) = ', F33(I) 
+
+      !write(*,*) 'F14(I) = ', F14(I)
+      !write(*,*) 'F24(I) = ', F24(I)
+      !write(*,*) 'F34(I) = ', F34(I) 
+
+      !write(*,*) 'F15(I) = ', F15(I)
+      !write(*,*) 'F25(I) = ', F25(I)
+      !write(*,*) 'F35(I) = ', F35(I) 
+
+      !write(*,*) 'F16(I) = ', F16(I)
+      !write(*,*) 'F26(I) = ', F26(I)
+      !write(*,*) 'F36(I) = ', F36(I) 
+
+    
+
+!      ENDDO
+
+ 
+      if(Flag_write==1) then
+      DO I = 1,NEL
+      write(*,*) 'After Fint'
+
+      write(*,*) 'F11(I) = ', F11(I)
+      write(*,*) 'F21(I) = ', F21(I)
+      write(*,*) 'F31(I) = ', F31(I) 
+      write(*,*) 'F12(I) = ', F12(I)
+      write(*,*) 'F22(I) = ', F22(I)
+      write(*,*) 'F32(I) = ', F32(I) 
+      write(*,*) 'F13(I) = ', F13(I)
+      write(*,*) 'F23(I) = ', F23(I)
+      write(*,*) 'F33(I) = ', F33(I) 
+      write(*,*) 'F14(I) = ', F14(I)
+      write(*,*) 'F24(I) = ', F24(I)
+      write(*,*) 'F34(I) = ', F34(I) 
+      write(*,*) 'F15(I) = ', F15(I)
+      write(*,*) 'F25(I) = ', F25(I)
+      write(*,*) 'F35(I) = ', F35(I) 
+      write(*,*) 'F16(I) = ', F16(I)
+      write(*,*) 'F26(I) = ', F26(I)
+      write(*,*) 'F36(I) = ', F36(I) 
+      ENDDO
+      endif
         ENDIF ! IF (ISORTH > 0)
 C-------------------------
 C Finite element heat transfert  
@@ -880,6 +1093,7 @@ C Hourglass
 C-----------------------------
       IF ( IMPL_S == 0) THEN
         IF (ISCTL > 0) THEN
+!          write(*,*) 'S6CHOUR_CTL Part of S6CFORCD3'
           DN = GEO(13,PID)
           CALL S6CHOUR_CTL(
      .      X1,  X2,  X3,  X4,  X5,  X6, 
@@ -895,14 +1109,54 @@ C-----------------------------
      .     GBUF%RHO,VOLG,CXX,GBUF%HOURG,
      .     OFF,GBUF%VOL,GBUF%EINT,DT1,STIN,NEL)
         ELSE
-C          
-          CALL S6CHOUR3(GBUF%RHO,VOLG,CXX,
-     .     X1, X2, X3, X3, X4, X5, X6, X6,
-     .     Y1, Y2, Y3, Y3, Y4, Y5, Y6, Y6,
-     .     Z1, Z2, Z3, Z3, Z4, Z5, Z6, Z6,
-     .     VZ1, VZ2, VZ3, VZ3, VZ4, VZ5, VZ6, VZ6,
-     .     F31,F32,F33,F34,F35,F36,
-     .     NU,GBUF%HOURG,OFF,GBUF%VOL,GBUF%EINT,NEL)
+      if (hourglass == 1) then
+!DO I = 1,NEL
+        !F11(I) = 0.
+        !F21(I) = 0.
+        !F31(I) = 0. 
+
+        !F12(I) = 0.
+        !F22(I) = 0.
+        !F32(I) = 0. 
+
+        !F13(I) = 0.
+        !F23(I) = 0.
+        !F33(I) = 0. 
+
+        !F14(I) = 0.
+        !F24(I) = 0.
+        !F34(I) = 0. 
+
+        !F15(I) = 0.
+        !F25(I) = 0.
+        !F35(I) = 0. 
+
+        !F16(I) = 0.
+        !F26(I) = 0.
+        !F36(I) = 0. 
+!ENDDO
+
+          CALL S6CHOUR3_1(
+     .   PM, NPROPM, GBUF%RHO,VOLG,CXX,!A VERIFIER CHAQUE PARAMETER
+     .   X1, X2, X3, X3, X4, X5, X6, X6,
+     .   Y1, Y2, Y3, Y3, Y4, Y5, Y6, Y6,
+     .   Z1, Z2, Z3, Z3, Z4, Z5, Z6, Z6,
+     .   VX1, VX2, VX3, VX3, VX4, VX5, VX6, VX6,
+     .   VY1, VY2, VY3, VY3, VY4, VY5, VY6, VY6,    
+     .   VZ1, VZ2, VZ3, VZ3, VZ4, VZ5, VZ6, VZ6,
+     .   F11,F12,F13,F14,F15,F16,
+     .   F21,F22,F23,F24,F25,F26,     
+     .   F31,F32,F33,F34,F35,F36,
+     .   NU,GBUF%HOURG,OFF,GBUF%VOL,GBUF%EINT,NEL,
+     .   MXT,NPROPG,GEO,NGEO) 
+  !        CALL S6CHOUR3(GBUF%RHO,VOLG,CXX,
+  !   .     X1, X2, X3, X3, X4, X5, X6, X6,
+  !   .     Y1, Y2, Y3, Y3, Y4, Y5, Y6, Y6,
+  !   .     Z1, Z2, Z3, Z3, Z4, Z5, Z6, Z6,
+  !   .     VZ1, VZ2, VZ3, VZ3, VZ4, VZ5, VZ6, VZ6,
+  !   .     F31,F32,F33,F34,F35,F36,
+  !   .     NU,GBUF%HOURG,OFF,GBUF%VOL,GBUF%EINT,NEL)
+      endif
         END IF !(ISCTL > 0) THEN
       ENDIF
 C-----------------------------
@@ -925,47 +1179,154 @@ C--------------------------------------
 C--------------------------------
 C Convected frame to global frame
 C--------------------------------
-      CALL S6PROJ3(
-     1   X1,      X2,      X3,      X4,
-     2   X5,      X6,      Y1,      Y2,
-     3   Y3,      Y4,      Y5,      Y6,
-     4   Z1,      Z2,      Z3,      Z4,
-     5   Z5,      Z6,      F11,     F12,
-     6   F13,     F14,     F15,     F16,
-     7   F21,     F22,     F23,     F24,
-     8   F25,     F26,     F31,     F32,
-     9   F33,     F34,     F35,     F36,
-     A   DD,      NEL)
-      CALL VRROTA3(
+!      CALL S6PROJ3(
+!     1   X1,      X2,      X3,      X4,
+!     2   X5,      X6,      Y1,      Y2,
+!     3   Y3,      Y4,      Y5,      Y6,
+!     4   Z1,      Z2,      Z3,      Z4,
+!     5   Z5,      Z6,      F11,     F12,
+!     6   F13,     F14,     F15,     F16,
+!     7   F21,     F22,     F23,     F24,
+!     8   F25,     F26,     F31,     F32,
+!     9   F33,     F34,     F35,     F36,
+!     A   DD,      NEL)
+!      CALL VRROTA3(
+!     1   R11,     R21,     R31,     R12,
+!     2   R22,     R32,     R13,     R23,
+!     3   R33,     F11,     F21,     F31,
+!     4   NEL)
+!      CALL VRROTA3(
+!     1   R11,     R21,     R31,     R12,
+!     2   R22,     R32,     R13,     R23,
+!     3   R33,     F12,     F22,     F32,
+!    4   NEL)
+!      CALL VRROTA3(
+!     1   R11,     R21,     R31,     R12,
+!     2   R22,     R32,     R13,     R23,
+!     3   R33,     F13,     F23,     F33,
+!     4   NEL)
+!      CALL VRROTA3(
+!     1   R11,     R21,     R31,     R12,
+!     2   R22,     R32,     R13,     R23,
+!     3   R33,     F14,     F24,     F34,
+!     4   NEL)
+!      CALL VRROTA3(
+!     1   R11,     R21,     R31,     R12,
+!     2   R22,     R32,     R13,     R23,
+!     3   R33,     F15,     F25,     F35,
+!     4   NEL)
+!      CALL VRROTA3(
+!     1   R11,     R21,     R31,     R12,
+!     2   R22,     R32,     R13,     R23,
+!     3   R33,     F16,     F26,     F36,
+!     4   NEL)
+
+!      DO I = 1,NEL
+!          write(*,*) 'In the local system before the rotation'
+!          write(*,*) 'F11(I) = ', F11(I)
+!          write(*,*) 'F21(I) = ', F21(I)
+!          write(*,*) 'F31(I) = ', F31(I) 
+
+!          write(*,*) 'F12(I) = ', F12(I)
+!          write(*,*) 'F22(I) = ', F22(I)
+!          write(*,*) 'F32(I) = ', F32(I) 
+
+!          write(*,*) 'F13(I) = ', F13(I)
+!          write(*,*) 'F23(I) = ', F23(I)
+!          write(*,*) 'F33(I) = ', F33(I) 
+
+!          write(*,*) 'F14(I) = ', F14(I)
+!          write(*,*) 'F24(I) = ', F24(I)
+!          write(*,*) 'F34(I) = ', F34(I) 
+
+!          write(*,*) 'F15(I) = ', F15(I)
+!          write(*,*) 'F25(I) = ', F25(I)
+!          write(*,*) 'F35(I) = ', F35(I) 
+
+!          write(*,*) 'F16(I) = ', F16(I)
+!          write(*,*) 'F26(I) = ', F26(I)
+!          write(*,*) 'F36(I) = ', F36(I) 
+!          write(*,*) 'R11',R11(I)
+!          write(*,*) 'R21',R21(I)
+!          write(*,*) 'R31',R31(I)
+!          write(*,*) 'R12',R12(I)
+!          write(*,*) 'R22',R22(I)
+!          write(*,*) 'R32',R32(I)
+!          write(*,*) 'R13',R13(I)
+!          write(*,*) 'R23',R23(I)
+!          write(*,*) 'R33',R33(I)
+!      ENDDO
+      CALL SRROTA3_1(
      1   R11,     R21,     R31,     R12,
      2   R22,     R32,     R13,     R23,
-     3   R33,     F11,     F21,     F31,
-     4   NEL)
-      CALL VRROTA3(
-     1   R11,     R21,     R31,     R12,
-     2   R22,     R32,     R13,     R23,
-     3   R33,     F12,     F22,     F32,
-     4   NEL)
-      CALL VRROTA3(
-     1   R11,     R21,     R31,     R12,
-     2   R22,     R32,     R13,     R23,
-     3   R33,     F13,     F23,     F33,
-     4   NEL)
-      CALL VRROTA3(
-     1   R11,     R21,     R31,     R12,
-     2   R22,     R32,     R13,     R23,
-     3   R33,     F14,     F24,     F34,
-     4   NEL)
-      CALL VRROTA3(
-     1   R11,     R21,     R31,     R12,
-     2   R22,     R32,     R13,     R23,
-     3   R33,     F15,     F25,     F35,
-     4   NEL)
-      CALL VRROTA3(
-     1   R11,     R21,     R31,     R12,
-     2   R22,     R32,     R13,     R23,
-     3   R33,     F16,     F26,     F36,
-     4   NEL)
+     3   R33,     
+     4   F11,     F12,     F13,
+     5   F14,     F15,     F16,
+     6   F21,     F22,     F23,
+     7   F24,     F25,     F26,
+     8   F31,     F32,     F33,
+     9   F34,     F35,     F36,
+     A   NEL)
+
+!      DO I = 1,NEL
+!        !F11(I) = 0.
+!        !F21(I) = 0.
+!        !F31(I) = 0. !
+
+!        !F12(I) = 0.
+!        !F22(I) = 0.
+!        !F32(I) = 0. !
+
+!        !F13(I) = 0.
+!        !F23(I) = 0.
+!        !F33(I) = 0. !
+
+!        !F14(I) = 0.
+!        !F24(I) = 0.
+!        !F34(I) = 0. !
+
+!        !F15(I) = 0.
+!        !F25(I) = 0.
+!        !F35(I) = 0. !
+
+!        !F16(I) = 0.
+!        !F26(I) = 0.
+!        !F36(I) = 0. !
+
+!          write(*,*) 'In the global system'
+!          write(*,*) 'F11(I) = ', F11(I)
+!          write(*,*) 'F21(I) = ', F21(I)
+!          write(*,*) 'F31(I) = ', F31(I) !
+
+!          write(*,*) 'F12(I) = ', F12(I)
+!          write(*,*) 'F22(I) = ', F22(I)
+!          write(*,*) 'F32(I) = ', F32(I) !
+
+!          write(*,*) 'F13(I) = ', F13(I)
+!          write(*,*) 'F23(I) = ', F23(I)
+!          write(*,*) 'F33(I) = ', F33(I) !
+
+!          write(*,*) 'F14(I) = ', F14(I)
+!          write(*,*) 'F24(I) = ', F24(I)
+!          write(*,*) 'F34(I) = ', F34(I) !
+
+!          write(*,*) 'F15(I) = ', F15(I)
+!          write(*,*) 'F25(I) = ', F25(I)
+!          write(*,*) 'F35(I) = ', F35(I) !
+
+!          write(*,*) 'F16(I) = ', F16(I)
+!          write(*,*) 'F26(I) = ', F26(I)
+!          write(*,*) 'F36(I) = ', F36(I) 
+!          write(*,*) 'R11',R11(I)
+!          write(*,*) 'R21',R21(I)
+!          write(*,*) 'R31',R31(I)
+!          write(*,*) 'R12',R12(I)
+!          write(*,*) 'R22',R22(I)
+!          write(*,*) 'R32',R32(I)
+!          write(*,*) 'R13',R13(I)
+!          write(*,*) 'R23',R23(I)
+!          write(*,*) 'R33',R33(I)
+!      ENDDO
 C----------------------------
 C     distortion control  
 C----------------------------
@@ -1060,5 +1421,6 @@ C----------------------------
      2   NC3,     NC4,     NC5,     NC6,
      3   NEL)
 C-----------
+!      PAUSE 
       RETURN
-      END SUBROUTINE S6CFORC3
+      END SUBROUTINE S6FORC3_1

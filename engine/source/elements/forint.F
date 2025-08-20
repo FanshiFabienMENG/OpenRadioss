@@ -1023,6 +1023,7 @@ C              SOLID HEPH FORMULATION
 C-------------------------
                IHET = IINT
 C
+               IF (ISOLNOD == 8) THEN
                CALL SZFORC3(TIMERS,ELBUF_TAB,NG    ,
      1         PM      ,GEO    ,IXS    ,X            ,
      2         A       ,V     ,MS     ,W      ,WA          ,
@@ -1045,6 +1046,28 @@ C
      J         OUTPUT,NSVOIS,IBID,SNPC,STF,SBUFMAT,SVIS,IRESP,
      K         MAXFUNC,  USERL_AVAIL, GLOB_THERM, impl_s   ,idyna)
 C
+               ELSEIF (ISOLNOD == 6) THEN
+               CALL S6FORC3_1(TIMERS,  OUTPUT, ELBUF_TAB,NG         ,
+     1         PM   ,GEO   ,IXS    ,X            ,
+     2         A           ,V    ,W      ,WA          ,
+     3         VAL2  ,ALE_CONNECT        ,IPARG       ,
+     4         TF    ,NPC    ,BUFMAT       ,PARTSAV     ,
+     5         DT2T ,NELTST,ITYPTST,STIFN        ,FSKY        ,
+     6         IADS    ,OFFSET  ,IPARTS(NF1) ,
+     7         FX(1,1) ,FY(1,1) ,FZ(1,1) ,FX(1,2) ,FY(1,2) ,
+     8         FZ(1,2) ,FX(1,3) ,FY(1,3) ,FZ(1,3) ,FX(1,4) ,
+     9         FY(1,4) ,FZ(1,4) ,FX(1,5) ,FY(1,5) ,FZ(1,5) ,
+     A         FX(1,6) ,FY(1,6) ,FZ(1,6) ,NEL     ,
+     B         ICP     ,NLOC_DMG,
+     C         IPM     ,ISTRA   ,IGEO    ,GRESAV  ,GRTH       ,
+     D         IGRTH(NF1),TABLE ,MSSA(NF1),DMELS(NF1)  ,VOLN  ,
+     E         ITASK ,IPRI      ,MAT_ELEM ,IBID,TEMP       ,
+     F         FTHE  ,FTHESKY   ,CONDN    ,CONDNSKY ,
+     G         IEXPAN,IFTHE ,ICONDN    ,DT      ,SNPC,STF,
+     H         SBUFMAT,SVIS,NSVOIS, IRESP, 
+     I         IDEL7NOK,MAXFUNC, IMON_MAT, USERL_AVAIL, 
+     J         GLOB_THERM,XDP,SENSORS )
+               ENDIF
             ELSE
 C-------------------------
 C             STANDARD 8 NODE SOLID ELEMENT (JHBE = 1,2,101,102)

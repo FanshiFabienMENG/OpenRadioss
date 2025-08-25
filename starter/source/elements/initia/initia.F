@@ -222,6 +222,7 @@ C-----------------------------------------------
       USE DAMPING_RANGE_INIT_MOD
       USE EIKONAL_SOLVER_MOD, ONLY : EIKONAL_SOLVER
       USE DETONATION_TIMES_PRINTOUT_MOD , ONLY : DETONATION_TIMES_PRINTOUT
+      USE S6INIT3_MOD
 C-----------------------------------------------
 C   I m p l i c i t   T y p e s
 C-----------------------------------------------
@@ -254,6 +255,7 @@ C-----------------------------------------------
 #include      "boltpr_c.inc"
 #include      "titr_c.inc"
 #include      "tabsiz_c.inc"
+#include      "scry_c.inc"
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
@@ -1090,6 +1092,38 @@ C Case total strain
           NUVAR =  NINT(GEO(NPROPG*(IPROP-1)+25))
           ISTRAIN = IPARG(44,NG)
           IF (JHBE == 24 .AND. ISOLNOD == 6) THEN 
+!            subroutine s6init3(                                                   &                       
+!                  elbuf_str,mas     ,ixs     ,pm       ,x     ,      &
+!                  detonators,geo    ,ale_connectivity,iparg ,        &
+!                  dtelem   ,sigi    ,nel     ,skew     ,igeo  ,      &
+!                  stifn    ,partsav ,v       ,iparts   ,mss   ,      &
+!                  ipart    ,glob_therm,                              &
+!                  sigsp    ,nsigi   ,ipm     ,iuser    ,nsigs ,      &
+!                  volnod   ,bvolnod ,vns     ,bns      ,ptsol ,      &
+!                  bufmat   ,mcp     ,mcps    ,temp  ,                &
+!                  npf      ,tf      ,strsglob,straglob ,mssa  ,      &
+!                  orthoglob,fail_ini,iloadp  ,facload  ,rnoise,      &
+!                  perturb  ,mat_param,defaults_solid,                &
+!                  npropm   ,npropg  ,npropgi ,npropmi ,              &
+!                  lskew    ,sizloadp,lfacload,                       &
+!                  nixs     ,nperturb,ltitr   ,              &
+!                  nummat   ,numsol  ,lipart1,                        &
+!                  i7stifs  ,idttsh  ,isorth  ,istrain  ,             &
+!                  jthe     ,mtn     ,nft)   !
+
+!                  SUBROUTINE S6INIT3(
+!                        .                    ELBUF_STR,MAS     ,IXS     ,PM       ,X     ,
+!                        .                    DETONATORS,GEO    ,ALE_CONNECTIVITY,IPARG ,
+!                        .                    DTELEM   ,SIGI    ,NEL     ,SKEW     ,IGEO  ,
+!                        .                    STIFN    ,PARTSAV ,V       ,IPARTS   ,MSS   ,
+!                        .                    IPART    ,GLOB_THERM,
+!                        .                    SIGSP    ,NSIGI   ,IPM     ,IUSER    ,NSIGS ,
+!                        .                    VOLNOD   ,BVOLNOD ,VNS     ,BNS      ,PTSOL ,
+!                        .                    BUFMAT   ,MCP     ,MCPS    ,TEMP  ,
+!                        .                    NPF      ,TF      ,STRSGLOB,STRAGLOB ,MSSA  ,
+!                        .                    ORTHOGLOB,FAIL_INI,ILOADP  ,FACLOAD  ,RNOISE,
+!                        .                    PERTURB  ,MAT_PARAM,DEFAULTS_SOLID)
+
           CALL S6INIT3(
      .             ELBUF_TAB(NG),MS       ,IXS      ,PM         ,X    ,
      .             DETONATORS   ,GEO      ,ALE_CONNECTIVITY      ,IPARG(1,NG),
@@ -1100,8 +1134,14 @@ C Case total strain
      .             VOLNOD       ,BVOLNOD  ,VNS      ,BNS        ,PTSOL   ,
      .             BUFMAT       ,MCP      ,MCPS     ,TEMP    ,
      .             NPC          ,PLD      ,STRSGLOB(NF1),STRAGLOB(NF1),MSSA    ,
-     .             ORTHOGLOB    ,FAIL_INI ,ILOADP   ,FACLOAD   ,PERTURB  ,
-     .             RNOISE       ,MAT_PARAM,DEFAULTS%SOLID)
+     .             FAIL_INI     ,ILOADP   ,FACLOAD  ,RNOISE  ,
+     .             PERTURB      ,MAT_PARAM,DEFAULTS%SOLID,
+     .             NPROPM       ,NPROPG   ,NPROPGI  ,NPROPMI   ,
+     .             LSKEW        ,SIZLOADP ,LFACLOAD ,
+     .             NIXS         ,NPERTURB , LTITR    ,
+     .             NUMMAT       ,NUMSOL   ,    LIPART1  ,
+     .             I7STIFS      ,IDTTSH   ,ISORTH   ,ISTRAIN   ,
+     .             JTHE         ,MTN      ,NFT)
           ENDIF  
           IF (JHBE == 15) THEN
            !Thick shells PA6 / HQEPH

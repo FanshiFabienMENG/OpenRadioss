@@ -1,472 +1,556 @@
-Copyright>        OpenRadioss
-Copyright>        Copyright (C) 1986-2025 Altair Engineering Inc.
-Copyright>
-Copyright>        This program is free software: you can redistribute it and/or modify
-Copyright>        it under the terms of the GNU Affero General Public License as published by
-Copyright>        the Free Software Foundation, either version 3 of the License, or
-Copyright>        (at your option) any later version.
-Copyright>
-Copyright>        This program is distributed in the hope that it will be useful,
-Copyright>        but WITHOUT ANY WARRANTY; without even the implied warranty of
-Copyright>        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-Copyright>        GNU Affero General Public License for more details.
-Copyright>
-Copyright>        You should have received a copy of the GNU Affero General Public License
-Copyright>        along with this program.  If not, see <https://www.gnu.org/licenses/>.
-Copyright>
-Copyright>
-Copyright>        Commercial Alternative: Altair Radioss Software
-Copyright>
-Copyright>        As an alternative to this open-source version, Altair also offers Altair Radioss
-Copyright>        software under a commercial license.  Contact Altair to discuss further if the
-Copyright>        commercial version may interest you: https://www.altair.com/radioss/.
-      !||====================================================================
-      !||    s6cinit3               ../starter/source/elements/thickshell/solide6c/s6cinit3.F
-      !||--- called by ------------------------------------------------------
-      !||    initia                 ../starter/source/elements/initia/initia.F
-      !||--- calls      -----------------------------------------------------
-      !||    ancmsg                 ../starter/source/output/message/message.F
-      !||    atheri                 ../starter/source/ale/atheri.F
-      !||    dtmain                 ../starter/source/materials/time_step/dtmain.F
-      !||    failini                ../starter/source/elements/solid/solide/failini.F
-      !||    fretitl2               ../starter/source/starter/freform.F
-      !||    matini                 ../starter/source/materials/mat_share/matini.F
-      !||    s6ccoor3               ../starter/source/elements/thickshell/solide6c/s6ccoor3.F
-      !||    s6cderi3               ../starter/source/elements/thickshell/solide6c/s6cderi3.F
-      !||    s6mass3                ../starter/source/elements/thickshell/solide6c/s6mass3.F
-      !||    sbulk3                 ../starter/source/elements/solid/solide/sbulk3.F
-      !||    scmorth3               ../starter/source/elements/thickshell/solidec/scmorth3.F
-      !||    sczero3                ../starter/source/elements/thickshell/solidec/scinit3.F
-      !||    sdlensh3n              ../starter/source/elements/thickshell/solide6c/s6cinit3.F
-      !||    sigin20b               ../starter/source/elements/solid/solide20/s20mass3.F
-      !||    svalue0                ../starter/source/elements/thickshell/solidec/scinit3.F
-      !||--- uses       -----------------------------------------------------
-      !||    defaults_mod           ../starter/source/modules/defaults_mod.F90
-      !||    detonators_mod         ../starter/share/modules1/detonators_mod.F
-      !||    message_mod            ../starter/share/message_module/message_mod.F
-      !||====================================================================
-      SUBROUTINE S6INIT3(
-     .                    ELBUF_STR,MAS     ,IXS     ,PM       ,X     ,
-     .                    DETONATORS,GEO    ,ALE_CONNECTIVITY,IPARG ,
-     .                    DTELEM   ,SIGI    ,NEL     ,SKEW     ,IGEO  ,
-     .                    STIFN    ,PARTSAV ,V       ,IPARTS   ,MSS   ,
-     .                    IPART    ,GLOB_THERM,
-     .                    SIGSP    ,NSIGI   ,IPM     ,IUSER    ,NSIGS ,
-     .                    VOLNOD   ,BVOLNOD ,VNS     ,BNS      ,PTSOL ,
-     .                    BUFMAT   ,MCP     ,MCPS    ,TEMP  ,
-     .                    NPF      ,TF      ,STRSGLOB,STRAGLOB ,MSSA  ,
-     .                    ORTHOGLOB,FAIL_INI,ILOADP  ,FACLOAD  ,RNOISE,
-     .                    PERTURB  ,MAT_PARAM,DEFAULTS_SOLID)
-C-----------------------------------------------
-C   D e s c r i p t i o n
-C   Initialization of solid shell PA6 element
-C-----------------------------------------------
-C   M o d u l e s
-C-----------------------------------------------
-      USE ELBUFDEF_MOD            
-      USE MESSAGE_MOD
-      USE DETONATORS_MOD      
-      USE ALE_CONNECTIVITY_MOD
-      USE MATPARAM_DEF_MOD
-      USE DEFAULTS_MOD
-      USE NAMES_AND_TITLES_MOD , ONLY : NCHARTITLE
+!Copyright>        OpenRadioss
+!Copyright>        Copyright (C) 1986-2025 Altair Engineering Inc.
+!Copyright>
+!Copyright>        This program is free software: you can redistribute it and/or modify
+!Copyright>        it under the terms of the GNU Affero General Public License as published by
+!Copyright>        the Free Software Foundation, either version 3 of the License, or
+!Copyright>        (at your option) any later version.
+!Copyright>
+!Copyright>        This program is distributed in the hope that it will be useful,
+!Copyright>        but WITHOUT ANY WARRANTY; without even the implied warranty of
+!Copyright>        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!Copyright>        GNU Affero General Public License for more details.
+!Copyright>
+!Copyright>        You should have received a copy of the GNU Affero General Public License
+!Copyright>        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+!Copyright>
+!Copyright>
+!Copyright>        Commercial Alternative: Altair Radioss Software
+!Copyright>
+!Copyright>        As an alternative to this open-source version, Altair also offers Altair Radioss
+!Copyright>        software under a commercial license.  Contact Altair to discuss further if the
+!Copyright>        commercial version may interest you: https://www.altair.com/radioss/.
+! ======================================================================================================================
+! \brief   initiation of penta solid element
+! ======================================================================================================================
+!||====================================================================
+!||    s6init3               ../starter/source/elements/solid/solide6z/s6init3.F90
+!||--- called by ------------------------------------------------------
+!||    initia                 ../starter/source/elements/initia/initia.F
+!||--- calls      -----------------------------------------------------
+!||    ancmsg                 ../starter/source/output/message/message.F
+!||    atheri                 ../starter/source/ale/atheri.F
+!||    dtmain                 ../starter/source/materials/time_step/dtmain.F
+!||    failini                ../starter/source/elements/solid/solide/failini.F
+!||    fretitl2               ../starter/source/starter/freform.F
+!||    matini                 ../starter/source/materials/mat_share/matini.F
+!||    s6ccoor3               ../starter/source/elements/thickshell/solide6c/s6ccoor3.F
+!||    s6cderi3               ../starter/source/elements/thickshell/solide6c/s6cderi3.F
+!||    s6mass3                ../starter/source/elements/thickshell/solide6c/s6mass3.F
+!||    sbulk3                 ../starter/source/elements/solid/solide/sbulk3.F
+!||    scmorth3               ../starter/source/elements/thickshell/solidec/scmorth3.F
+!||    sczero3                ../starter/source/elements/thickshell/solidec/scinit3.F
+!||    sdlensh3n              ../starter/source/elements/thickshell/solide6c/s6cinit3.F
+!||    sigin20b               ../starter/source/elements/solid/solide20/s20mass3.F
+!||    svalue0                ../starter/source/elements/thickshell/solidec/scinit3.F
+!||--- uses       -----------------------------------------------------
+!||    defaults_mod           ../starter/source/modules/defaults_mod.F90
+!||    detonators_mod         ../starter/share/modules1/detonators_mod.F
+!||    message_mod            ../starter/share/message_module/message_mod.F
+!||====================================================================
+      module s6init3_mod
+      contains
+      subroutine s6init3(                                                   &                       
+                         elbuf_str,mas     ,ixs     ,pm       ,x     ,      &
+                         detonators,geo    ,ale_connectivity,iparg ,        &
+                         dtelem   ,sigi    ,nel     ,skew     ,igeo  ,      &
+                         stifn    ,partsav ,v       ,iparts   ,mss   ,      &
+                         ipart    ,glob_therm,                              &
+                         sigsp    ,nsigi   ,ipm     ,iuser    ,nsigs ,      &
+                         volnod   ,bvolnod ,vns     ,bns      ,ptsol ,      &
+                         bufmat   ,mcp     ,mcps    ,temp  ,                &
+                         npf      ,tf      ,strsglob,straglob ,mssa  ,      &
+                         fail_ini,iloadp  ,facload  ,rnoise,      &
+                         perturb  ,mat_param,defaults_solid,                &
+                         npropm   ,npropg  ,npropgi ,npropmi ,              &
+                         lskew    ,sizloadp,lfacload,                       &
+                         nixs     ,nperturb,ltitr   ,              &
+                         nummat   ,numsol  ,lipart1,                        &
+                         i7stifs  ,idttsh  ,isorth  ,istrain  ,             &
+                         jthe     ,mtn     ,nft)                           
+! ----------------------------------------------------------------------------------------------------------------------
+!                                                   MODULES
+! ----------------------------------------------------------------------------------------------------------------------
+      use elbufdef_mod            
+      use message_mod
+      use detonators_mod      
+      use ale_connectivity_mod
+      use matparam_def_mod
+      use defaults_mod
+      use names_and_titles_mod, only : NCHARTITLE
       use glob_therm_mod
-C-----------------------------------------------
-C   I m p l i c i t   T y p e s
-C-----------------------------------------------
-#include      "implicit_f.inc"
-C-----------------------------------------------
-C   G l o b a l   P a r a m e t e r s
-C-----------------------------------------------
-#include      "mvsiz_p.inc"
-C-----------------------------------------------
-C   C o m m o n   B l o c k s
-C-----------------------------------------------
-#include      "com04_c.inc"
-#include      "param_c.inc"
-#include      "scr12_c.inc"
-#include      "scr17_c.inc"
-#include      "scry_c.inc"
-#include      "vect01_c.inc"
-C-----------------------------------------------
-C   D u m m y   A r g u m e n t s
-C-----------------------------------------------
-      INTEGER IXS(NIXS,*), IPARG(*),IPARTS(*), 
-     .    NEL, IPART(LIPART1,*),PERTURB(NPERTURB), 
-     .    IPM(NPROPMI,*), PTSOL(*), NSIGI, IUSER, NSIGS, NPF(*)
-      INTEGER IGEO(NPROPGI,*),STRSGLOB(*),STRAGLOB(*),ORTHOGLOB(*),
-     .    FAIL_INI(*)
-      my_real
-     .   MAS(*), PM(NPROPM,*), X(*), GEO(NPROPG,*),
-     .   DTELEM(*),SIGI(NSIGS,*),SKEW(LSKEW,*),STIFN(*),
-     .   PARTSAV(20,*), V(*), MSS(8,*),SIGSP(NSIGI,*),
-     .    VOLNOD(*), BVOLNOD(*), VNS(8,*), BNS(8,*),BUFMAT(*),MCP(*),
-     .    MCPS(8,*),TEMP(*), TF(*), MSSA(*),RNOISE(NPERTURB,*)
-      TYPE(ELBUF_STRUCT_), TARGET :: ELBUF_STR
-      INTEGER,INTENT(IN) :: ILOADP(SIZLOADP,*)
-      my_real,INTENT(IN) :: FACLOAD(LFACLOAD,*)
-      TYPE(DETONATORS_STRUCT_) :: DETONATORS
-      TYPE(t_ale_connectivity), INTENT(INOUT) :: ALE_CONNECTIVITY
-      TYPE (MATPARAM_STRUCT_) ,DIMENSION(NUMMAT) ,INTENT(INOUT) :: MAT_PARAM
-      TYPE(SOLID_DEFAULTS_), INTENT(IN) :: DEFAULTS_SOLID
-      type (glob_therm_) ,intent(in)      :: glob_therm
-C-----------------------------------------------
-C   L o c a l   V a r i a b l e s
-C-----------------------------------------------
-      INTEGER I,NF1,IBID,IGTYP,IREP,IP,ILAY,NLAY,NUVAR,NCC,JHBE,
-     .   NUVARR,IDEF,IPANG,IPTHK,IPPOS,IPMAT,IG,IM,MTN0,NLYMAX,
-     .   IPID1,NPTR,NPTS,NPTT,L_PLA,L_SIGB,IMAS_DS
-      INTEGER MAT(MVSIZ), PID(MVSIZ), NGL(MVSIZ), MAT0(MVSIZ)
-      INTEGER IX1(MVSIZ), IX2(MVSIZ), IX3(MVSIZ), IX4(MVSIZ),
-     .        IX5(MVSIZ), IX6(MVSIZ)
-      my_real
-     .     X1(MVSIZ), X2(MVSIZ), X3(MVSIZ), X4(MVSIZ), X5(MVSIZ), X6(MVSIZ), 
-     .     Y1(MVSIZ), Y2(MVSIZ), Y3(MVSIZ), Y4(MVSIZ), Y5(MVSIZ), Y6(MVSIZ), 
-     .     Z1(MVSIZ), Z2(MVSIZ), Z3(MVSIZ), Z4(MVSIZ), Z5(MVSIZ), Z6(MVSIZ)
-      CHARACTER(LEN=NCHARTITLE)::TITR1
-      my_real
-     .   BID, FV, STI, ZI,WI
-      my_real
-     .   V8LOC(51,MVSIZ),VOLU(MVSIZ),DTX(MVSIZ),VZL(MVSIZ),VZQ(MVSIZ),
-     .   RX(MVSIZ) ,RY(MVSIZ) ,RZ(MVSIZ) ,SX(MVSIZ) ,
-     .   SY(MVSIZ) ,SZ(MVSIZ) ,TX(MVSIZ) ,TY(MVSIZ) ,TZ(MVSIZ) ,
-     .   E1X(MVSIZ),E1Y(MVSIZ),E1Z(MVSIZ),
-     .   E2X(MVSIZ),E2Y(MVSIZ),E2Z(MVSIZ),
-     .   E3X(MVSIZ),E3Y(MVSIZ),E3Z(MVSIZ),
-     .   F1X(MVSIZ) ,F1Y(MVSIZ) ,F1Z(MVSIZ) ,LLSH(MVSIZ) ,
-     .   F2X(MVSIZ) ,F2Y(MVSIZ) ,F2Z(MVSIZ) ,RHOCP(MVSIZ),TEMP0(MVSIZ), DELTAX(MVSIZ), AIRE(MVSIZ)
-      my_real :: TEMPEL(NEL)
-C-----------------------------------------------
-      TYPE(G_BUFEL_) ,POINTER :: GBUF     
-      TYPE(BUF_LAY_) ,POINTER :: BUFLY
-      TYPE(L_BUFEL_) ,POINTER :: LBUF     
-      TYPE(BUF_MAT_) ,POINTER :: MBUF
-C-----------------------------------------------
-      my_real
-     .  W_GAUSS(9,9),A_GAUSS(9,9),ANGLE(MVSIZ),DTX0(MVSIZ)
-      DATA W_GAUSS /
-     1 2.               ,0.               ,0.               ,
-     1 0.               ,0.               ,0.               ,
-     1 0.               ,0.               ,0.               ,
-     2 1.               ,1.               ,0.               ,
-     2 0.               ,0.               ,0.               ,
-     2 0.               ,0.               ,0.               ,
-     3 0.555555555555556,0.888888888888889,0.555555555555556,
-     3 0.               ,0.               ,0.               ,
-     3 0.               ,0.               ,0.               ,
-     4 0.347854845137454,0.652145154862546,0.652145154862546,
-     4 0.347854845137454,0.               ,0.               ,
-     4 0.               ,0.               ,0.               ,
-     5 0.236926885056189,0.478628670499366,0.568888888888889,
-     5 0.478628670499366,0.236926885056189,0.               ,
-     5 0.               ,0.               ,0.               ,
-     6 0.171324492379170,0.360761573048139,0.467913934572691,
-     6 0.467913934572691,0.360761573048139,0.171324492379170,
-     6 0.               ,0.               ,0.               ,
-     7 0.129484966168870,0.279705391489277,0.381830050505119,
-     7 0.417959183673469,0.381830050505119,0.279705391489277,
-     7 0.129484966168870,0.               ,0.               ,
-     8 0.101228536290376,0.222381034453374,0.313706645877887,
-     8 0.362683783378362,0.362683783378362,0.313706645877887,
-     8 0.222381034453374,0.101228536290376,0.               ,
-     9 0.081274388361574,0.180648160694857,0.260610696402935,
-     9 0.312347077040003,0.330239355001260,0.312347077040003,
-     9 0.260610696402935,0.180648160694857,0.081274388361574/
-      DATA A_GAUSS /
-     1 0.               ,0.               ,0.               ,
-     1 0.               ,0.               ,0.               ,
-     1 0.               ,0.               ,0.               ,
-     2 -.577350269189626,0.577350269189626,0.               ,
-     2 0.               ,0.               ,0.               ,
-     2 0.               ,0.               ,0.               ,
-     3 -.774596669241483,0.               ,0.774596669241483,
-     3 0.               ,0.               ,0.               ,
-     3 0.               ,0.               ,0.               ,
-     4 -.861136311594053,-.339981043584856,0.339981043584856,
-     4 0.861136311594053,0.               ,0.               ,
-     4 0.               ,0.               ,0.               ,
-     5 -.906179845938664,-.538469310105683,0.               ,
-     5 0.538469310105683,0.906179845938664,0.               ,
-     5 0.               ,0.               ,0.               ,
-     6 -.932469514203152,-.661209386466265,-.238619186083197,
-     6 0.238619186083197,0.661209386466265,0.932469514203152,
-     6 0.               ,0.               ,0.               ,
-     7 -.949107912342759,-.741531185599394,-.405845151377397,
-     7 0.               ,0.405845151377397,0.741531185599394,
-     7 0.949107912342759,0.               ,0.               ,
-     8 -.960289856497536,-.796666477413627,-.525532409916329,
-     8 -.183434642495650,0.183434642495650,0.525532409916329,
-     8 0.796666477413627,0.960289856497536,0.               ,
-     9 -.968160239507626,-.836031107326636,-.613371432700590,
-     9 -.324253423403809,0.               ,0.324253423403809,
-     9 0.613371432700590,0.836031107326636,0.968160239507626/
-C-----------------------------------------------
-C   S o u r c e  L i n e s
-C=======================================================================
-      GBUF => ELBUF_STR%GBUF
-      LBUF  => ELBUF_STR%BUFLY(1)%LBUF(1,1,1)
-      MBUF  => ELBUF_STR%BUFLY(1)%MAT(1,1,1)
-      BUFLY => ELBUF_STR%BUFLY(1)
-      NPTR  =  ELBUF_STR%NPTR
-      NPTS  =  ELBUF_STR%NPTS
-      NPTT  =  ELBUF_STR%NPTT
-      NLAY  =  ELBUF_STR%NLAY
- !     write(*,*) 'NLAY = ',NLAY
-C
-      JHBE  = IPARG(23)
-      IREP  = IPARG(35)
-      IGTYP = IPARG(38)
-      NF1=NFT+1
-      IDEF =0
-      IBID = 0
-      BID   = ZERO
-      IF (IGTYP /= 22) THEN
-       ISORTH = 0
-      END IF
-      IMAS_DS = DEFAULTS_SOLID%IMAS
-C
-      DO I=1,NEL
-        RHOCP(I) =  PM(69,IXS(1,NFT+I))
-        TEMP0(I) =  PM(79,IXS(1,NFT+I))
-      ENDDO
-C
-      CALL S6CCOOR3(X     ,IXS(1,NF1)   ,GEO  ,NGL  ,MAT  ,PID  ,
-     .     RX   ,RY   ,RZ   ,SX   ,SY   ,SZ   ,TX   ,TY   ,TZ   ,
-     .     E1X  ,E1Y  ,E1Z  ,E2X  ,E2Y  ,E2Z  ,E3X  ,E3Y  ,E3Z  ,
-     .     F1X  ,F1Y  ,F1Z  ,F2X  ,F2Y  ,F2Z  ,TEMP0, TEMP,GLOB_THERM%NINTEMP, 
-     .     IX1, IX2, IX3, IX4, IX5, IX6, 
-     .     X1, X2, X3, X4, X5, X6, 
-     .     Y1, Y2, Y3, Y4, Y5, Y6,
-     .     Z1, Z2, Z3, Z4, Z5, Z6)
-      IF (IGTYP == 21 .OR. IGTYP == 22) THEN
-        DO I=1,NEL
-         ANGLE(I) =  GEO(1,PID(I))
-        END DO
-        CALL SCMORTH3(PID  ,GEO  ,IGEO ,SKEW ,IREP ,GBUF%GAMA   ,
-     .         RX   ,RY   ,RZ   ,SX   ,SY   ,SZ   ,TX   ,TY   ,TZ   ,
-     .         E1X  ,E1Y  ,E1Z  ,E2X  ,E2Y  ,E2Z  ,E3X  ,E3Y  ,E3Z  ,
-     .         NGL  ,ANGLE,NSIGI,SIGSP,NSIGS,SIGI ,IXS  ,1    ,
-     .         ORTHOGLOB,PTSOL,NEL)
-       IF (IGTYP == 22) THEN
-        NLYMAX= 200
-        IPANG = 200
-        IPTHK = IPANG+NLYMAX
-        IPPOS = IPTHK+NLYMAX
-        IPMAT = 100
-        IG=PID(1)
-        MTN0=MTN
-        DO I=1,NEL
-         MAT0(I)=MAT(I)
-         DTX0(I) = EP20
-        ENDDO
-       END IF
-      END IF
-      CALL S6CDERI3(NEL,GBUF%VOL,GEO,VZL,NGL,DELTAX,VOLU , 
-     .     X1, X2, X3, X4, X5, X6, 
-     .     Y1, Y2, Y3, Y4, Y5, Y6,
-     .     Z1, Z2, Z3, Z4, Z5, Z6)
-      IF (IDTTSH > 0) THEN
-         CALL SDLENSH3N(NEL,LLSH,
-     .                  X1, X2, X3, X4, X5, X6,
-     .                  Y1, Y2, Y3, Y4, Y5, Y6,
-     .                  Z1, Z2, Z3, Z4, Z5, Z6)
-!        DO I=1,NEL
-!          IF (GBUF%IDT_TSH(I)>0) 
-!     .     DELTAX(I)=MAX(LLSH(I),DELTAX(I))
-!        ENDDO
-      END IF        
-!
-!     Initialize element temperature from /initemp
-!      
-      IF (JTHE == 0 .and. GLOB_THERM%NINTEMP > 0) THEN
-        DO I=1,NEL
-          TEMPEL(I) = ONE_OVER_8 *(TEMP(IXS(2,I)) + TEMP(IXS(3,I))
-     .                           + TEMP(IXS(4,I)) + TEMP(IXS(5,I))        
-     .                           + TEMP(IXS(6,I)) + TEMP(IXS(7,I))        
-     .                           + TEMP(IXS(8,I)) + TEMP(IXS(9,I))) 
-        ENDDO
-      ELSE
-        TEMPEL(1:NEL) = TEMP0(1:NEL)
-      END IF
-!
-      IP=0
-      CALL MATINI(PM      ,IXS    ,NIXS       ,X      ,
-     .            GEO     ,ALE_CONNECTIVITY  ,DETONATORS ,IPARG  ,
-     .            SIGI    ,NEL    ,SKEW       ,IGEO   ,
-     .            IPART   ,IPARTS ,
-     .            MAT     ,IPM    ,NSIGS  ,NUMSOL     ,PTSOL  ,
-     .            IP      ,NGL    ,NPF    ,TF         ,BUFMAT , 
-     .            GBUF    ,LBUF   ,MBUF   ,ELBUF_STR  ,ILOADP ,
-     .            FACLOAD, DELTAX ,TEMPEL )                         
-C
-      IF (IGTYP == 22) CALL SCZERO3(GBUF%RHO,GBUF%SIG,GBUF%EINT,NEL)
-C----------------------------------------
-C Thermal initialization
-      IF(JTHE /=0) CALL ATHERI(MAT,PM,GBUF%TEMP)
-C-----------------------------
-C Loop on integration points
-      DO ILAY=1,NLAY
-        LBUF => ELBUF_STR%BUFLY(ILAY)%LBUF(1,1,1)
-        MBUF => ELBUF_STR%BUFLY(ILAY)%MAT(1,1,1)
-        L_PLA = ELBUF_STR%BUFLY(ILAY)%L_PLA
-        L_SIGB= ELBUF_STR%BUFLY(ILAY)%L_SIGB
-c
-       IF (IGTYP == 22) THEN
-          ZI = GEO(IPPOS+ILAY,IG)
-          WI = GEO(IPTHK+ILAY,IG)
-          IM=IGEO(IPMAT+ILAY,IG)
-         MTN=NINT(PM(19,IM))
-         DO I=1,NEL
-          MAT(I)=IM
-            ANGLE(I) = GEO(IPANG+ILAY,PID(I))
-         ENDDO
-       ELSE
-          ZI = A_GAUSS(ILAY,NLAY)
-          WI = W_GAUSS(ILAY,NLAY)
-       ENDIF
-c
-        DO I=1,NEL
-          LBUF%VOL0DP(I)= HALF*WI*(GBUF%VOL(I)+VZL(I)*ZI)
-          LBUF%VOL(I)= LBUF%VOL0DP(I)
-        ENDDO
-        IF (IGTYP == 22)
-     .  CALL SCMORTH3(PID  ,GEO  ,IGEO ,SKEW ,IREP ,LBUF%GAMA   ,
-     .         RX   ,RY   ,RZ   ,SX   ,SY   ,SZ   ,TX   ,TY   ,TZ   ,
-     .         E1X  ,E1Y  ,E1Z  ,E2X  ,E2Y  ,E2Z  ,E3X  ,E3Y  ,E3Z  ,
-     .         NGL  ,ANGLE,NSIGI,SIGSP,NSIGS,SIGI ,IXS,ILAY,
-     .         ORTHOGLOB,PTSOL,NEL)
-!
-!     Initialize element temperature from /initemp
-!      
-        IF (JTHE == 0 .and. GLOB_THERM%NINTEMP > 0) THEN
-          DO I=1,NEL
-            TEMPEL(I) = ONE_OVER_8 *(TEMP(IXS(2,I)) + TEMP(IXS(3,I))
-     .                             + TEMP(IXS(4,I)) + TEMP(IXS(5,I))      
-     .                             + TEMP(IXS(6,I)) + TEMP(IXS(7,I))      
-     .                             + TEMP(IXS(8,I)) + TEMP(IXS(9,I))) 
-          ENDDO
-        ELSE
-          TEMPEL(1:NEL) = TEMP0(1:NEL)
-        END IF
-!
-        CALL MATINI(PM      ,IXS    ,NIXS   ,X         ,
-     .              GEO     ,ALE_CONNECTIVITY  ,DETONATORS,IPARG  ,
-     .              SIGI    ,NEL    ,SKEW      ,IGEO   ,
-     .              IPART   ,IPARTS ,
-     .              MAT     ,IPM    ,NSIGS  ,NUMSOL    ,PTSOL  ,
-     .              ILAY    ,NGL    ,NPF    ,TF        ,BUFMAT ,
-     .              GBUF    ,LBUF   ,MBUF   ,ELBUF_STR ,ILOADP ,
-     .              FACLOAD, DELTAX ,TEMPEL )
-        IF (MTN >= 28) THEN
-           NUVAR = IPM(8,IXS(1,NFT+1))
-           IDEF =1
-        ELSE
-           NUVAR = 0
-            IF(MTN == 14 .OR. MTN == 12)THEN
-               IDEF =1
-            ELSEIF(MTN == 24)THEN
-              IDEF =1
-            ELSEIF(ISTRAIN == 1)THEN
-             IF(MTN == 1)THEN
-               IDEF =1
-             ELSEIF(MTN == 2)THEN
-               IDEF =1
-             ELSEIF(MTN == 4)THEN
-               IDEF =1
-            ELSEIF(MTN == 3.OR.MTN == 6.OR.MTN == 10
-     .       .OR.MTN == 21.OR.MTN == 22.OR.MTN == 23.OR.MTN == 49)THEN
-               IDEF =1
-             ENDIF
-            ENDIF
-        ENDIF
-        CALL SIGIN20B(
-     .     LBUF%SIG,PM      ,LBUF%VOL ,SIGSP    ,
-     .     SIGI    ,LBUF%EINT,LBUF%RHO,MBUF%VAR ,LBUF%STRA,
-     .     IXS     ,NIXS     ,NSIGI   ,ILAY     ,NUVAR    , 
-     .     NEL     ,IUSER    ,IDEF    ,NSIGS    ,STRSGLOB ,
-     .     STRAGLOB,JHBE     ,IGTYP   ,X        ,LBUF%GAMA,
-     .     MAT     ,LBUF%PLA ,L_PLA   ,PTSOL    ,LBUF%SIGB,
-     .     L_SIGB  ,IPM      ,BUFMAT  ,LBUF%VOL0DP)
-c
-        IF(IGTYP == 22) THEN
-C         moyene density,sig,...---
-          AIRE(:) = ZERO
-          CALL DTMAIN(GEO       ,PM        ,IPM         ,PID     ,MAT     ,FV    ,
-     .         LBUF%EINT ,LBUF%TEMP ,LBUF%DELTAX ,LBUF%RK ,LBUF%RE ,BUFMAT, DELTAX, AIRE, 
-     .         VOLU, DTX , IGEO,IGTYP)
-C
-          CALL SVALUE0(
-     .         LBUF%RHO,LBUF%VOL,LBUF%OFF,LBUF%SIG,LBUF%EINT,DTX,
-     .         GBUF%RHO,GBUF%VOL,GBUF%OFF,GBUF%SIG,GBUF%EINT,DTX0,
-     .         NEL     )
-        ENDIF
-      ENDDO  ! ILAY = 1,NLAY
-C----------------------------------------
-      IF(IGTYP == 22) THEN
-       MTN=MTN0
-       DO I=1,NEL
-         MAT(I)=MAT0(I)
-       ENDDO
-      ENDIF
-C----------------------------------------
-C Mass initialization
-      CALL S6MASS3(GBUF%RHO,MAS,PARTSAV,X,V,IPARTS(NF1),MSS(1,NF1),
-     .     RHOCP,MCP ,MCPS(1,NF1),MSSA(NF1),GBUF%FILL, VOLU, 
-     .     IX1, IX2, IX3, IX4, IX5, IX6,IMAS_DS)
-C----------------------------------------
-C Failure model initialization
-      CALL FAILINI(ELBUF_STR,NPTR,NPTS,NPTT,NLAY,
-     .             IPM,SIGSP,NSIGI,FAIL_INI ,
-     .             SIGI,NSIGS,IXS,NIXS,PTSOL,
-     .             RNOISE,PERTURB,MAT_PARAM)
-C------------------------------------------ 
-C  Assemble nodal volumes and moduli for interface stiffness
-C  Warning : IX1, IX2 ... IX6 <=> NC(MVSIZ,6)
-      IF(I7STIFS/=0)THEN
-        NCC=6
-        CALL SBULK3(VOLU  ,IX1    ,NCC,MAT,PM ,
-     2              VOLNOD,BVOLNOD,VNS(1,NF1),BNS(1,NF1),BID,
-     3              BID ,GBUF%FILL)
-      ENDIF
-C------------------------------------------
-C Element time step
-        AIRE(:) = ZERO
-        CALL DTMAIN(GEO       ,PM        ,IPM         ,PID     ,MAT     ,FV    ,
-     .       LBUF%EINT ,LBUF%TEMP ,LBUF%DELTAX ,LBUF%RK ,LBUF%RE ,BUFMAT, DELTAX, AIRE, 
-     .       VOLU, DTX, IGEO,IGTYP)
-C------------------------------------------
-       IF(IGTYP == 22) THEN
-        DO I=1,NEL
-         DTX(I)=DTX0(I)
-        ENDDO
-       ENDIF
-c
-      DO I=1,NEL
-        IF(IXS(10,I+NFT) /= 0) THEN
-          IF (IGTYP < 20 .OR. IGTYP > 22) THEN
-             IPID1=IXS(NIXS-1,I+NFT)
-             CALL FRETITL2(TITR1,IGEO(NPROPGI-LTITR+1,IPID1),LTITR)
-!             CALL ANCMSG(MSGID=226,
-!     .                   MSGTYPE=MSGERROR,
-!     .                   ANMODE=ANINFO_BLIND_1,
-!     .                   I1=IGEO(1,IPID1),
-!     .                   C1=TITR1,
-!     .                   I2=IGTYP)
-          ENDIF
-        ENDIF
-        DTELEM(NFT+I)=DTX(I)
-        STI = FOURTH * GBUF%FILL(I) * GBUF%RHO(I) * VOLU(I) /
-     .        MAX(EM20,DTX(I)*DTX(I))
-        STIFN(IXS(2,I+NFT))=STIFN(IXS(2,I+NFT))+STI
-        STIFN(IXS(3,I+NFT))=STIFN(IXS(3,I+NFT))+STI
-        STIFN(IXS(4,I+NFT))=STIFN(IXS(4,I+NFT))+STI
-        STIFN(IXS(5,I+NFT))=STIFN(IXS(5,I+NFT))+STI
-        STIFN(IXS(6,I+NFT))=STIFN(IXS(6,I+NFT))+STI
-        STIFN(IXS(7,I+NFT))=STIFN(IXS(7,I+NFT))+STI
-        STIFN(IXS(8,I+NFT))=STIFN(IXS(8,I+NFT))+STI
-        STIFN(IXS(9,I+NFT))=STIFN(IXS(9,I+NFT))+STI
-      ENDDO
-C-----------
-      RETURN
-      END SUBROUTINE S6INIT3
-  
+      use constant_mod
+      use precision_mod, only : WP
+      use eos_param_mod 
+      use table_mat_vinterp_mod 
+
+! ----------------------------------------------------------------------------------------------------------------------
+!                                                   IMPLICIT NONE
+! ----------------------------------------------------------------------------------------------------------------------
+  implicit none
+! ---------------------------------------------------------------------------------------------------------------------
+!c-----------------------------------------------
+!                                               c i m p l i c i t t y p e
+!c-----------------------------------------------
+#include      "units_c.inc"
+!#include      "implicit_f.inc"
+!C-----------------------------------------------
+!C   G l o b a l   P a r a m e t e r s
+!C-----------------------------------------------
+!#include      "mvsiz_p.inc"
+!C-----------------------------------------------
+!C   C o m m o n   B l o c k s
+!C-----------------------------------------------
+!#include      "com04_c.inc"
+!#include      "param_c.inc"
+!#include      "scr12_c.inc"
+!#include      "scr17_c.inc"
+!#include      "scry_c.inc"
+!#include      "vect01_c.inc"
+!C-----------------------------------------------
+!C   D u m m y   A r g u m e n t s
+!C-----------------------------------------------
+! Integer arguments
+integer, dimension(nixs, nel), intent(inout) :: ixs
+integer, dimension(lipart1, nel), intent(inout) :: ipart
+integer, dimension(npropmi, nel), intent(inout) :: ipm
+integer, dimension(nel), intent(inout) :: iparg
+integer, dimension(nel), intent(inout) :: iparts
+integer, intent(in) :: nel
+integer, intent(in) :: nsigi
+integer, intent(in) :: iuser
+integer, intent(in) :: nsigs
+integer, dimension(nel), intent(in) :: npf
+integer, dimension(sizloadp, nel), intent(in) :: iloadp
+integer, dimension(npropgi, nel), intent(inout) :: igeo
+integer, dimension(nel), intent(inout) :: strsglob
+integer, dimension(nel), intent(inout) :: straglob
+!integer, dimension(nel), intent(inout) :: orthoglob
+integer, dimension(nel), intent(inout) :: fail_ini
+integer, dimension(nperturb), intent(in) :: perturb
+integer, dimension(*), intent(in) :: ptsol
+
+! Real arguments
+real(kind=8), dimension(nel), intent(inout) :: mas
+real(kind=8), dimension(npropm, nel), intent(inout) :: pm
+real(kind=8), dimension(nel), intent(inout) :: x
+real(kind=8), dimension(npropg, nel), intent(inout) :: geo
+real(kind=8), dimension(nel), intent(inout) :: dtelem
+real(kind=8), dimension(nsigs, nel), intent(inout) :: sigi
+real(kind=8), dimension(lskew, nel), intent(inout) :: skew
+real(kind=8), dimension(nel), intent(inout) :: stifn
+real(kind=8), dimension(20, nel), intent(inout) :: partsav
+real(kind=8), dimension(nel), intent(inout) :: v
+real(kind=8), dimension(8, nel), intent(inout) :: mss
+real(kind=8), dimension(nsigi, nel), intent(inout) :: sigsp
+real(kind=8), dimension(nel), intent(inout) :: volnod
+real(kind=8), dimension(nel), intent(inout) :: bvolnod
+real(kind=8), dimension(8, nel), intent(inout) :: vns
+real(kind=8), dimension(8, nel), intent(inout) :: bns
+real(kind=8), dimension(nel), intent(inout) :: bufmat
+real(kind=8), dimension(nel), intent(inout) :: mcp
+real(kind=8), dimension(8, nel), intent(inout) :: mcps
+real(kind=8), dimension(nel), intent(inout) :: temp
+real(kind=8), dimension(nel), intent(inout) :: tf
+real(kind=8), dimension(nel), intent(inout) :: mssa
+real(kind=8), dimension(nperturb, nel), intent(inout) :: rnoise
+real(kind=8), dimension(lfacload, nel), intent(in) :: facload        ! Logical flag for shell elements
+
+! Derived type arguments
+type(elbuf_struct_), target, intent(inout) :: elbuf_str
+type(detonators_struct_), intent(inout) :: detonators
+type(t_ale_connectivity), intent(inout) :: ale_connectivity
+type(matparam_struct_), dimension(nummat), intent(inout) :: mat_param
+type(solid_defaults_), intent(in) :: defaults_solid
+type(glob_therm_), intent(in) :: glob_therm
+
+! New arguments
+integer, intent(in) :: npropm       ! Number of material properties
+integer, intent(in) :: npropg       ! Number of geometric properties
+integer, intent(in) :: npropgi      ! Number of geometric integration properties
+integer, intent(in) :: npropmi      ! Number of material integration properties
+integer, intent(in) :: lskew        ! Logical flag for skew
+integer, intent(in) :: sizloadp     ! Size of load parameter
+integer, intent(in) :: lfacload     ! Load factor
+integer, intent(in) :: nixs         ! Number of integration points
+integer, intent(in) :: nperturb     ! Number of perturbations
+integer, intent(in) :: ltitr        ! Logical flag for iterations
+integer, intent(in) :: nummat       ! Number of materials
+integer, intent(in) :: numsol       ! Number of solutions
+integer, intent(in) :: lipart1      ! Logical flag for part 1
+integer, intent(inout) :: i7stifs  ! Stiffness matrix index
+integer, intent(inout) :: idttsh   ! Time step index
+integer, intent(inout) :: isorth   ! Orthogonality index
+integer, intent(inout) :: istrain  ! Strain index
+integer, intent(inout) :: jthe     ! Thermal index
+integer, intent(inout) :: mtn      ! Material type number
+integer, intent(inout) :: nft      ! Number of failure types
+
+!C-----------------------------------------------
+!C   L o c a l   V a r i a b l e s
+!C-----------------------------------------------
+integer :: i, nf1, ibid, igtyp, irep, ip, ilay, nlay, nuvar, ncc, jhbe
+integer :: nuvarr, idef, ipang, ipthk, ippos, ipmat, ig, im, mtn0, nlymax
+integer :: ipid1, nptr, npts, nptt, l_pla, l_sigb, imas_ds
+integer, dimension(nel) :: mat, pid, ngl, mat0
+integer, dimension(nel) :: ix1, ix2, ix3, ix4, ix5, ix6
+
+
+real(kind=8) :: bid, fv, sti, zi, wi
+real(kind=8), dimension(nel) :: volu, dtx, vzl, vzq, rx, ry, rz
+real(kind=8), dimension(nel) :: sx, sy, sz, tx, ty, tz
+real(kind=8), dimension(nel) :: e1x, e1y, e1z, e2x, e2y, e2z, e3x, e3y, e3z
+real(kind=8), dimension(nel) :: f1x, f1y, f1z, f2x, f2y, f2z
+real(kind=8), dimension(nel) :: rhocp, temp0, deltax, aire
+real(kind=8), dimension(51, nel) :: v8loc
+real(kind=8) :: tempel(nel)
+real(kind=8), dimension(nel) :: llsh
+real(kind=8), dimension(nel) :: x1, x2, x3, x4, x5, x6
+real(kind=8), dimension(nel) :: y1, y2, y3, y4, y5, y6
+real(kind=8), dimension(nel) :: z1, z2, z3, z4, z5, z6
+
+character(len=NCHARTITLE) :: titr1
+
+type(g_bufel_), pointer :: gbuf
+type(buf_lay_), pointer :: bufly
+type(l_bufel_), pointer :: lbuf
+type(buf_mat_), pointer :: mbuf
+
+
+real(kind=8), dimension(9, 9) :: w_gauss, a_gauss
+real(kind=8), dimension(nel) :: angle, dtx0
+!wp = 8 !//TODO:why wp = 4
+
+!C-----------------------------------------------
+  w_gauss = reshape( [ &
+  2.0_wp, 0.0_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  1.0_wp, 1.0_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  0.555555555555556_wp, 0.888888888888889_wp, 0.555555555555556_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  0.347854845137454_wp, 0.652145154862546_wp, 0.652145154862546_wp,&
+  0.347854845137454_wp, 0.0_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  0.236926885056189_wp, 0.478628670499366_wp, 0.568888888888889_wp, &
+  0.478628670499366_wp, 0.236926885056189_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  0.171324492379170_wp, 0.360761573048139_wp, 0.467913934572691_wp, &
+  0.467913934572691_wp, 0.360761573048139_wp, 0.171324492379170_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  0.129484966168870_wp, 0.279705391489277_wp, 0.381830050505119_wp, &
+  0.417959183673469_wp, 0.381830050505119_wp, 0.279705391489277_wp, &
+  0.129484966168870_wp, 0.0_wp, 0.0_wp, &
+  0.101228536290376_wp, 0.222381034453374_wp, 0.313706645877887_wp, &
+  0.362683783378362_wp, 0.362683783378362_wp, 0.313706645877887_wp, &
+  0.222381034453374_wp, 0.101228536290376_wp, 0.0_wp, &
+  0.081274388361574_wp, 0.180648160694857_wp, 0.260610696402935_wp, &
+  0.312347077040003_wp, 0.330239355001260_wp, 0.312347077040003_wp, & 
+  0.260610696402935_wp, 0.180648160694857_wp, 0.081274388361574_wp ], &
+  shape(w_gauss) )
+
+  a_gauss = reshape( [ &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  -0.577350269189626_wp, 0.577350269189626_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  -0.774596669241483_wp, 0.0_wp, 0.774596669241483_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  -0.861136311594053_wp, -0.339981043584856_wp, 0.339981043584856_wp, &
+  0.861136311594053_wp, 0.0_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  -0.906179845938664_wp, -0.538469310105683_wp, 0.0_wp, &
+  0.538469310105683_wp, 0.906179845938664_wp, 0.0_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  -0.932469514203152_wp, -0.661209386466265_wp, -0.238619186083197_wp, &
+  0.238619186083197_wp, 0.661209386466265_wp, 0.932469514203152_wp, &
+  0.0_wp, 0.0_wp, 0.0_wp, &
+  -0.949107912342759_wp, -0.741531185599394_wp, -0.405845151377397_wp, &
+  0.0_wp, 0.405845151377397_wp, 0.741531185599394_wp, &
+  0.949107912342759_wp, 0.0_wp, 0.0_wp, &
+  -0.960289856497536_wp, -0.796666477413627_wp, -0.525532409916329_wp, &
+  -0.183434642495650_wp, 0.183434642495650_wp, 0.525532409916329_wp, &
+  0.796666477413627_wp, 0.960289856497536_wp, 0.0_wp, &
+  -0.968160239507626_wp, -0.836031107326636_wp, -0.613371432700590_wp, &
+  -0.324253423403809_wp, 0.0_wp, 0.324253423403809_wp, &
+  0.613371432700590_wp, 0.836031107326636_wp, 0.968160239507626_wp ], &
+  shape(A_GAUSS) )
+
+!C-----------------------------------------------
+!C   S o u r c e  L i n e s
+!=======================================================================
+      gbuf => elbuf_str%gbuf
+      lbuf  => elbuf_str%bufly(1)%lbuf(1,1,1)
+      mbuf  => elbuf_str%bufly(1)%mat(1,1,1)
+      bufly => elbuf_str%bufly(1)
+      nptr  =  elbuf_str%nptr
+      npts  =  elbuf_str%npts
+      nptt  =  elbuf_str%nptt
+      nlay  =  elbuf_str%nlay
+ 
+!=======================================================================
+      jhbe  = iparg(23)
+      irep  = iparg(35)
+      igtyp = iparg(38)
+      nf1 = nft+1
+      idef = 0
+      ibid = 0
+      bid  = zero
+      if (igtyp /= 22) then
+        isorth = 0
+      end if
+      imas_ds = defaults_solid%imas
+!=======================================================================
+      do i = 1, nel
+        rhocp(i) = pm(69, ixs(1, nft+i))
+        temp0(i) = pm(79, ixs(1, nft+i))
+      end do
+!c
+      call s6ccoor3(x     ,ixs(1,nf1)   ,geo  ,ngl  ,mat  ,pid  , &
+                   rx   ,ry   ,rz   ,sx   ,sy   ,sz   ,tx   ,ty   ,tz   , &
+                   e1x  ,e1y  ,e1z  ,e2x  ,e2y  ,e2z  ,e3x  ,e3y  ,e3z  , &
+                   f1x  ,f1y  ,f1z  ,f2x  ,f2y  ,f2z  ,temp0, temp,glob_therm%nintemp, &
+                   ix1, ix2, ix3, ix4, ix5, ix6, &
+                   x1, x2, x3, x4, x5, x6, &
+                   y1, y2, y3, y4, y5, y6, &
+                   z1, z2, z3, z4, z5, z6)
+!      if (igtyp == 21 .or. igtyp == 22) then
+!        do i=1,nel
+!         angle(i) =  geo(1,pid(i))
+!        end do
+!        call scmorth3(pid  ,geo  ,igeo ,skew ,irep ,gbuf%gama   , &
+!                      rx   ,ry   ,rz   ,sx   ,sy   ,sz   ,tx   ,ty   ,tz   , &
+!                      e1x  ,e1y  ,e1z  ,e2x  ,e2y  ,e2z  ,e3x  ,e3y  ,e3z  , &
+!                      ngl  ,angle,nsigi,sigsp,nsigs,sigi ,ixs  ,1    , &
+!                      orthoglob,ptsol,nel)
+!       if (igtyp == 22) then
+!        nlymax= 200
+!        ipang = 200
+!        ipthk = ipang+nlymax
+!        ippos = ipthk+nlymax
+!        ipmat = 100
+!        ig=pid(1)
+!        mtn0=mtn
+!        do i=1,nel
+!         mat0(i)=mat(i)
+!         dtx0(i) = ep20
+!        end do
+!       end if
+!      end if
+      call s6cderi3(nel,gbuf%vol,geo,vzl,ngl,deltax,volu , &
+                    x1, x2, x3, x4, x5, x6, &
+                    y1, y2, y3, y4, y5, y6, &
+                    z1, z2, z3, z4, z5, z6)
+      if (idttsh > 0) then
+         call sdlensh3n(nel,llsh, &
+                        x1, x2, x3, x4, x5, x6, &
+                        y1, y2, y3, y4, y5, y6, &
+                        z1, z2, z3, z4, z5, z6)
+!        do i=1,nel
+!          if (gbuf%idt_tsh(i)>0) &
+!             deltax(i)=max(llsh(i),deltax(i))
+!        end do
+      end if        
+!c
+!c     initialize element temperature from /initemp
+!c      
+      if (jthe == 0 .and. glob_therm%nintemp > 0) then
+        do i=1,nel
+          tempel(i) = one_over_8 *(temp(ixs(2,i)) + temp(ixs(3,i)) &
+                                   + temp(ixs(4,i)) + temp(ixs(5,i)) &        
+                                   + temp(ixs(6,i)) + temp(ixs(7,i)) &        
+                                   + temp(ixs(8,i)) + temp(ixs(9,i))) 
+        end do
+      else
+        tempel(1:nel) = temp0(1:nel)
+      end if
+!c
+      ip=0
+      call matini(pm      ,ixs    ,nixs       ,x      , &
+                  geo     ,ale_connectivity  ,detonators ,iparg  , &
+                  sigi    ,nel    ,skew       ,igeo   , &
+                  ipart   ,iparts , &
+                  mat     ,ipm    ,nsigs  ,numsol     ,ptsol  , &
+                  ip      ,ngl    ,npf    ,tf         ,bufmat , &
+                  gbuf    ,lbuf   ,mbuf   ,elbuf_str  ,iloadp , &
+                  facload, deltax ,tempel )                         
+!c
+!      if (igtyp == 22) call sczero3(gbuf%rho,gbuf%sig,gbuf%eint,nel)
+!c----------------------------------------
+!c thermal initialization
+      if(jthe /=0) call atheri(mat,pm,gbuf%temp)
+!c-----------------------------
+!c loop on integration points
+!      do ilay=1,nlay
+        ilay = 1
+        lbuf => elbuf_str%bufly(ilay)%lbuf(1,1,1)
+        mbuf => elbuf_str%bufly(ilay)%mat(1,1,1)
+        l_pla = elbuf_str%bufly(ilay)%l_pla
+        l_sigb= elbuf_str%bufly(ilay)%l_sigb
+!c
+!       if (igtyp == 22) then
+!          zi = geo(ippos+ilay,ig)
+!          wi = geo(ipthk+ilay,ig)
+!          im=igeo(ipmat+ilay,ig)
+!         mtn=nint(pm(19,im))
+!         do i=1,nel
+!          mat(i)=im
+!            angle(i) = geo(ipang+ilay,pid(i))
+!         end do
+!       else
+          zi = a_gauss(ilay,nlay)
+          wi = w_gauss(ilay,nlay)
+!       end if
+!c
+        do i=1,nel
+          lbuf%vol0dp(i)= half*wi*(gbuf%vol(i)+vzl(i)*zi)
+          lbuf%vol(i)= lbuf%vol0dp(i)
+        end do
+!        if (igtyp == 22) &
+!           call scmorth3(pid  ,geo  ,igeo ,skew ,irep ,lbuf%gama   , &
+!                         rx   ,ry   ,rz   ,sx   ,sy   ,sz   ,tx   ,ty   ,tz   , &
+!                         e1x  ,e1y  ,e1z  ,e2x  ,e2y  ,e2z  ,e3x  ,e3y  ,e3z  , &
+!                         ngl  ,angle,nsigi,sigsp,nsigs,sigi ,ixs,ilay, &
+!                         orthoglob,ptsol,nel)
+!c
+!c     initialize element temperature from /initemp
+!c      
+        if (jthe == 0 .and. glob_therm%nintemp > 0) then
+          do i=1,nel
+            tempel(i) = one_over_8 *(temp(ixs(2,i)) + temp(ixs(3,i)) &
+                                     + temp(ixs(4,i)) + temp(ixs(5,i)) &      
+                                     + temp(ixs(6,i)) + temp(ixs(7,i)) &      
+                                     + temp(ixs(8,i)) + temp(ixs(9,i))) 
+          end do
+        else
+          tempel(1:nel) = temp0(1:nel)
+        end if
+!c
+        call matini(pm      ,ixs    ,nixs   ,x         , &
+                    geo     ,ale_connectivity  ,detonators,iparg  , &
+                    sigi    ,nel    ,skew      ,igeo   , &
+                    ipart   ,iparts , &
+                    mat     ,ipm    ,nsigs  ,numsol    ,ptsol  , &
+                    ilay    ,ngl    ,npf    ,tf        ,bufmat , &
+                    gbuf    ,lbuf   ,mbuf   ,elbuf_str ,iloadp , &
+                    facload, deltax ,tempel )
+        if (mtn >= 28) then
+           nuvar = ipm(8,ixs(1,nft+1))
+           idef =1
+        else
+           nuvar = 0
+            if(mtn == 14 .or. mtn == 12)then
+               idef =1
+            elseif(mtn == 24)then
+              idef =1
+            elseif(istrain == 1)then
+             if(mtn == 1)then
+               idef =1
+             elseif(mtn == 2)then
+               idef =1
+             elseif(mtn == 4)then
+               idef =1
+            elseif(mtn == 3.or.mtn == 6.or.mtn == 10 &
+                   .or.mtn == 21.or.mtn == 22.or.mtn == 23.or.mtn == 49)then
+               idef =1
+             end if
+            end if
+        end if
+        call sigin20b( &
+                      lbuf%sig,pm      ,lbuf%vol ,sigsp    , &
+                      sigi    ,lbuf%eint,lbuf%rho,mbuf%var ,lbuf%stra, &
+                      ixs     ,nixs     ,nsigi   ,ilay     ,nuvar    , &
+                      nel     ,iuser    ,idef    ,nsigs    ,strsglob , &
+                      straglob,jhbe     ,igtyp   ,x        ,lbuf%gama, &
+                      mat     ,lbuf%pla ,l_pla   ,ptsol    ,lbuf%sigb, &
+                      l_sigb  ,ipm      ,bufmat  ,lbuf%vol0dp)
+!c
+!        if(igtyp == 22) then
+!c         moyene density,sig,...---
+!          aire(:) = zero
+!          call dtmain(geo       ,pm        ,ipm         ,pid     ,mat     ,fv    , &
+!                      lbuf%eint ,lbuf%temp ,lbuf%deltax ,lbuf%rk ,lbuf%re ,bufmat, deltax, aire, &
+!                      volu, dtx , igeo,igtyp)
+!c
+!          call svalue0( &
+!                      lbuf%rho,lbuf%vol,lbuf%off,lbuf%sig,lbuf%eint,dtx, &
+!                      gbuf%rho,gbuf%vol,gbuf%off,gbuf%sig,gbuf%eint,dtx0, &
+!                      nel     )
+!        end if
+!      end do  ! ilay = 1,nlay
+!c----------------------------------------
+!      if(igtyp == 22) then
+!       mtn=mtn0
+!       do i=1,nel
+!         mat(i)=mat0(i)
+!       end do
+!      end if
+!c----------------------------------------
+!c mass initialization
+      call s6mass3(gbuf%rho,mas,partsav,x,v,iparts(nf1),mss(1,nf1), &
+                   rhocp,mcp ,mcps(1,nf1),mssa(nf1),gbuf%fill, volu, &
+                   ix1, ix2, ix3, ix4, ix5, ix6,imas_ds)
+!c----------------------------------------
+!c failure model initialization
+      call failini(elbuf_str,nptr,npts,nptt,nlay, &
+                   ipm,sigsp,nsigi,fail_ini , &
+                   sigi,nsigs,ixs,nixs,ptsol, &
+                   rnoise,perturb,mat_param)
+!c------------------------------------------ 
+!c  assemble nodal volumes and moduli for interface stiffness
+!c  warning : ix1, ix2 ... ix6 <=> nc(mvsiz,6)
+      if(i7stifs/=0)then
+        ncc=6
+        call sbulk3(volu  ,ix1    ,ncc,mat,pm , &
+                    volnod,bvolnod,vns(1,nf1),bns(1,nf1),bid, &
+                    bid ,gbuf%fill)
+      end if
+!c------------------------------------------
+!c element time step
+        aire(:) = zero
+        call dtmain(geo       ,pm        ,ipm         ,pid     ,mat     ,fv    , &
+                    lbuf%eint ,lbuf%temp ,lbuf%deltax ,lbuf%rk ,lbuf%re ,bufmat, deltax, aire, &
+                    volu, dtx, igeo,igtyp)
+!c------------------------------------------
+!       if(igtyp == 22) then
+!        do i=1,nel
+!         dtx(i)=dtx0(i)
+!        end do
+!       end if
+!c
+      do i=1,nel
+        if(ixs(10,i+nft) /= 0) then
+          if (igtyp < 20 .or. igtyp > 22) then
+             ipid1=ixs(nixs-1,i+nft)
+             call fretitl2(titr1,igeo(npropgi-ltitr+1,ipid1),ltitr)
+!             call ancmsg(msgid=226, &
+!                         msgtype=msgerror, &
+!                         anmode=aninfo_blind_1, &
+!                         i1=igeo(1,ipid1), &
+!                         c1=titr1, &
+!                         i2=igtyp)
+          end if
+        end if
+ !//TODO:why eight       
+        dtelem(nft+i)=dtx(i)
+        sti = fourth * gbuf%fill(i) * gbuf%rho(i) * volu(i) / &
+              max(em20,dtx(i)*dtx(i))
+        stifn(ixs(2,i+nft))=stifn(ixs(2,i+nft))+sti
+        stifn(ixs(3,i+nft))=stifn(ixs(3,i+nft))+sti
+        stifn(ixs(4,i+nft))=stifn(ixs(4,i+nft))+sti
+        stifn(ixs(5,i+nft))=stifn(ixs(5,i+nft))+sti
+        stifn(ixs(6,i+nft))=stifn(ixs(6,i+nft))+sti
+        stifn(ixs(7,i+nft))=stifn(ixs(7,i+nft))+sti
+        stifn(ixs(8,i+nft))=stifn(ixs(8,i+nft))+sti
+        stifn(ixs(9,i+nft))=stifn(ixs(9,i+nft))+sti
+      end do
+!c-----------
+      return
+      end subroutine s6init3
+end module s6init3_mod

@@ -1,25 +1,25 @@
-Copyright>        OpenRadioss
-Copyright>        Copyright (C) 1986-2025 Altair Engineering Inc.
-Copyright>
-Copyright>        This program is free software: you can redistribute it and/or modify
-Copyright>        it under the terms of the GNU Affero General Public License as published by
-Copyright>        the Free Software Foundation, either version 3 of the License, or
-Copyright>        (at your option) any later version.
-Copyright>
-Copyright>        This program is distributed in the hope that it will be useful,
-Copyright>        but WITHOUT ANY WARRANTY; without even the implied warranty of
-Copyright>        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-Copyright>        GNU Affero General Public License for more details.
-Copyright>
-Copyright>        You should have received a copy of the GNU Affero General Public License
-Copyright>        along with this program.  If not, see <https://www.gnu.org/licenses/>.
-Copyright>
-Copyright>
-Copyright>        Commercial Alternative: Altair Radioss Software
-Copyright>
-Copyright>        As an alternative to this open-source version, Altair also offers Altair Radioss
-Copyright>        software under a commercial license.  Contact Altair to discuss further if the
-Copyright>        commercial version may interest you: https://www.altair.com/radioss/.
+!Copyright>        OpenRadioss
+!Copyright>        Copyright (C) 1986-2025 Altair Engineering Inc.
+!Copyright>
+!Copyright>        This program is free software: you can redistribute it and/or modify
+!Copyright>        it under the terms of the GNU Affero General Public License as published by
+!Copyright>        the Free Software Foundation, either version 3 of the License, or
+!Copyright>        (at your option) any later version.
+!Copyright>
+!Copyright>        This program is distributed in the hope that it will be useful,
+!Copyright>        but WITHOUT ANY WARRANTY; without even the implied warranty of
+!Copyright>        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!Copyright>        GNU Affero General Public License for more details.
+!Copyright>
+!Copyright>        You should have received a copy of the GNU Affero General Public License
+!Copyright>        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+!Copyright>
+!Copyright>
+!Copyright>        Commercial Alternative: Altair Radioss Software
+!Copyright>
+!Copyright>        As an alternative to this open-source version, Altair also offers Altair Radioss
+!Copyright>        software under a commercial license.  Contact Altair to discuss further if the
+!Copyright>        commercial version may interest you: https://www.altair.com/radioss/.
       !||====================================================================
       !||    s6cderi3      ../engine/source/elements/thickshell/solide6c/s6cderi3.F
       !||--- called by ------------------------------------------------------
@@ -30,98 +30,198 @@ Copyright>        commercial version may interest you: https://www.altair.com/ra
       !||--- uses       -----------------------------------------------------
       !||    message_mod   ../engine/share/message_module/message_mod.F
       !||====================================================================
-      SUBROUTINE S6CDERI3_1(
-     1   OFF,     DET,     NGL,     X1,
-     2   X2,      X3,      X4,      X5,
-     3   X6,      Y1,      Y2,      Y3,
-     4   Y4,      Y5,      Y6,      Z1,
-     5   Z2,      Z3,      Z4,      Z5,
-     6   Z6,      PX1,     PX2,     PX3,
-     7   PX4,     PY1,     PY2,     PY3,
-     8   PY4,     PZ1,     PZ2,     PZ3,
-     9   PZ4,     PX1H,    PX2H,    PX3H,
-     A   PY1H,    PY2H,    PY3H,    PZ1H,
-     B   PZ2H,    PZ3H,    JACOB5,  JACOB6,
-     C   JACOB4,  JACOB8,  JACOB9,  JACOB7,
-     D   JACI33,  B1X,     B1Y,     B2Y,
-     E   B2X,     B1122,   B1221,   B2212,
-     F   B1121,   B1XH,    B1YH,    B2XH,
-     G   B2YH,    B1122H,  B1221H,  B2212H,
-     H   B1121H,  VZL,     VOLG,    SAV,
-     I   OFFG,    NEL,     ISMSTR,
-     J   PX5,     PY5,     PZ5,
-     K   PX6,     PY6,     PZ6 )
-C-----------------------------------------------
-C   M o d u l e s
-C-----------------------------------------------
-      USE MESSAGE_MOD
-C-----------------------------------------------
-C   I m p l i c i t   T y p e s
-C-----------------------------------------------
-#include      "implicit_f.inc"
-#include      "comlock.inc"
-C-----------------------------------------------
-C   G l o b a l   P a r a m e t e r s
-C-----------------------------------------------
-#include      "mvsiz_p.inc"
-C-----------------------------------------------
-C   C o m m o n   B l o c k s
-C-----------------------------------------------
-#include      "com06_c.inc"
-#include      "units_c.inc"
-#include      "scr07_c.inc"
-#include      "scr17_c.inc"
-#include      "scr18_c.inc"
-C-----------------------------------------------
-C   D u m m y   A r g u m e n t s
-C-----------------------------------------------
-      INTEGER, INTENT(IN) :: ISMSTR
-      INTEGER :: NEL, NGL(*)
-C
-      my_real
-     .   OFF(*),DET(*),
-     .   X1(*), X2(*), X3(*), X4(*), X5(*), X6(*), 
-     .   Y1(*), Y2(*), Y3(*), Y4(*), Y5(*), Y6(*),  
-     .   Z1(*), Z2(*), Z3(*), Z4(*), Z5(*), Z6(*),   
-     .   PX1(*), PX2(*), PX3(*), PX4(*),  PX5(*), PX6(*),  
-     .   PY1(*), PY2(*), PY3(*), PY4(*),  PY5(*), PY6(*), 
-     .   PZ1(*), PZ2(*), PZ3(*), PZ4(*),  PZ5(*), PZ6(*),  
-     .   PX1H(*), PX2H(*), PX3H(*),  
-     .   PY1H(*), PY2H(*), PY3H(*),   
-     .   PZ1H(*), PZ2H(*), PZ3H(*),   
-     .   JACOB7(*),JACOB8(*),JACOB9(*),
-     .   JACOB4(*),JACOB5(*),JACOB6(*),
-     .   JACI33(*),B1X(MVSIZ,2),B1Y(MVSIZ,2),B2X(MVSIZ,2),B2Y(MVSIZ,2),
-     .   B1XH(MVSIZ,2),B1YH(MVSIZ,2),B2XH(MVSIZ,2),B2YH(MVSIZ,2),
-     .   B1122(*),B1221(*),B2212(*),B1121(*),
-     .   B1122H(*),B1221H(*),B2212H(*),B1121H(*),
-     .   VZL(*),VOLG(*),OFFG(*)
-      DOUBLE PRECISION
-     .   SAV(NEL,15)
-C-----------------------------------------------
-C   L o c a l   V a r i a b l e s
-C-----------------------------------------------
-      INTEGER :: I, J,ICOR,NNEGA,INDEX(MVSIZ)
-C                                                                     12
-      my_real
-     .   DETT(MVSIZ), JAC1(MVSIZ), JAC2(MVSIZ), JAC3(MVSIZ), 
-     .   JAC4(MVSIZ), JAC5(MVSIZ), JAC6(MVSIZ),
-     .   JAC7(MVSIZ), JAC8(MVSIZ), JAC9(MVSIZ),
-     .   JACI1, JACI2, JACI3,
-     .   JACI4, JACI5, JACI6,
-     .   JACI7, JACI8, JACI9,
-     .   X21(MVSIZ) , X31(MVSIZ) , X54(MVSIZ) , X64(MVSIZ),
-     .   Y21(MVSIZ) , Y31(MVSIZ) , Y54(MVSIZ) , Y64(MVSIZ),
-     .   Z21(MVSIZ) , Z31(MVSIZ) , Z54(MVSIZ) , Z64(MVSIZ),
-     .   X41(MVSIZ) , Y41(MVSIZ) , Z41(MVSIZ) , 
-     .   JAC_59_68(MVSIZ), JAC_67_49(MVSIZ), JAC_48_57(MVSIZ),
-     .   JACI12, JACI45, JACI78,
-     .   FAC
-C-----------------------------------------------
-      NNEGA=0
-C
-      DO I=1,NEL
+      module s6deri3_2_mod
+      contains
 
+      !! \brief Compute derivatives and Jacobian matrix for 6-node solid element
+      !! \details This routine calculates the Jacobian matrix, its inverse, and related
+      !!          shape function derivatives for 6-node solid elements. It also handles
+      !!          negative volume detection and correction.
+      subroutine s6deri3_2(                   &
+        off,     det,     ngl,     x1,      &
+        x2,      x3,      x4,      x5,      &
+        x6,      y1,      y2,      y3,      &
+        y4,      y5,      y6,      z1,      &
+        z2,      z3,      z4,      z5,      &
+        z6,      px1,     px2,     px3,     &
+        px4,     py1,     py2,     py3,     &
+        py4,     pz1,     pz2,     pz3,     &
+        pz4,     px1h,    px2h,    px3h,    &
+        py1h,    py2h,    py3h,    pz1h,    &
+        pz2h,    pz3h,    jacob5,  jacob6,  &
+        jacob4,  jacob8,  jacob9,  jacob7,  &
+        jaci33,  b1x,     b1y,     b2y,     &
+        b2x,     b1122,   b1221,   b2212,   &
+        b1121,   b1xh,    b1yh,    b2xh,    &
+        b2yh,    b1122h,  b1221h,  b2212h,  &
+        b1121h,  vzl,     volg,    sav,     &
+        offg,    nel,     ismstr,            &
+        px5,     py5,     pz5,              &
+        px6,     py6,     pz6,              &
+        idel7nok, ineg_v,  mstop,volmin,    &
+        idtmin  )    
+
+      ! ----------------------------------------------------------------------------------------------------------------------
+      !                                                   MODULES
+      ! ----------------------------------------------------------------------------------------------------------------------
+        use MESSAGE_MOD
+        use MVSIZ_MOD, only : mvsiz
+        use PRECISION_MOD, only : wp
+        use CONSTANT_MOD, only : zero, one, two, third, fourth, one_over_8, one_over_12
+
+            ! ----------------------------------------------------------------------------------------------------------------------
+            !                                                   IMPLICIT NONE
+            ! ----------------------------------------------------------------------------------------------------------------------
+              implicit none
+#include      "units_c.inc"
+      ! ----------------------------------------------------------------------------------------------------------------------
+      !                                                   INCLUDED FILES
+      ! ----------------------------------------------------------------------------------------------------------------------
+!      #include "implicit_f.inc"
+!      #include "comlock.inc"
+!      #include "mvsiz_p.inc"
+!      #include "com06_c.inc"
+!      #include "units_c.inc"
+!      #include "scr07_c.inc"
+!      #include "scr17_c.inc"
+!      #include "scr18_c.inc"
+
+
+      ! ----------------------------------------------------------------------------------------------------------------------
+      !                                                   ARGUMENTS
+      ! ----------------------------------------------------------------------------------------------------------------------
+      integer, intent(in)    :: ismstr                                 !< Material strain option flag
+      integer, intent(in)    :: nel                                    !< Number of elements
+      integer, intent(in)    :: ngl(nel)                              !< Global element numbers
+      
+      real(kind=wp), intent(inout) :: off(nel)                        !< Element deactivation flag
+      real(kind=wp), intent(out)   :: det(nel)                        !< Jacobian determinant
+      
+      real(kind=wp), intent(inout)    :: x1(nel)                         !< X coordinate of node 1
+      real(kind=wp), intent(inout)    :: x2(nel)                         !< X coordinate of node 2
+      real(kind=wp), intent(inout)    :: x3(nel)                         !< X coordinate of node 3
+      real(kind=wp), intent(inout)    :: x4(nel)                         !< X coordinate of node 4
+      real(kind=wp), intent(inout)    :: x5(nel)                         !< X coordinate of node 5
+      real(kind=wp), intent(inout)    :: x6(nel)                         !< X coordinate of node 6
+      
+      real(kind=wp), intent(inout)    :: y1(nel)                         !< Y coordinate of node 1
+      real(kind=wp), intent(inout)    :: y2(nel)                         !< Y coordinate of node 2
+      real(kind=wp), intent(inout)    :: y3(nel)                         !< Y coordinate of node 3
+      real(kind=wp), intent(inout)    :: y4(nel)                         !< Y coordinate of node 4
+      real(kind=wp), intent(inout)    :: y5(nel)                         !< Y coordinate of node 5
+      real(kind=wp), intent(inout)    :: y6(nel)                         !< Y coordinate of node 6
+      
+      real(kind=wp), intent(inout)    :: z1(nel)                         !< Z coordinate of node 1
+      real(kind=wp), intent(inout)    :: z2(nel)                         !< Z coordinate of node 2
+      real(kind=wp), intent(inout)    :: z3(nel)                         !< Z coordinate of node 3
+      real(kind=wp), intent(inout)    :: z4(nel)                         !< Z coordinate of node 4
+      real(kind=wp), intent(inout)    :: z5(nel)                         !< Z coordinate of node 5
+      real(kind=wp), intent(inout)    :: z6(nel)                         !< Z coordinate of node 6
+      
+      real(kind=wp), intent(out)   :: px1(nel)                        !< Shape function derivative dN1/dxi
+      real(kind=wp), intent(out)   :: px2(nel)                        !< Shape function derivative dN2/dxi
+      real(kind=wp), intent(out)   :: px3(nel)                        !< Shape function derivative dN3/dxi
+      real(kind=wp), intent(out)   :: px4(nel)                        !< Shape function derivative dN4/dxi
+      real(kind=wp), intent(out)   :: px5(nel)                        !< Shape function derivative dN5/dxi
+      real(kind=wp), intent(out)   :: px6(nel)                        !< Shape function derivative dN6/dxi
+      
+      real(kind=wp), intent(out)   :: py1(nel)                        !< Shape function derivative dN1/deta
+      real(kind=wp), intent(out)   :: py2(nel)                        !< Shape function derivative dN2/deta
+      real(kind=wp), intent(out)   :: py3(nel)                        !< Shape function derivative dN3/deta
+      real(kind=wp), intent(out)   :: py4(nel)                        !< Shape function derivative dN4/deta
+      real(kind=wp), intent(out)   :: py5(nel)                        !< Shape function derivative dN5/deta
+      real(kind=wp), intent(out)   :: py6(nel)                        !< Shape function derivative dN6/deta
+      
+      real(kind=wp), intent(out)   :: pz1(nel)                        !< Shape function derivative dN1/dzeta
+      real(kind=wp), intent(out)   :: pz2(nel)                        !< Shape function derivative dN2/dzeta
+      real(kind=wp), intent(out)   :: pz3(nel)                        !< Shape function derivative dN3/dzeta
+      real(kind=wp), intent(out)   :: pz4(nel)                        !< Shape function derivative dN4/dzeta
+      real(kind=wp), intent(out)   :: pz5(nel)                        !< Shape function derivative dN5/dzeta
+      real(kind=wp), intent(out)   :: pz6(nel)                        !< Shape function derivative dN6/dzeta
+      
+      real(kind=wp), intent(out)   :: px1h(nel)                       !< Hourglass shape function derivative dN1h/dxi
+      real(kind=wp), intent(out)   :: px2h(nel)                       !< Hourglass shape function derivative dN2h/dxi
+      real(kind=wp), intent(out)   :: px3h(nel)                       !< Hourglass shape function derivative dN3h/dxi
+      
+      real(kind=wp), intent(out)   :: py1h(nel)                       !< Hourglass shape function derivative dN1h/deta
+      real(kind=wp), intent(out)   :: py2h(nel)                       !< Hourglass shape function derivative dN2h/deta
+      real(kind=wp), intent(out)   :: py3h(nel)                       !< Hourglass shape function derivative dN3h/deta
+      
+      real(kind=wp), intent(out)   :: pz1h(nel)                       !< Hourglass shape function derivative dN1h/dzeta
+      real(kind=wp), intent(out)   :: pz2h(nel)                       !< Hourglass shape function derivative dN2h/dzeta
+      real(kind=wp), intent(out)   :: pz3h(nel)                       !< Hourglass shape function derivative dN3h/dzeta
+      
+      real(kind=wp), intent(out)   :: jacob4(nel)                     !< Jacobian matrix component J12
+      real(kind=wp), intent(out)   :: jacob5(nel)                     !< Jacobian matrix component J22
+      real(kind=wp), intent(out)   :: jacob6(nel)                     !< Jacobian matrix component J32
+      real(kind=wp), intent(out)   :: jacob7(nel)                     !< Jacobian matrix component J13
+      real(kind=wp), intent(out)   :: jacob8(nel)                     !< Jacobian matrix component J23
+      real(kind=wp), intent(out)   :: jacob9(nel)                     !< Jacobian matrix component J33
+      
+      real(kind=wp), intent(out)   :: jaci33(nel)                     !< Inverse Jacobian component (3,3)
+      
+      real(kind=wp), intent(out)   :: b1x(mvsiz,2)                    !< B-matrix component for strain calculation
+      real(kind=wp), intent(out)   :: b1y(mvsiz,2)                    !< B-matrix component for strain calculation
+      real(kind=wp), intent(out)   :: b2x(mvsiz,2)                    !< B-matrix component for strain calculation
+      real(kind=wp), intent(out)   :: b2y(mvsiz,2)                    !< B-matrix component for strain calculation
+      
+      real(kind=wp), intent(out)   :: b1xh(mvsiz,2)                   !< Hourglass B-matrix component
+      real(kind=wp), intent(out)   :: b1yh(mvsiz,2)                   !< Hourglass B-matrix component
+      real(kind=wp), intent(out)   :: b2xh(mvsiz,2)                   !< Hourglass B-matrix component
+      real(kind=wp), intent(out)   :: b2yh(mvsiz,2)                   !< Hourglass B-matrix component
+      
+      real(kind=wp), intent(out)   :: b1122(nel)                      !< Mixed B-matrix component
+      real(kind=wp), intent(out)   :: b1221(nel)                      !< Mixed B-matrix component
+      real(kind=wp), intent(out)   :: b2212(nel)                      !< Mixed B-matrix component
+      real(kind=wp), intent(out)   :: b1121(nel)                      !< Mixed B-matrix component
+      
+      real(kind=wp), intent(out)   :: b1122h(nel)                     !< Hourglass mixed B-matrix component
+      real(kind=wp), intent(out)   :: b1221h(nel)                     !< Hourglass mixed B-matrix component
+      real(kind=wp), intent(out)   :: b2212h(nel)                     !< Hourglass mixed B-matrix component
+      real(kind=wp), intent(out)   :: b1121h(nel)                     !< Hourglass mixed B-matrix component
+      
+      real(kind=wp), intent(out)   :: vzl(nel)                        !< Local volume change rate
+      real(kind=wp), intent(out)   :: volg(nel)                       !< Global element volume
+      real(kind=wp), intent(inout) :: offg(nel)                       !< Global element deactivation flag
+      
+      real(kind=wp), intent(in)    :: sav(nel,15)                     !< Saved nodal coordinates for negative volume recovery
+
+
+      integer, intent(inout) :: idel7nok  
+      integer, intent(inout) :: ineg_v
+      integer, intent(inout)             :: mstop
+      real(kind=wp), intent(in) :: volmin
+      integer,dimension(102) :: idtmin
+      ! ----------------------------------------------------------------------------------------------------------------------
+      !                                                   LOCAL VARIABLES
+      ! ----------------------------------------------------------------------------------------------------------------------
+        integer :: i, j, icor, nnega                         !< Loop counters and flags
+        integer :: index(mvsiz)                              !< Index array for negative volume elements
+        
+        real(kind=wp) :: dett(mvsiz)                         !< Inverse determinant
+        real(kind=wp) :: jac1(mvsiz), jac2(mvsiz), jac3(mvsiz) !< Jacobian matrix components
+        real(kind=wp) :: jac4(mvsiz), jac5(mvsiz), jac6(mvsiz) !< Jacobian matrix components
+        real(kind=wp) :: jac7(mvsiz), jac8(mvsiz), jac9(mvsiz) !< Jacobian matrix components
+        
+        real(kind=wp) :: jaci1, jaci2, jaci3                 !< Jacobian inverse components
+        real(kind=wp) :: jaci4, jaci5, jaci6                 !< Jacobian inverse components
+        real(kind=wp) :: jaci7, jaci8, jaci9                 !< Jacobian inverse components
+        real(kind=wp) :: jaci12, jaci45, jaci78               !< Combined inverse components
+        
+        real(kind=wp) :: x21(mvsiz), x31(mvsiz), x54(mvsiz), x64(mvsiz) !< Coordinate differences
+        real(kind=wp) :: y21(mvsiz), y31(mvsiz), y54(mvsiz), y64(mvsiz) !< Coordinate differences
+        real(kind=wp) :: z21(mvsiz), z31(mvsiz), z54(mvsiz), z64(mvsiz) !< Coordinate differences
+        real(kind=wp) :: x41(mvsiz), y41(mvsiz), z41(mvsiz)             !< Coordinate differences
+        
+        real(kind=wp) :: jac_59_68(mvsiz), jac_67_49(mvsiz), jac_48_57(mvsiz) !< Cross products
+        real(kind=wp) :: fac                                                   !< Scaling factor
+
+      ! ----------------------------------------------------------------------------------------------------------------------
+ 
+! -----------------------------------------------
+  nnega = 0
+!
+  do i = 1, nel
 
   !      write(*,*) 'In S6DERI3  I = ', I
   !      write(*,*) 'X1(I) = ', X1(I)
@@ -145,67 +245,67 @@ C
   !      write(*,*) 'Z5(I) = ', Z5(I)
   !      write(*,*) 'Z6(I) = ', Z6(I)
    
-      X21(I)=X2(I)-X1(I)
-      X31(I)=X3(I)-X1(I)
-      X41(I)=X4(I)-X1(I)
-      X54(I)=X5(I)-X4(I)
-      X64(I)=X6(I)-X4(I)
+  x21(i) = x2(i) - x1(i)
+  x31(i) = x3(i) - x1(i)
+  x41(i) = x4(i) - x1(i)
+  x54(i) = x5(i) - x4(i)
+  x64(i) = x6(i) - x4(i)
 
-      Y21(I)=Y2(I)-Y1(I)
-      Y31(I)=Y3(I)-Y1(I)
-      Y41(I)=Y4(I)-Y1(I)
-      Y54(I)=Y5(I)-Y4(I)
-      Y64(I)=Y6(I)-Y4(I)
-      
-      Z21(I)=Z2(I)-Z1(I)
-      Z31(I)=Z3(I)-Z1(I)
-      Z41(I)=Z4(I)-Z1(I)
-      Z54(I)=Z5(I)-Z4(I)
-      Z64(I)=Z6(I)-Z4(I)
-      END DO
-C
-C Jacobian matrix
-      DO I=1,NEL
-C  -------ri.xi---->ksi--------
-       JAC1(I)=X21(I)+X54(I)
-       JAC2(I)=Y21(I)+Y54(I)
-       JAC3(I)=Z21(I)+Z54(I)
-      END DO
-      DO I=1,NEL
-C  -------si.xi--->eta--------
-       JAC4(I)=X31(I)+X64(I)
-       JAC5(I)=Y31(I)+Y64(I)
-       JAC6(I)=Z31(I)+Z64(I)
-C  -------ti.xi----zeta-------
-      ! //TODO:A VERIFY WITH QIANG Ok pas de souci
-       JAC7(I)=THIRD*(X41(I)+X5(I)-X2(I)+X6(I)-X3(I))
-       JAC8(I)=THIRD*(Y41(I)+Y5(I)-Y2(I)+Y6(I)-Y3(I))
-       JAC9(I)=THIRD*(Z41(I)+Z5(I)-Z2(I)+Z6(I)-Z3(I))
-       !JAC7(I)=THIRD*(X5(I)-X2(I)-X6(I)+X3(I)) + X41(I)
-       !JAC8(I)=THIRD*(Y5(I)-Y2(I)-Y6(I)+Y3(I)) + Y41(I)
-       !JAC9(I)=THIRD*(Z5(I)-Z2(I)-Z6(I)+Z3(I)) + Z41(I)
+  y21(i) = y2(i) - y1(i)
+  y31(i) = y3(i) - y1(i)
+  y41(i) = y4(i) - y1(i)
+  y54(i) = y5(i) - y4(i)
+  y64(i) = y6(i) - y4(i)
+  
+  z21(i) = z2(i) - z1(i)
+  z31(i) = z3(i) - z1(i)
+  z41(i) = z4(i) - z1(i)
+  z54(i) = z5(i) - z4(i)
+  z64(i) = z6(i) - z4(i)
+  end do
+!c
+!c jacobian matrix
+  do i=1,nel
+!c  -------ri.xi---->ksi--------
+   jac1(i)=x21(i)+x54(i)
+   jac2(i)=y21(i)+y54(i)
+   jac3(i)=z21(i)+z54(i)
+  end do
+  do i=1,nel
+!c  -------si.xi--->eta--------
+   jac4(i)=x31(i)+x64(i)
+   jac5(i)=y31(i)+y64(i)
+   jac6(i)=z31(i)+z64(i)
+!c  -------ti.xi----zeta-------
+  ! //todo:a verify with qiang ok pas de souci
+   jac7(i)=third*(x41(i)+x5(i)-x2(i)+x6(i)-x3(i))
+   jac8(i)=third*(y41(i)+y5(i)-y2(i)+y6(i)-y3(i))
+   jac9(i)=third*(z41(i)+z5(i)-z2(i)+z6(i)-z3(i))
+   !jac7(i)=third*(x5(i)-x2(i)-x6(i)+x3(i)) + x41(i)
+   !jac8(i)=third*(y5(i)-y2(i)-y6(i)+y3(i)) + y41(i)
+   !jac9(i)=third*(z5(i)-z2(i)-z6(i)+z3(i)) + z41(i)
 
-       !JAC7(I)=X41(I)
-       !JAC8(I)=Y41(I)
-       !JAC9(I)=Z41(I) 
-       !write(*,*) 'NEW'
-      END DO
-C
-      DO I=1,NEL
-       JACOB4(I)=JAC4(I)
-       JACOB5(I)=JAC5(I)
-       JACOB6(I)=JAC6(I)
-       JACOB7(I)=JAC7(I)
-       JACOB8(I)=JAC8(I)
-       JACOB9(I)=JAC9(I)
-      ENDDO 
-C
-      DO I=1,NEL
-      JAC_59_68(I)=JAC5(I)*JAC9(I)-JAC6(I)*JAC8(I)
-      JAC_67_49(I)=JAC6(I)*JAC7(I)-JAC4(I)*JAC9(I)
-      JAC_48_57(I)=JAC4(I)*JAC8(I)-JAC5(I)*JAC7(I)
-      END DO
-C
+   !jac7(i)=x41(i)
+   !jac8(i)=y41(i)
+   !jac9(i)=z41(i) 
+   !write(*,*) 'new'
+  end do
+!c
+  do i=1,nel
+   jacob4(i)=jac4(i)
+   jacob5(i)=jac5(i)
+   jacob6(i)=jac6(i)
+   jacob7(i)=jac7(i)
+   jacob8(i)=jac8(i)
+   jacob9(i)=jac9(i)
+  enddo 
+!c
+  do i=1,nel
+  jac_59_68(i)=jac5(i)*jac9(i)-jac6(i)*jac8(i)
+  jac_67_49(i)=jac6(i)*jac7(i)-jac4(i)*jac9(i)
+  jac_48_57(i)=jac4(i)*jac8(i)-jac5(i)*jac7(i)
+  end do
+!C
 !      DO I=1,NEL
 !           write(*,*) 'JAC1 = ', JAC1(I)
 !           write(*,*) 'JAC2 = ', JAC2(I)
@@ -218,414 +318,416 @@ C
 !           write(*,*) 'JAC9 = ', JAC9(I)
 !      END DO
 
-      DO I=1,NEL
-      DET(I)=ONE_OVER_8*(JAC1(I)*JAC_59_68(I)+JAC2(I)*JAC_67_49(I)+JAC3(I)*JAC_48_57(I))
-      END DO
+      do i = 1, nel
+        det(i) = one_over_8 * (jac1(i) * jac_59_68(i) + jac2(i) * jac_67_49(i) + jac3(i) * jac_48_57(i))
+      end do
 
-!      DO I=1,NEL
-!        write(*,*) '!!!!!! A Comparer, DET GOOD', DET(I)
-!      END DO
-C
-      IF(IDTMIN(1)==1)THEN
-        ICOR = 0
-        DO I=1,NEL
-           IF(OFF(I) ==ZERO)THEN
-            DET(I)=ONE
-          ELSEIF((DET(I)<=VOLMIN).OR.(DET(I)<=ZERO))THEN
-            ICOR = 1
-          ENDIF
-        ENDDO
-        IF (ICOR>0) THEN
-          DO I=1,NEL
-           IF(OFF(I)/=ZERO)THEN
-             IF(DET(I)<=VOLMIN)THEN
-              DET(I)=ONE
-              OFF(I)=ZERO
-#include "lockon.inc"
-                WRITE(ISTDO,2000) NGL(I)
-                WRITE(IOUT ,2000) NGL(I)
-#include "lockoff.inc"
-             ELSEIF(DET(I)<=ZERO)THEN
-               CALL ANCMSG(MSGID=166,ANMODE=ANINFO,
-     .                     I1=NGL(I))
-               MSTOP = 1
-             ENDIF
-           ENDIF
-          ENDDO
-        ENDIF
-      ELSEIF(IDTMIN(1)==2)THEN
-        ICOR = 0
-        DO I=1,NEL
-          IF(OFF(I) ==ZERO)THEN
-            DET(I)=ONE
-           ELSEIF((DET(I)<=VOLMIN).OR.(DET(I)<=ZERO))THEN
-            ICOR=1
-          ENDIF
-        ENDDO
-        IF (ICOR>0) THEN
-          DO I=1,NEL
-            IF((OFF(I)/=ZERO).AND.
-     .         (DET(I)<=VOLMIN.OR.DET(I)<=ZERO))THEN
-              DET(I)=ONE
-              OFF(I)=ZERO
-#include "lockon.inc"
-                WRITE(ISTDO,2000) NGL(I)
-                WRITE(IOUT ,2000) NGL(I)
-#include "lockoff.inc"
-              IDEL7NOK = 1
-            ENDIF
-          ENDDO
-        ENDIF
-      ELSEIF (ISMSTR /=4 ) THEN
-        ICOR = 0
-        DO I=1,NEL
-          IF(OFF(I) ==ZERO)THEN
-            DET(I)=ONE
-          ELSEIF((DET(I)<=VOLMIN).OR.(DET(I)<=ZERO))THEN
-            ICOR = 1
-          ENDIF
-        ENDDO
-        IF (ICOR>0) THEN
-        DO I=1,NEL
-          IF(OFF(I) == ZERO)THEN
-            DET(I)=ONE
-          ELSEIF(OFFG(I) > ONE)THEN
-            
-          ELSEIF((DET(I)<=VOLMIN).OR.(DET(I)<=ZERO))THEN
-            NNEGA=NNEGA+1
-              INDEX(NNEGA)=I
-#include "lockon.inc"
-            WRITE(ISTDO,3000) NGL(I)
-            WRITE(IOUT ,3000) NGL(I)
-#include "lockoff.inc"
-          ENDIF
-        ENDDO
-          IF (INEG_V==0) THEN
-           CALL ANCMSG(MSGID=280,ANMODE=ANINFO)
-           MSTOP = 1
-          ENDIF
-        END IF !(ICOR>0) THEN
-      ELSE
-C
-        ICOR = 0
-        DO I=1,NEL
-          IF(OFF(I) ==ZERO)THEN
-            DET(I)=ONE
-          ELSEIF(DET(I)<=ZERO)THEN
-            ICOR=1
-          ENDIF
-        ENDDO
-        IF (ICOR>0) THEN
-          DO I=1,NEL
-           IF(OFF(I)/=ZERO)THEN
-            IF(DET(I)<=ZERO)THEN
-              CALL ANCMSG(MSGID=166,ANMODE=ANINFO,
-     .                    I1=NGL(I))
-              MSTOP = 1
-            ENDIF
-           ENDIF
-          ENDDO
-        ENDIF
-      ENDIF
-C
-C Projection is not changed---
-!      write(*,*) 'NNEGA = ', NNEGA
-      IF (NNEGA>0) THEN
-#include "vectorize.inc"
-         
-         DO J=1,NNEGA
-!          write(*,*) 'In the loop of NNEGA'
-          I = INDEX(J)
-            X1(I)=SAV(I,1)
-            Y1(I)=SAV(I,2)
-            Z1(I)=SAV(I,3)
-            X2(I)=SAV(I,4)
-            Y2(I)=SAV(I,5)
-            Z2(I)=SAV(I,6)
-            X3(I)=SAV(I,7)
-            Y3(I)=SAV(I,8)
-            Z3(I)=SAV(I,9)
-            X4(I)=SAV(I,10)
-            Y4(I)=SAV(I,11)
-            Z4(I)=SAV(I,12)
-            X5(I)=SAV(I,13)
-            Y5(I)=SAV(I,14)
-            Z5(I)=SAV(I,15)
-            X6(I)=ZERO
-            Y6(I)=ZERO
-            Z6(I)=ZERO
-C
-           X21(I)=X2(I)-X1(I)
-           X31(I)=X3(I)-X1(I)
-           X41(I)=X4(I)-X1(I)
-           X54(I)=X5(I)-X4(I)
-           X64(I)=X6(I)-X4(I)
-           Y21(I)=Y2(I)-Y1(I)
-           Y31(I)=Y3(I)-Y1(I)
-           Y41(I)=Y4(I)-Y1(I)
-           Y54(I)=Y5(I)-Y4(I)
-           Y64(I)=Y6(I)-Y4(I)
-           Z21(I)=Z2(I)-Z1(I)
-           Z31(I)=Z3(I)-Z1(I)
-           Z41(I)=Z4(I)-Z1(I)
-           Z54(I)=Z5(I)-Z4(I)
-           Z64(I)=Z6(I)-Z4(I)
-C
-           JAC1(I)=X21(I)+X54(I)
-           JAC2(I)=Y21(I)+Y54(I)
-           JAC3(I)=Z21(I)+Z54(I)
-C----
-           JAC4(I)=X31(I)+X64(I)
-           JAC5(I)=Y31(I)+Y64(I)
-           JAC6(I)=Z31(I)+Z64(I)
-           JAC7(I)=THIRD*(X41(I)+X5(I)-X2(I)+X6(I)-X3(I))
-           JAC8(I)=THIRD*(Y41(I)+Y5(I)-Y2(I)+Y6(I)-Y3(I))
-           JAC9(I)=THIRD*(Z41(I)+Z5(I)-Z2(I)+Z6(I)-Z3(I))
-C
-           JACOB4(I)=JAC4(I)
-           JACOB5(I)=JAC5(I)
-           JACOB6(I)=JAC6(I)
-           JACOB7(I)=JAC7(I)
-           JACOB8(I)=JAC8(I)
-           JACOB9(I)=JAC9(I)
-C
-           JAC_59_68(I)=JAC5(I)*JAC9(I)-JAC6(I)*JAC8(I)
-           JAC_67_49(I)=JAC6(I)*JAC7(I)-JAC4(I)*JAC9(I)
-           JAC_48_57(I)=JAC4(I)*JAC8(I)-JAC5(I)*JAC7(I)
-C
-           DET(I)=ONE_OVER_8*(JAC1(I)*JAC_59_68(I)+JAC2(I)*JAC_67_49(I)+JAC3(I)*JAC_48_57(I))
-           OFFG(I) = TWO
-         ENDDO
-      END IF
-C
-C Jacobian matrix inverse
-      DO I=1,NEL
-        DETT(I)=ONE_OVER_8/DET(I)
-C
-        JACI1=DETT(I)*JAC_59_68(I)
-        JACI4=DETT(I)*JAC_67_49(I)
-        JACI7=DETT(I)*JAC_48_57(I)
-        JACI2=DETT(I)*(-JAC2(I)*JAC9(I)+JAC3(I)*JAC8(I))
-        JACI5=DETT(I)*( JAC1(I)*JAC9(I)-JAC3(I)*JAC7(I))
-        JACI8=DETT(I)*(-JAC1(I)*JAC8(I)+JAC2(I)*JAC7(I))
-        JACI3=DETT(I)*( JAC2(I)*JAC6(I)-JAC3(I)*JAC5(I))
-        JACI6=DETT(I)*(-JAC1(I)*JAC6(I)+JAC3(I)*JAC4(I))
-        JACI9=DETT(I)*( JAC1(I)*JAC5(I)-JAC2(I)*JAC4(I))
-
-
+      ! Check for minimum volume conditions and handle negative volumes
+      if (idtmin(1) == 1) then
+        icor = 0
+        do i = 1, nel
+          if (off(i) == zero) then
+            det(i) = one
+          elseif ((det(i) <= volmin) .or. (det(i) <= zero)) then
+            icor = 1
+          endif
+        enddo
         
-      
-!           write(*,*) 'JACI1 = ', JACI1
-!           write(*,*) 'JACI2 = ', JACI2
-!           write(*,*) 'JACI3 = ', JACI3
-!           write(*,*) 'JACI4 = ', JACI4
-!           write(*,*) 'JACI5 = ', JACI5
-!           write(*,*) 'JACI6 = ', JACI6
-!           write(*,*) 'JACI7 = ', JACI7
-!           write(*,*) 'JACI8 = ', JACI8
-!           write(*,*) 'JACI9 = ', JACI9
-      
+        if (icor > 0) then
+          do i = 1, nel
+            if (off(i) /= zero) then
+              if (det(i) <= volmin) then
+                det(i) = one
+                off(i) = zero
+!    #include "lockon.inc"
+                write(istdo, 2000) ngl(i)
+                write(iout, 2000) ngl(i)
+!    #include "lockoff.inc"
+              elseif (det(i) <= zero) then
+                call ancmsg(msgid=166, anmode=aninfo, i1=ngl(i))
+                mstop = 1
+              endif
+            endif
+          enddo
+        endif
+        
+      elseif (idtmin(1) == 2) then
+        icor = 0
+        do i = 1, nel
+          if (off(i) == zero) then
+            det(i) = one
+          elseif ((det(i) <= volmin) .or. (det(i) <= zero)) then
+            icor = 1
+          endif
+        enddo
+        
+        if (icor > 0) then
+          do i = 1, nel
+            if ((off(i) /= zero) .and. (det(i) <= volmin .or. det(i) <= zero)) then
+              det(i) = one
+              off(i) = zero
+!    #include "lockon.inc"
+              write(istdo, 2000) ngl(i)
+              write(iout, 2000) ngl(i)
+!    #include "lockoff.inc"
+              idel7nok = 1
+            endif
+          enddo
+        endif
+        
+      elseif (ismstr /= 4) then
+        icor = 0
+        do i = 1, nel
+          if (off(i) == zero) then
+            det(i) = one
+          elseif ((det(i) <= volmin) .or. (det(i) <= zero)) then
+            icor = 1
+          endif
+        enddo
+        
+        if (icor > 0) then
+          do i = 1, nel
+            if (off(i) == zero) then
+              det(i) = one
+            elseif (offg(i) > one) then
+              ! Element already flagged - skip processing
+            elseif ((det(i) <= volmin) .or. (det(i) <= zero)) then
+              nnega = nnega + 1
+              index(nnega) = i
+!    #include "lockon.inc"
+              write(istdo, 3000) ngl(i)
+              write(iout, 3000) ngl(i)
+!    #include "lockoff.inc"
+            endif
+          enddo
+          
+          
+          if (ineg_v == 0) then
+            call ancmsg(msgid=280, anmode=aninfo)
+            mstop = 1
+          endif
+        end if ! (icor > 0)
+        
+      else
+        ! Handle case where ismstr == 4
+        icor = 0
+        do i = 1, nel
+          if (off(i) == zero) then
+            det(i) = one
+          elseif (det(i) <= zero) then
+            icor = 1
+          endif
+        enddo
+        
+        if (icor > 0) then
+          do i = 1, nel
+            if (off(i) /= zero) then
+              if (det(i) <= zero) then
+                call ancmsg(msgid=166, anmode=aninfo, i1=ngl(i))
+                mstop = 1
+              endif
+            endif
+          enddo
+        endif
+      endif
 
-C//Here is OK //!TO VERIFY
-         JACI12=JACI1+JACI2
-         JACI45=JACI4+JACI5
-         JACI78=JACI7+JACI8
+      ! Process elements with negative volumes for coordinate recovery
+      if (nnega > 0) then
+!    #include "vectorize.inc"
+        do j = 1, nnega
+!          write(*,*) 'In the loop of NNEGA'
+            i = index(j)
+            x1(i) = sav(i,1)
+            y1(i) = sav(i,2)
+            z1(i) = sav(i,3)
+            x2(i) = sav(i,4)
+            y2(i) = sav(i,5)
+            z2(i) = sav(i,6)
+            x3(i) = sav(i,7)
+            y3(i) = sav(i,8)
+            z3(i) = sav(i,9)
+            x4(i) = sav(i,10)
+            y4(i) = sav(i,11)
+            z4(i) = sav(i,12)
+            x5(i) = sav(i,13)
+            y5(i) = sav(i,14)
+            z5(i) = sav(i,15)
+            x6(i) = zero
+            y6(i) = zero
+            z6(i) = zero
+      !
+             x21(i) = x2(i) - x1(i)
+             x31(i) = x3(i) - x1(i)
+             x41(i) = x4(i) - x1(i)
+             x54(i) = x5(i) - x4(i)
+             x64(i) = x6(i) - x4(i)
+             y21(i) = y2(i) - y1(i)
+             y31(i) = y3(i) - y1(i)
+             y41(i) = y4(i) - y1(i)
+             y54(i) = y5(i) - y4(i)
+             y64(i) = y6(i) - y4(i)
+             z21(i) = z2(i) - z1(i)
+             z31(i) = z3(i) - z1(i)
+             z41(i) = z4(i) - z1(i)
+             z54(i) = z5(i) - z4(i)
+             z64(i) = z6(i) - z4(i)
+      !
+             jac1(i) = x21(i) + x54(i)
+             jac2(i) = y21(i) + y54(i)
+             jac3(i) = z21(i) + z54(i)
+      !----
+             jac4(i) = x31(i) + x64(i)
+             jac5(i) = y31(i) + y64(i)
+             jac6(i) = z31(i) + z64(i)
+             jac7(i) = third * (x41(i) + x5(i) - x2(i) + x6(i) - x3(i))
+             jac8(i) = third * (y41(i) + y5(i) - y2(i) + y6(i) - y3(i))
+             jac9(i) = third * (z41(i) + z5(i) - z2(i) + z6(i) - z3(i))
+      !
+             jacob4(i) = jac4(i)
+             jacob5(i) = jac5(i)
+             jacob6(i) = jac6(i)
+             jacob7(i) = jac7(i)
+             jacob8(i) = jac8(i)
+             jacob9(i) = jac9(i)
+      !
+             jac_59_68(i) = jac5(i) * jac9(i) - jac6(i) * jac8(i)
+             jac_67_49(i) = jac6(i) * jac7(i) - jac4(i) * jac9(i)
+             jac_48_57(i) = jac4(i) * jac8(i) - jac5(i) * jac7(i)
+      !
+             det(i) = one_over_8 * (jac1(i) * jac_59_68(i) + jac2(i) * jac_67_49(i) + jac3(i) * jac_48_57(i))
+             offg(i) = two
+           end do
+          end if
+      !
+      ! Jacobian matrix inverse
+          do i = 1, nel
+          dett(i) = one_over_8 / det(i)
+      !
+          jaci1 = dett(i) * jac_59_68(i)
+          jaci4 = dett(i) * jac_67_49(i)
+          jaci7 = dett(i) * jac_48_57(i)
+          jaci2 = dett(i) * (-jac2(i) * jac9(i) + jac3(i) * jac8(i))
+          jaci5 = dett(i) * ( jac1(i) * jac9(i) - jac3(i) * jac7(i))
+          jaci8 = dett(i) * (-jac1(i) * jac8(i) + jac2(i) * jac7(i))
+          jaci3 = dett(i) * ( jac2(i) * jac6(i) - jac3(i) * jac5(i))
+          jaci6 = dett(i) * (-jac1(i) * jac6(i) + jac3(i) * jac4(i))
+          jaci9 = dett(i) * ( jac1(i) * jac5(i) - jac2(i) * jac4(i))
 
-        !JACI12=JACI1+JACI2+JACI3
-        !JACI45=JACI4+JACI5+JACI6 
-        !JACI78=JACI7+JACI8+JACI9
-C
-C Symmetry (a b c a b c)->P1-P3, anti-symmetry(-1 -1 -1 1 1 1)->P4
-        PX1(I)=-JACI12 - THIRD*JACI3
-        PY1(I)=-JACI45 - THIRD*JACI6
-        PZ1(I)=-JACI78 - THIRD*JACI9
 
-        PX4(I)=-JACI12 + THIRD*JACI3
-        PY4(I)=-JACI45 + THIRD*JACI6
-        PZ4(I)=-JACI78 + THIRD*JACI9
+          
+          
+      !           write(*,*) 'jaci1 = ', jaci1
+      !           write(*,*) 'jaci2 = ', jaci2
+      !           write(*,*) 'jaci3 = ', jaci3
+      !           write(*,*) 'jaci4 = ', jaci4
+      !           write(*,*) 'jaci5 = ', jaci5
+      !           write(*,*) 'jaci6 = ', jaci6
+      !           write(*,*) 'jaci7 = ', jaci7
+      !           write(*,*) 'jaci8 = ', jaci8
+      !           write(*,*) 'jaci9 = ', jaci9
+          
 
-        PX2(I)=JACI1 - THIRD*JACI3
-        PY2(I)=JACI4 - THIRD*JACI6
-        PZ2(I)=JACI7 - THIRD*JACI9
+      ! Here is OK //!TO VERIFY
+           jaci12 = jaci1 + jaci2
+           jaci45 = jaci4 + jaci5
+           jaci78 = jaci7 + jaci8
 
-        PX5(I)=JACI1 + THIRD*JACI3
-        PY5(I)=JACI4 + THIRD*JACI6
-        PZ5(I)=JACI7 + THIRD*JACI9
+          !jaci12 = jaci1 + jaci2 + jaci3
+          !jaci45 = jaci4 + jaci5 + jaci6 
+          !jaci78 = jaci7 + jaci8 + jaci9
+      !
+      ! Symmetry (a b c a b c)->P1-P3, anti-symmetry(-1 -1 -1 1 1 1)->P4
+          px1(i) = -jaci12 - third * jaci3
+          py1(i) = -jaci45 - third * jaci6
+          pz1(i) = -jaci78 - third * jaci9
+
+          px4(i) = -jaci12 + third * jaci3
+          py4(i) = -jaci45 + third * jaci6
+          pz4(i) = -jaci78 + third * jaci9
+
+          px2(i) = jaci1 - third * jaci3
+          py2(i) = jaci4 - third * jaci6
+          pz2(i) = jaci7 - third * jaci9
+
+          px5(i) = jaci1 + third * jaci3
+          py5(i) = jaci4 + third * jaci6
+          pz5(i) = jaci7 + third * jaci9
 
 
-        PX3(I)=JACI2 - THIRD*JACI3
-        PY3(I)=JACI5 - THIRD*JACI6
-        PZ3(I)=JACI8 - THIRD*JACI9
+          px3(i) = jaci2 - third * jaci3
+          py3(i) = jaci5 - third * jaci6
+          pz3(i) = jaci8 - third * jaci9
 
-        PX6(I)=JACI2 + THIRD*JACI3
-        PY6(I)=JACI5 + THIRD*JACI6
-        PZ6(I)=JACI8 + THIRD*JACI9        
-!        //!TO VERIFY
-       ! PX4(I)=THIRD*JACI3
-       ! PY4(I)=THIRD*JACI6
-       ! PZ4(I)=THIRD*JACI9
-       !PX4(I)= JACI3 - JACI2 - JACI1
-       !PY4(I)= JACI6 - JACI4 - JACI5
-       !PZ4(I)= JACI9 - JACI8 - JACI7
-  
-        !PX4(I)=-JACI12 + THIRD*JACI3
-        !PY4(I)=-JACI45 + THIRD*JACI6
-        !PZ4(I)=-JACI78 + THIRD*JACI9
+          px6(i) = jaci2 + third * jaci3
+          py6(i) = jaci5 + third * jaci6
+          pz6(i) = jaci8 + third * jaci9        
+      !        //!TO VERIFY
+           ! px4(i) = third * jaci3
+           ! py4(i) = third * jaci6
+           ! pz4(i) = third * jaci9
+           !px4(i) =  jaci3 - jaci2 - jaci1
+           !py4(i) =  jaci6 - jaci4 - jaci5
+           !pz4(i) =  jaci9 - jaci8 - jaci7
+        
+          !px4(i) = -jaci12 + third * jaci3
+          !py4(i) = -jaci45 + third * jaci6
+          !pz4(i) = -jaci78 + third * jaci9
 
-!       write(*,*) 'PX1', PX1(I)
-!       write(*,*) 'PY1', PY1(I)
-!       write(*,*) 'PZ1', PZ1(I)
+      !       write(*,*) 'px1', px1(i)
+      !       write(*,*) 'py1', py1(i)
+      !       write(*,*) 'pz1', pz1(i)
 
-!        write(*,*) 'PX2', PX2(I)
-!        write(*,*) 'PY2', PY2(I)
-!        write(*,*) 'PZ2', PZ2(I)
+      !        write(*,*) 'px2', px2(i)
+      !        write(*,*) 'py2', py2(i)
+      !        write(*,*) 'pz2', pz2(i)
 
-!        write(*,*) 'PX3', PX3(I)
-!        write(*,*) 'PY3', PY3(I)
-!        write(*,*) 'PZ3', PZ3(I)
+      !        write(*,*) 'px3', px3(i)
+      !        write(*,*) 'py3', py3(i)
+      !        write(*,*) 'pz3', pz3(i)
 
-!        write(*,*) 'PX4', PX4(I)
-!        write(*,*) 'PY4', PY4(I)
-!        write(*,*) 'PZ4', PZ4(I)
+      !        write(*,*) 'px4', px4(i)
+      !        write(*,*) 'py4', py4(i)
+      !        write(*,*) 'pz4', pz4(i)
 
-!        write(*,*) 'PX5', PX5(I)
-!        write(*,*) 'PY5', PY5(I)
-!        write(*,*) 'PZ5', PZ5(I)
+      !        write(*,*) 'px5', px5(i)
+      !        write(*,*) 'py5', py5(i)
+      !        write(*,*) 'pz5', pz5(i)
 
-!        write(*,*) 'PX6', PX6(I)
-!        write(*,*) 'PY6', PY6(I)
-!        write(*,*) 'PZ6', PZ6(I)
+      !        write(*,*) 'px6', px6(i)
+      !        write(*,*) 'py6', py6(i)
+      !        write(*,*) 'pz6', pz6(i)
 
-        JACI33(I) = JACI9*ONE_OVER_12
-      ENDDO
-C
+          jaci33(i) = jaci9 * one_over_12
+          end do
+      !
 
-      DO I=1,NEL
-       FAC = DETT(I)*ONE_OVER_12
-       B1X(I,1)= 1.
-       B1X(I,2)= 1.
-       B1Y(I,1)= 1.
-       B1Y(I,2)= 1.
-       B2X(I,1)= 1.
-       B2X(I,2)= 1.
-       B2Y(I,1)= 1.
-       B2Y(I,2)= 1.
-       FAC = FAC*2.0
-       B1122(I)= 1.
-       B1221(I)= 1.
-       B2212(I)= 1.
-       B1121(I)=1.
-C
-       B1XH(I,1)= 1.
-       B1XH(I,2)= 1.
-       B1YH(I,1)= 1.
-       B1YH(I,2)= 1.
-       B2XH(I,1)= 1.
-       B2XH(I,2)= 1.
-       B2YH(I,1)= 1.
-       B2YH(I,2)= 1.
-       FAC = FAC*TWO
-       B1122H(I)= 1.
-       B1221H(I)= 1.
-       B2212H(I)= 1.
-       B1121H(I)= 1.
+          do i = 1, nel
+           fac = dett(i) * one_over_12
+           b1x(i,1) = 1.0_wp
+           b1x(i,2) = 1.0_wp
+           b1y(i,1) = 1.0_wp
+           b1y(i,2) = 1.0_wp
+           b2x(i,1) = 1.0_wp
+           b2x(i,2) = 1.0_wp
+           b2y(i,1) = 1.0_wp
+           b2y(i,2) = 1.0_wp
+           fac = fac * 2.0_wp
+           b1122(i) = 1.0_wp
+           b1221(i) = 1.0_wp
+           b2212(i) = 1.0_wp
+           b1121(i) = 1.0_wp
+      !
+           b1xh(i,1) = 1.0_wp
+           b1xh(i,2) = 1.0_wp
+           b1yh(i,1) = 1.0_wp
+           b1yh(i,2) = 1.0_wp
+           b2xh(i,1) = 1.0_wp
+           b2xh(i,2) = 1.0_wp
+           b2yh(i,1) = 1.0_wp
+           b2yh(i,2) = 1.0_wp
+           fac = fac * two
+           b1122h(i) = 1.0_wp
+           b1221h(i) = 1.0_wp
+           b2212h(i) = 1.0_wp
+           b1121h(i) = 1.0_wp
 
-       PX1H(I)= 1.
-       PY1H(I)= 1.
-       PZ1H(I)= 1.
-       PX2H(I)= 1.
-       PY2H(I)= 1.
-       PZ2H(I)= 1.
-       PX3H(I)= 1.
-       PY3H(I)= 1.
-       PZ3H(I)= 1.
-      ENDDO
-C For shear traitement----------
-  !    DO I=1,NEL
-  !     FAC = DETT(I)*ONE_OVER_12
-  !     B1X(I,1)=-FAC*JAC1(I)*JAC2(I)
-  !     B1X(I,2)=-FAC*JAC4(I)*JAC5(I)
-  !     B1Y(I,1)=-FAC*JAC2(I)*JAC2(I)
-  !     B1Y(I,2)=-FAC*JAC5(I)*JAC5(I)
-  !     B2X(I,1)=-FAC*JAC1(I)*JAC1(I)
-  !     B2X(I,2)=-FAC*JAC4(I)*JAC4(I)
-  !     B2Y(I,1)=B1X(I,1)
-  !     B2Y(I,2)=B1X(I,2)
-  !     FAC = FAC*2.0
-  !     B1122(I)=FAC*JAC1(I)*JAC5(I)
-  !     B1221(I)=FAC*JAC2(I)*JAC4(I)
-  !     B2212(I)=FAC*JAC5(I)*JAC2(I)
-  !     B1121(I)=B2212(I)
-C
-  !     B1XH(I,1)=-FAC*(X54(I)*Y54(I)-X21(I)*Y21(I))
-  !     B1XH(I,2)=-FAC*(X64(I)*Y64(I)-X31(I)*Y31(I))
-  !     B1YH(I,1)=-FAC*(Y54(I)*Y54(I)-Y21(I)*Y21(I))
-  !     B1YH(I,2)=-FAC*(Y64(I)*Y64(I)-Y31(I)*Y31(I))
-  !     B2XH(I,1)=-FAC*(X54(I)*X54(I)-X21(I)*X21(I))
-  !     B2XH(I,2)=-FAC*(X64(I)*X64(I)-X31(I)*X31(I))
-  !     B2YH(I,1)=B1XH(I,1)
-  !     B2YH(I,2)=B1XH(I,2)
-  !     FAC = FAC*TWO
-  !     B1122H(I)=FAC*(X54(I)*Y64(I)-X21(I)*Y31(I))
-  !     B1221H(I)=FAC*(X64(I)*Y54(I)-X31(I)*Y21(I))
-  !     B2212H(I)=FAC*(Y54(I)*Y64(I)-Y21(I)*Y31(I))
-  !     B1121H(I)=B2212H(I)
-  !    ENDDO
-C Non constant part
-  !    DO I=1,NEL
-  !     JAC1(I)=-X21(I)+X54(I)
-  !     JAC2(I)=-Y21(I)+Y54(I)
-  !     JAC3(I)=-Z21(I)+Z54(I)
-  !     JAC4(I)=-X31(I)+X64(I)
-  !     JAC5(I)=-Y31(I)+Y64(I)
-  !     JAC6(I)=-Z31(I)+Z64(I)
-  !    ENDDO
-C
-  !    DO I=1,NEL
-  !     JAC_59_68(I)=JAC5(I)*JAC9(I)-JAC6(I)*JAC8(I)
-  !     JAC_67_49(I)=JAC6(I)*JAC7(I)-JAC4(I)*JAC9(I)
-  !     JAC_48_57(I)=JAC4(I)*JAC8(I)-JAC5(I)*JAC7(I)
-  !    ENDDO
-C
-  !    DO I=1,NEL
-  !     JACI1=DETT(I)*JAC_59_68(I)
-  !     JACI4=DETT(I)*JAC_67_49(I)
-  !     JACI7=DETT(I)*JAC_48_57(I)
-  !     JACI2=DETT(I)*(-JAC2(I)*JAC9(I)+JAC3(I)*JAC8(I))
-  !     JACI5=DETT(I)*( JAC1(I)*JAC9(I)-JAC3(I)*JAC7(I))
-  !     JACI8=DETT(I)*(-JAC1(I)*JAC8(I)+JAC2(I)*JAC7(I))
-C
-  !     JACI12=JACI1+JACI2
-  !     JACI45=JACI4+JACI5
-  !     JACI78=JACI7+JACI8
-C
-C Symmetry(a b c a b c)->P1-P3
-  !     PX1H(I)=-JACI12
-  !     PY1H(I)=-JACI45
-  !     PZ1H(I)=-JACI78
-  !     PX2H(I)=JACI1
-  !     PY2H(I)=JACI4
-  !     PZ2H(I)=JACI7
-  !     PX3H(I)=JACI2
-  !     PY3H(I)=JACI5
-  !     PZ3H(I)=JACI8
-  !    ENDDO
-C                                                                     12
-       DO I=1,NEL
-        VZL(I) = FOURTH*(JACOB9(I)*(
-     .          X54(I)*Y64(I)-X21(I)*Y31(I)-X64(I)*Y54(I)+X31(I)*Y21(I))
-     .                  -JACOB8(I)*(
-     .          X54(I)*Z64(I)+X31(I)*Z21(I)-X21(I)*Z31(I)-X64(I)*Z54(I))
-     .                  +JACOB7(I)*(
-     .          Y54(I)*Z64(I)+Y31(I)*Z21(I)-Y21(I)*Z31(I)-Y64(I)*Z54(I))
-     .                )
-        !VZL(I) = 0. 
-        VOLG(I)= DET(I)
-       ENDDO
-      RETURN
-C
- 1000 FORMAT(/' ZERO OR NEGATIVE VOLUME : 3D-ELEMENT NB',I10/)
- 2000 FORMAT(/' ZERO OR NEGATIVE VOLUME : DELETE 3D-ELEMENT NB',I10/)
- 3000 FORMAT(/' ZERO OR NEGATIVE VOLUME : 3D-ELEMENT NB:',I10/,
-     +    ' SOLID-SHELL ELEMENT IS SWITCHED TO SMALL STRAIN OPTION'/) 
-      END
+           px1h(i) = 1.0_wp
+           py1h(i) = 1.0_wp
+           pz1h(i) = 1.0_wp
+           px2h(i) = 1.0_wp
+           py2h(i) = 1.0_wp
+           pz2h(i) = 1.0_wp
+           px3h(i) = 1.0_wp
+           py3h(i) = 1.0_wp
+           pz3h(i) = 1.0_wp
+          end do
+      ! For shear traitement----------
+        !    do i = 1, nel
+        !     fac = dett(i) * one_over_12
+        !     b1x(i,1) = -fac * jac1(i) * jac2(i)
+        !     b1x(i,2) = -fac * jac4(i) * jac5(i)
+        !     b1y(i,1) = -fac * jac2(i) * jac2(i)
+        !     b1y(i,2) = -fac * jac5(i) * jac5(i)
+        !     b2x(i,1) = -fac * jac1(i) * jac1(i)
+        !     b2x(i,2) = -fac * jac4(i) * jac4(i)
+        !     b2y(i,1) = b1x(i,1)
+        !     b2y(i,2) = b1x(i,2)
+        !     fac = fac * 2.0_wp
+        !     b1122(i) = fac * jac1(i) * jac5(i)
+        !     b1221(i) = fac * jac2(i) * jac4(i)
+        !     b2212(i) = fac * jac5(i) * jac2(i)
+        !     b1121(i) = b2212(i)
+      !
+        !     b1xh(i,1) = -fac * (x54(i) * y54(i) - x21(i) * y21(i))
+        !     b1xh(i,2) = -fac * (x64(i) * y64(i) - x31(i) * y31(i))
+        !     b1yh(i,1) = -fac * (y54(i) * y54(i) - y21(i) * y21(i))
+        !     b1yh(i,2) = -fac * (y64(i) * y64(i) - y31(i) * y31(i))
+        !     b2xh(i,1) = -fac * (x54(i) * x54(i) - x21(i) * x21(i))
+        !     b2xh(i,2) = -fac * (x64(i) * x64(i) - x31(i) * x31(i))
+        !     b2yh(i,1) = b1xh(i,1)
+        !     b2yh(i,2) = b1xh(i,2)
+        !     fac = fac * two
+        !     b1122h(i) = fac * (x54(i) * y64(i) - x21(i) * y31(i))
+        !     b1221h(i) = fac * (x64(i) * y54(i) - x31(i) * y21(i))
+        !     b2212h(i) = fac * (y54(i) * y64(i) - y21(i) * y31(i))
+        !     b1121h(i) = b2212h(i)
+        !    end do
+      ! Non constant part
+        !    do i = 1, nel
+        !     jac1(i) = -x21(i) + x54(i)
+        !     jac2(i) = -y21(i) + y54(i)
+        !     jac3(i) = -z21(i) + z54(i)
+        !     jac4(i) = -x31(i) + x64(i)
+        !     jac5(i) = -y31(i) + y64(i)
+        !     jac6(i) = -z31(i) + z64(i)
+        !    end do
+      !
+        !    do i = 1, nel
+        !     jac_59_68(i) = jac5(i) * jac9(i) - jac6(i) * jac8(i)
+        !     jac_67_49(i) = jac6(i) * jac7(i) - jac4(i) * jac9(i)
+        !     jac_48_57(i) = jac4(i) * jac8(i) - jac5(i) * jac7(i)
+        !    end do
+      !
+        !    do i = 1, nel
+        !     jaci1 = dett(i) * jac_59_68(i)
+        !     jaci4 = dett(i) * jac_67_49(i)
+        !     jaci7 = dett(i) * jac_48_57(i)
+        !     jaci2 = dett(i) * (-jac2(i) * jac9(i) + jac3(i) * jac8(i))
+        !     jaci5 = dett(i) * ( jac1(i) * jac9(i) - jac3(i) * jac7(i))
+        !     jaci8 = dett(i) * (-jac1(i) * jac8(i) + jac2(i) * jac7(i))
+      !
+        !     jaci12 = jaci1 + jaci2
+        !     jaci45 = jaci4 + jaci5
+        !     jaci78 = jaci7 + jaci8
+      !
+      ! Symmetry(a b c a b c)->P1-P3
+        !     px1h(i) = -jaci12
+        !     py1h(i) = -jaci45
+        !     pz1h(i) = -jaci78
+        !     px2h(i) = jaci1
+        !     py2h(i) = jaci4
+        !     pz2h(i) = jaci7
+        !     px3h(i) = jaci2
+        !     py3h(i) = jaci5
+        !     pz3h(i) = jaci8
+        !    end do
+      !                                                                     12
+           do i = 1, nel
+          vzl(i) = fourth * (jacob9(i) * ( &
+               x54(i) * y64(i) - x21(i) * y31(i) - x64(i) * y54(i) + x31(i) * y21(i)) &
+                  - jacob8(i) * ( &
+               x54(i) * z64(i) + x31(i) * z21(i) - x21(i) * z31(i) - x64(i) * z54(i)) &
+                  + jacob7(i) * ( &
+               y54(i) * z64(i) + y31(i) * z21(i) - y21(i) * z31(i) - y64(i) * z54(i)) &
+                )
+          !vzl(i) = 0. 
+          volg(i) = det(i)
+           end do
+          return
+      !
+       1000 format(/' zero or negative volume : 3d-element nb',i10/)
+       2000 format(/' zero or negative volume : delete 3d-element nb',i10/)
+      3000 format(/' zero or negative volume : 3d-element nb:', i10, /, &
+            'solid-shell element is switched to small strain option'/)
+    end subroutine s6deri3_2
+  end module s6deri3_2_mod

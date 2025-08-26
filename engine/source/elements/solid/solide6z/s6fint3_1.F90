@@ -1,416 +1,446 @@
-Copyright>        OpenRadioss
-Copyright>        Copyright (C) 1986-2025 Altair Engineering Inc.
-Copyright>
-Copyright>        This program is free software: you can redistribute it and/or modify
-Copyright>        it under the terms of the GNU Affero General Public License as published by
-Copyright>        the Free Software Foundation, either version 3 of the License, or
-Copyright>        (at your option) any later version.
-Copyright>
-Copyright>        This program is distributed in the hope that it will be useful,
-Copyright>        but WITHOUT ANY WARRANTY; without even the implied warranty of
-Copyright>        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-Copyright>        GNU Affero General Public License for more details.
-Copyright>
-Copyright>        You should have received a copy of the GNU Affero General Public License
-Copyright>        along with this program.  If not, see <https://www.gnu.org/licenses/>.
-Copyright>
-Copyright>
-Copyright>        Commercial Alternative: Altair Radioss Software
-Copyright>
-Copyright>        As an alternative to this open-source version, Altair also offers Altair Radioss
-Copyright>        software under a commercial license.  Contact Altair to discuss further if the
-Copyright>        commercial version may interest you: https://www.altair.com/radioss/.
-      !||====================================================================
-      !||    s6cfint3   ../engine/source/elements/thickshell/solide6c/s6cfint3.F
-      !||--- called by ------------------------------------------------------
-      !||    s6cforc3   ../engine/source/elements/thickshell/solide6c/s6cforc3.F
-      !||====================================================================
-      SUBROUTINE S6CFINT3_1(
-     1   SIG,     PX1,     PX2,     PX3,
-     2   PX4,     PY1,     PY2,     PY3,
-     3   PY4,     PZ1,     PZ2,     PZ3,
-     4   PZ4,     PX1H,    PX2H,    PX3H,
-     5   PY1H,    PY2H,    PY3H,    PZ1H,
-     6   PZ2H,    PZ3H,    JI33,    B1X,
-     7   B1Y,     B2Y,     B2X,     B1122,
-     8   B1221,   B2212,   B1121,   B1XH,
-     9   B1YH,    B2XH,    B2YH,    B1122H,
-     A   B1221H,  B2212H,  B1121H,  F11,
-     B   F21,     F31,     F12,     F22,
-     C   F32,     F13,     F23,     F33,
-     D   F14,     F24,     F34,     F15,
-     E   F25,     F35,     F16,     F26,
-     F   F36,     VOL,     QVIS,    EINT,
-     G   RHO,     Q,       EPLA,    EPSD,
-     H   EPSDM,   SIGM,    EINTM,   RHOM,
-     I   QM,      EPLASM,  ZI,     
-     J   VOLG,    OFF,     NU,      VOL0,
-     K   VOL0G,   G_PLA,   G_EPSD,  NEL,
-     L   SVIS, NLAY,
-     M   PX5, PY5, PZ5,              
-     N   PX6, PY6, PZ6)
-C-----------------------------------------------
-C   I m p l i c i t   T y p e s
-C-----------------------------------------------
-      USE DEBUG_MOD
-#include      "implicit_f.inc"
-C-----------------------------------------------
-C   G l o b a l   P a r a m e t e r s
-C-----------------------------------------------
-#include      "mvsiz_p.inc"
-C-----------------------------------------------
-C   D u m m y   A r g u m e n t s
-C-----------------------------------------------
-      INTEGER G_PLA,G_EPSD,NEL,NLAY
-C     REAL
-      my_real
-     .   SIG(NEL,6),
-     .   PX1(*), PX2(*), PX3(*), PX4(*),  PX5(*), PX6(*), 
-     .   PY1(*), PY2(*), PY3(*), PY4(*),  PY5(*), PY6(*),
-     .   PZ1(*), PZ2(*), PZ3(*), PZ4(*),  PZ5(*), PZ6(*),
-     .   PX1H(*), PX2H(*), PX3H(*),   
-     .   PY1H(*), PY2H(*), PY3H(*),  
-     .   PZ1H(*), PZ2H(*), PZ3H(*),   
-     .   JI33(*),B1X(MVSIZ,2),B1Y(MVSIZ,2),B2X(MVSIZ,2),B2Y(MVSIZ,2),
-     .   B1XH(MVSIZ,2),B1YH(MVSIZ,2),B2XH(MVSIZ,2),B2YH(MVSIZ,2),
-     .   B1122(*),B1221(*),B2212(*),B1121(*),
-     .   B1122H(*),B1221H(*),B2212H(*),B1121H(*),
-     .   F11(*),F21(*),F31(*),F12(*),F22(*),F32(*),
-     .   F13(*),F23(*),F33(*),F14(*),F24(*),F34(*),
-     .   F15(*),F25(*),F35(*),F16(*),F26(*),F36(*),
-     .   VOL(*),QVIS(*),
-     .   EINT(*),RHO(*),Q(*),EPLASM(*),EPLA(*),
-     .   SIGM(NEL,6),EINTM(*),RHOM(*),QM(*),EPSD(*),EPSDM(*),
-     .   ZI,VOLG(*),OFF(*),NU(*),VOL0(*),VOL0G(*)
-      my_real, DIMENSION(MVSIZ,6), INTENT(INOUT) :: SVIS
-C-----------------------------------------------
-C   L o c a l   V a r i a b l e s
-C-----------------------------------------------
-      INTEGER I, J
-C     REAL
-      my_real
-     .   S1(MVSIZ), S2(MVSIZ), S3(MVSIZ),
-     .   S4(MVSIZ), S5(MVSIZ), S6(MVSIZ),
-     .   S1_OLD(MVSIZ), S2_OLD(MVSIZ), S3_OLD(MVSIZ),
-     .   S4_OLD(MVSIZ), S5_OLD(MVSIZ), S6_OLD(MVSIZ),
-     .   RX1(MVSIZ), RY1(MVSIZ), SX1(MVSIZ), SY1(MVSIZ),
-     .   FINT,FINTX,FINTY,FINTZ,FAC(MVSIZ),FXC,FYC,FINSX,FINSY
-      my_real 
-     .  NU1,FINSZ
-C=======================================================================
-      DO I=1,NEL
-!       write(*,*) 'Ncycle =', NC_DEBUG
-!       write(*,*) 'VOL(I) = ', VOL(I)
-       S1(I)=(SIG(I,1)+SVIS(I,1)-QVIS(I))*VOL(I)
-       S2(I)=(SIG(I,2)+SVIS(I,2)-QVIS(I))*VOL(I)
-       S3(I)=(SIG(I,3)+SVIS(I,3)-QVIS(I))*VOL(I)
-       S4(I)=(SIG(I,4)+SVIS(I,4))*VOL(I)
-       S5(I)=(SIG(I,5)+SVIS(I,5))*VOL(I)
-       S6(I)=(SIG(I,6)+SVIS(I,6))*VOL(I)
-!       write(*,*) 'S1(I)', S1(I)
-!       write(*,*) 'S2(I)', S2(I)
-!       write(*,*) 'S3(I)', S3(I)
-!       write(*,*) 'S4(I)', S4(I)
-!       write(*,*) 'S5(I)', S5(I)
-!       write(*,*) 'S6(I)', S6(I)
-      ENDDO
-C                                                                     12
-C  -------constant part---------
-       DO I=1,NEL
-        FINT=S1(I)*PX1(I)+S4(I)*PY1(I)
-        FXC = JI33(I)*S6(I)
-        FYC = JI33(I)*S5(I)
-        FINTX=S1(I)*PX4(I)+S4(I)*PY4(I) + THREE*FXC
-        FINSX=S6(I)*(B1X(I,1)-B1X(I,2))-S5(I)*(B2X(I,1)-B2X(I,2))-FXC
-        F11(I)=F11(I)-FINT+FINTX+FINSX
-        F14(I)=F14(I)-FINT-FINTX-FINSX
-        FINT=S2(I)*PY1(I)+S4(I)*PX1(I)
-        FINTY=S2(I)*PY4(I)+S4(I)*PX4(I) + THREE*FYC
-        FINSY=S6(I)*(B1Y(I,1)-B1Y(I,2))-S5(I)*(B2Y(I,1)-B2Y(I,2))-FYC
-        F21(I)=F21(I)-FINT+FINTY+FINSY
-        F24(I)=F24(I)-FINT-FINTY-FINSY
-        FINT=S3(I)*PZ1(I)+HALF*(S6(I)*PX1(I)+S5(I)*PY1(I))
-        FINTZ=S3(I)*PZ4(I)
-        F31(I)=F31(I)-FINT+FINTZ
-        F34(I)=F34(I)-FINT-FINTZ
-C
-        FINT=S1(I)*PX2(I)+S4(I)*PY2(I)
-        FINSX=S6(I)*(B1221(I)+B1X(I,2))-S5(I)*(B1121(I)+B2X(I,2))
-        F12(I)=F12(I)-FINT+FINTX+FINSX
-        F15(I)=F15(I)-FINT-FINTX-FINSX
-        FINT=S2(I)*PY2(I)+S4(I)*PX2(I)
-        FINSY=S6(I)*(B2212(I)+B1Y(I,2))-S5(I)*(B1122(I)+B2Y(I,2))
-        F22(I)=F22(I)-FINT+FINTY+FINSY
-        F25(I)=F25(I)-FINT-FINTY-FINSY
-        FINT=S3(I)*PZ2(I)+(S6(I)*PX2(I)+S5(I)*PY2(I))*HALF
-        F32(I)=F32(I)-FINT+FINTZ
-        F35(I)=F35(I)-FINT-FINTZ
-C
-        FINT=S1(I)*PX3(I)+S4(I)*PY3(I)
-        FINSX=-S6(I)*(B1122(I)+B1X(I,1))+S5(I)*(B1121(I)+B2X(I,1))
-        F13(I)=F13(I)-FINT+FINTX+FINSX
-        F16(I)=F16(I)-FINT-FINTX-FINSX
-        FINT=S2(I)*PY3(I)+S4(I)*PX3(I)
-        FINSY=-S6(I)*(B2212(I)+B1Y(I,1))+S5(I)*(B1221(I)+B2Y(I,1))
-        F23(I)=F23(I)-FINT+FINTY+FINSY
-        F26(I)=F26(I)-FINT-FINTY-FINSY
-        FINT=S3(I)*PZ3(I)+(S6(I)*PX3(I)+S5(I)*PY3(I))*HALF
-        F33(I)=F33(I)-FINT+FINTZ
-        F36(I)=F36(I)-FINT-FINTZ
-       ENDDO
-C   --- non constante part------------
-C                                                                     12
-      DO I=1,NEL
-       S1_OLD(I) = S1(I)
-       S2_OLD(I) = S2(I)
-       S3_OLD(I) = S3(I)
-       S4_OLD(I) = S4(I)
-       S5_OLD(I) = S5(I)
-       S6_OLD(I) = S6(I)
-       S1(I) = ZI*S1(I)
-       S2(I) = ZI*S2(I)
-       S3(I) = ZI*S3(I)
-       S4(I) = ZI*S4(I)
-       S5(I) = ZI*S5(I)
-       S6(I) = ZI*S6(I)
-      ENDDO
+!Copyright>        OpenRadioss
+!Copyright>        Copyright (C) 1986-2025 Altair Engineering Inc.
+!Copyright>
+!Copyright>        This program is free software: you can redistribute it and/or modify
+!Copyright>        it under the terms of the GNU Affero General Public License as published by
+!Copyright>        the Free Software Foundation, either version 3 of the License, or
+!Copyright>        (at your option) any later version.
+!Copyright>
+!Copyright>        This program is distributed in the hope that it will be useful,
+!Copyright>        but WITHOUT ANY WARRANTY; without even the implied warranty of
+!Copyright>        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!Copyright>        GNU Affero General Public License for more details.
+!Copyright>
+!Copyright>        You should have received a copy of the GNU Affero General Public License
+!Copyright>        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+!Copyright>
+!Copyright>
+!Copyright>        Commercial Alternative: Altair Radioss Software
+!Copyright>
+!Copyright>        As an alternative to this open-source version, Altair also offers Altair Radioss
+!Copyright>        software under a commercial license.  Contact Altair to discuss further if the
+!! \brief Internal force computation for 6-node solid elements
+!! \details Computes internal forces for solid elements using stress and strain data
+!!          Includes multi-layer averaging and various material properties
 
-       DO I=1,NEL
-        NU1 = NU(I)/(ONE - NU(I))
-        FXC =S1(I)-(S2(I)+S3(I))*NU(I)
-        FYC =S2(I)-(S1(I)+S3(I))*NU(I)
-        FINSX = S1(I)*NU1
-        FINSY = S2(I)*NU1
-        FINSZ = S3(I)*NU1
-        FINT=FXC*PX1H(I)+S4(I)*PY1H(I)
-        FINTX=(S1(I)-FINSZ)*PX1(I)+S4(I)*PY1(I)
-        FINTX=FINTX+S6(I)*(B1XH(I,1)-B1XH(I,2))
-     .             -S5(I)*(B2XH(I,1)-B2XH(I,2))
-        F11(I)=F11(I)-FINT+FINTX
-        F14(I)=F14(I)-FINT-FINTX
-        FINT=(S2(I)-FINSZ)*PY1H(I)+S4(I)*PX1H(I)
-        FINTY=FYC*PY1(I)+S4(I)*PX1(I)
-        FINTY=FINTY+S6(I)*(B1YH(I,1)-B1YH(I,2))
-     .             -S5(I)*(B2YH(I,1)-B2YH(I,2))
-        F21(I)=F21(I)-FINT+FINTY
-        F24(I)=F24(I)-FINT-FINTY
-        FINT=(S3(I)-FINSY)*PZ1H(I)+
-     .       (S6(I)*PX1H(I)+S5(I)*PY1H(I))*HALF
-        FINTZ=(S3(I)-FINSX)*PZ1(I)
-        F31(I)=F31(I)-FINT+FINTZ
-        F34(I)=F34(I)-FINT-FINTZ
-C
-        FINT=FXC*PX2H(I)+S4(I)*PY2H(I)
-        FINTX=(S1(I)-FINSZ)*PX2(I)+S4(I)*PY2(I)
-        FINTX=FINTX+
-     .        S6(I)*(B1221H(I)+B1XH(I,2))-S5(I)*(B1121H(I)+B2XH(I,2))
-        F12(I)=F12(I)-FINT+FINTX
-        F15(I)=F15(I)-FINT-FINTX
-        FINT=(S2(I)-FINSZ)*PY2H(I)+S4(I)*PX2H(I)
-        FINTY=FYC*PY2(I)+S4(I)*PX2(I)
-        FINTY=FINTY+
-     .        S6(I)*(B2212H(I)+B1YH(I,2))-S5(I)*(B1122H(I)+B2YH(I,2))
-        F22(I)=F22(I)-FINT+FINTY
-        F25(I)=F25(I)-FINT-FINTY
-        FINT=(S3(I)-FINSY)*PZ2H(I)+
-     .       (S6(I)*PX2H(I)+S5(I)*PY2H(I))*HALF
-        FINTZ=(S3(I)-FINSX)*PZ2(I)
-        F32(I)=F32(I)-FINT+FINTZ
-        F35(I)=F35(I)-FINT-FINTZ
-C
-        FINT=FXC*PX3H(I)+S4(I)*PY3H(I)
-        FINTX=(S1(I)-FINSZ)*PX3(I)+S4(I)*PY3(I)
-        FINTX=FINTX
-     .        -S6(I)*(B1122H(I)+B1XH(I,1))+S5(I)*(B1121H(I)+B2XH(I,1))
-        F13(I)=F13(I)-FINT+FINTX
-        F16(I)=F16(I)-FINT-FINTX
-        FINT=(S2(I)-FINSZ)*PY3H(I)+S4(I)*PX3H(I)
-        FINTY=FYC*PY3(I)+S4(I)*PX3(I)
-        FINTY=FINTY
-     .        -S6(I)*(B2212H(I)+B1YH(I,1))+S5(I)*(B1221H(I)+B2YH(I,1))
-        F23(I)=F23(I)-FINT+FINTY
-        F26(I)=F26(I)-FINT-FINTY
-        FINT=(S3(I)-FINSY)*PZ3H(I)+
-     .       (S6(I)*PX3H(I)+S5(I)*PY3H(I))*HALF
-        FINTZ=(S3(I)-FINSX)*PZ3(I)
-        F33(I)=F33(I)-FINT+FINTZ
-        F36(I)=F36(I)-FINT-FINTZ
-       ENDDO
+      module s6fint3_2_mod
+         contains
+         !! \brief Internal force computation for 6-node solid elements
+         !! \details Computes internal forces for solid elements using stress and strain data
+         !!          Includes multi-layer averaging and various material properties
+         subroutine s6fint3_2( &
+            sig,     px1,     px2,     px3, &
+            px4,     py1,     py2,     py3, &
+            py4,     pz1,     pz2,     pz3, &
+            pz4,     px1h,    px2h,    px3h, &
+            py1h,    py2h,    py3h,    pz1h, &
+            pz2h,    pz3h,    ji33,    b1x, &
+            b1y,     b2y,     b2x,     b1122, &
+            b1221,   b2212,   b1121,   b1xh, &
+            b1yh,    b2xh,    b2yh,    b1122h, &
+            b1221h,  b2212h,  b1121h,  f11, &
+            f21,     f31,     f12,     f22, &
+            f32,     f13,     f23,     f33, &
+            f14,     f24,     f34,     f15, &
+            f25,     f35,     f16,     f26, &
+            f36,     vol,     qvis,    eint, &
+            rho,     q,       epla,    epsd, &
+            epsdm,   sigm,    eintm,   rhom, &
+            qm,      eplasm,  zi, &
+            volg,    off,     nu,      vol0, &
+            vol0g,   g_pla,   g_epsd,  nel, &
+            svis,    nlay, &
+            px5,     py5,     pz5, &
+            px6,     py6,     pz6)
 
+! ----------------------------------------------------------------------------------------------------------------------
+!                                                   MODULES
+! ----------------------------------------------------------------------------------------------------------------------
+  use debug_mod, only : nc_debug
+  use precision_mod, only : wp
+  use mvsiz_mod, only : mvsiz
+  use constant_mod, only : one, half, three
 
+! ----------------------------------------------------------------------------------------------------------------------
+!                                                   IMPLICIT NONE
+! ----------------------------------------------------------------------------------------------------------------------
+  implicit none
 
+! ----------------------------------------------------------------------------------------------------------------------
+!                                                   ARGUMENTS
+! ----------------------------------------------------------------------------------------------------------------------
+  integer,                           intent(in)    :: g_pla           !< Plastic flag
+  integer,                           intent(in)    :: g_epsd          !< Strain rate flag
+  integer,                           intent(in)    :: nel             !< Number of elements
+  integer,                           intent(in)    :: nlay            !< Number of layers
+  real(kind=wp),                     intent(in)    :: zi              !< Z coordinate factor
+  real(kind=wp), dimension(nel,6),   intent(in)    :: sig             !< Stress tensor
+  real(kind=wp), dimension(*),       intent(in)    :: px1, px2, px3, px4, px5, px6  !< X coordinates
+  real(kind=wp), dimension(*),       intent(in)    :: py1, py2, py3, py4, py5, py6  !< Y coordinates
+  real(kind=wp), dimension(*),       intent(in)    :: pz1, pz2, pz3, pz4, pz5, pz6  !< Z coordinates
+  real(kind=wp), dimension(*),       intent(in)    :: px1h, px2h, px3h  !< X coordinates (hourglass)
+  real(kind=wp), dimension(*),       intent(in)    :: py1h, py2h, py3h  !< Y coordinates (hourglass)
+  real(kind=wp), dimension(*),       intent(in)    :: pz1h, pz2h, pz3h  !< Z coordinates (hourglass)
+  real(kind=wp), dimension(*),       intent(in)    :: ji33             !< Jacobian component
+  real(kind=wp), dimension(mvsiz,2), intent(in)    :: b1x, b1y         !< B matrix components
+  real(kind=wp), dimension(mvsiz,2), intent(in)    :: b2x, b2y         !< B matrix components
+  real(kind=wp), dimension(*),       intent(in)    :: b1122, b1221, b2212, b1121  !< B matrix terms
+  real(kind=wp), dimension(mvsiz,2), intent(in)    :: b1xh, b1yh       !< B matrix hourglass components
+  real(kind=wp), dimension(mvsiz,2), intent(in)    :: b2xh, b2yh       !< B matrix hourglass components
+  real(kind=wp), dimension(*),       intent(in)    :: b1122h, b1221h, b2212h, b1121h  !< B matrix hourglass terms
+  real(kind=wp), dimension(*),       intent(in)    :: vol              !< Element volume
+  real(kind=wp), dimension(*),       intent(in)    :: qvis             !< Viscous pressure
+  real(kind=wp), dimension(*),       intent(in)    :: eint             !< Internal energy
+  real(kind=wp), dimension(*),       intent(in)    :: rho              !< Density
+  real(kind=wp), dimension(*),       intent(in)    :: q                !< Artificial viscosity
+  real(kind=wp), dimension(*),       intent(in)    :: epla             !< Plastic strain
+  real(kind=wp), dimension(*),       intent(in)    :: epsd             !< Strain rate
+  real(kind=wp), dimension(*),       intent(in)    :: volg             !< Global volume
+  real(kind=wp), dimension(*),       intent(in)    :: off              !< Element off flag
+  real(kind=wp), dimension(*),       intent(in)    :: nu               !< Poisson's ratio
+  real(kind=wp), dimension(*),       intent(in)    :: vol0             !< Initial volume
+  real(kind=wp), dimension(*),       intent(in)    :: vol0g            !< Initial global volume
+  real(kind=wp), dimension(mvsiz,6), intent(inout) :: svis             !< Viscous stress
+  real(kind=wp), dimension(*),       intent(inout) :: f11, f21, f31    !< Forces on node 1
+  real(kind=wp), dimension(*),       intent(inout) :: f12, f22, f32    !< Forces on node 2
+  real(kind=wp), dimension(*),       intent(inout) :: f13, f23, f33    !< Forces on node 3
+  real(kind=wp), dimension(*),       intent(inout) :: f14, f24, f34    !< Forces on node 4
+  real(kind=wp), dimension(*),       intent(inout) :: f15, f25, f35    !< Forces on node 5
+  real(kind=wp), dimension(*),       intent(inout) :: f16, f26, f36    !< Forces on node 6
+  real(kind=wp), dimension(*),       intent(inout) :: eplasm           !< Mean plastic strain
+  real(kind=wp), dimension(nel,6),   intent(inout) :: sigm             !< Mean stress
+  real(kind=wp), dimension(*),       intent(inout) :: eintm            !< Mean internal energy
+  real(kind=wp), dimension(*),       intent(inout) :: rhom             !< Mean density
+  real(kind=wp), dimension(*),       intent(inout) :: qm               !< Mean artificial viscosity
+  real(kind=wp), dimension(*),       intent(inout) :: epsdm            !< Mean strain rate
 
-        DO I=1,NEL
+! ----------------------------------------------------------------------------------------------------------------------
+!                                                   LOCAL VARIABLES
+! ----------------------------------------------------------------------------------------------------------------------
+  integer :: i                                                          ! Loop counter
+  real(kind=wp), dimension(mvsiz) :: s1, s2, s3, s4, s5, s6           ! Stress components
+  real(kind=wp), dimension(mvsiz) :: s1_old, s2_old, s3_old           ! Original stress components
+  real(kind=wp), dimension(mvsiz) :: s4_old, s5_old, s6_old           ! Original stress components
+  real(kind=wp), dimension(mvsiz) :: fac                              ! Volume factor
+  real(kind=wp) :: fint, fintx, finty, fintz                          ! Internal force components
+  real(kind=wp) :: fxc, fyc, finsx, finsy, finsz                      ! Force components
+  real(kind=wp) :: nu1                                                 ! Modified Poisson's ratio
 
-       !   F(xyz)( N 1 2 3 4 5 6)//TODO: A regerder coordonne de chaque node; function forme 1, 
-!            write(*,*) 'PX1', PX1(I)
-!            write(*,*) 'PY1', PY1(I)
-!            write(*,*) 'PZ1', PZ1(I)
-!    
-!            write(*,*) 'PX2', PX2(I)
-!            write(*,*) 'PY2', PY2(I)
-!            write(*,*) 'PZ2', PZ2(I)
-!    
-!            write(*,*) 'PX3', PX3(I)
-!            write(*,*) 'PY3', PY3(I)
-!            write(*,*) 'PZ3', PZ3(I)
-!    
-!            write(*,*) 'PX4', PX4(I)
-!            write(*,*) 'PY4', PY4(I)
-!            write(*,*) 'PZ4', PZ4(I)
-
-!            write(*,*) 'PX5', PX5(I)
-!            write(*,*) 'PY5', PY5(I)
-!            write(*,*) 'PZ5', PZ5(I)
-!    
-!            write(*,*) 'PX6', PX6(I)
-!            write(*,*) 'PY6', PY6(I)
-!            write(*,*) 'PZ6', PZ6(I)
-           
-            F11(I) = 0.
-            F21(I) = 0.
-            F31(I) = 0. 
-      
-            F12(I) = 0.
-            F22(I) = 0.
-            F32(I) = 0. 
-      
-            F13(I) = 0.
-            F23(I) = 0.
-            F33(I) = 0. 
-      
-            F14(I) = 0.
-            F24(I) = 0.
-            F34(I) = 0. 
-      
-            F15(I) = 0.
-            F25(I) = 0.
-            F35(I) = 0. 
-      
-            F16(I) = 0.
-            F26(I) = 0.
-            F36(I) = 0. 
-
-!            write(*,*) 'F11(I) = ', F11(I)
-!            write(*,*) 'F21(I) = ', F21(I)
-!            write(*,*) 'F31(I) = ', F31(I) 
-!  
-!            write(*,*) 'F12(I) = ', F12(I)
-!            write(*,*) 'F22(I) = ', F22(I)
-!            write(*,*) 'F32(I) = ', F32(I) 
-!  
-!            write(*,*) 'F13(I) = ', F13(I)
-!            write(*,*) 'F23(I) = ', F23(I)
-!            write(*,*) 'F33(I) = ', F33(I) 
-!  
-!            write(*,*) 'F14(I) = ', F14(I)
-!            write(*,*) 'F24(I) = ', F24(I)
-!            write(*,*) 'F34(I) = ', F34(I) 
-!  
-!            write(*,*) 'F15(I) = ', F15(I)
-!            write(*,*) 'F25(I) = ', F25(I)
-!            write(*,*) 'F35(I) = ', F35(I) 
-!  
-!            write(*,*) 'F16(I) = ', F16(I)
-!            write(*,*) 'F26(I) = ', F26(I)
-!            write(*,*) 'F36(I) = ', F36(I) 
-
+! ----------------------------------------------------------------------------------------------------------------------
+!                                                   BODY
+! ----------------------------------------------------------------------------------------------------------------------
+   do i=1,nel
+!       write(*,*) 'ncycle =', nc_debug
+!       write(*,*) 'vol(i) = ', vol(i)
+               s1(i)=(sig(i,1)+svis(i,1)-qvis(i))*vol(i)
+               s2(i)=(sig(i,2)+svis(i,2)-qvis(i))*vol(i)
+               s3(i)=(sig(i,3)+svis(i,3)-qvis(i))*vol(i)
+               s4(i)=(sig(i,4)+svis(i,4))*vol(i)
+               s5(i)=(sig(i,5)+svis(i,5))*vol(i)
+               s6(i)=(sig(i,6)+svis(i,6))*vol(i)
+!       write(*,*) 's1(i)', s1(i)
+!       write(*,*) 's2(i)', s2(i)
+!       write(*,*) 's3(i)', s3(i)
+!       write(*,*) 's4(i)', s4(i)
+!       write(*,*) 's5(i)', s5(i)
+!       write(*,*) 's6(i)', s6(i)
+             end do
+!c                                                                     12
+!c  -------constant part---------
+               do i=1,nel
+                fint=s1(i)*px1(i)+s4(i)*py1(i)
+                fxc = ji33(i)*s6(i)
+                fyc = ji33(i)*s5(i)
+                fintx=s1(i)*px4(i)+s4(i)*py4(i) + three*fxc
+                finsx=s6(i)*(b1x(i,1)-b1x(i,2))-s5(i)*(b2x(i,1)-b2x(i,2))-fxc
+                f11(i)=f11(i)-fint+fintx+finsx
+                f14(i)=f14(i)-fint-fintx-finsx
+                fint=s2(i)*py1(i)+s4(i)*px1(i)
+                finty=s2(i)*py4(i)+s4(i)*px4(i) + three*fyc
+                finsy=s6(i)*(b1y(i,1)-b1y(i,2))-s5(i)*(b2y(i,1)-b2y(i,2))-fyc
+                f21(i)=f21(i)-fint+finty+finsy
+                f24(i)=f24(i)-fint-finty-finsy
+                fint=s3(i)*pz1(i)+half*(s6(i)*px1(i)+s5(i)*py1(i))
+                fintz=s3(i)*pz4(i)
+                f31(i)=f31(i)-fint+fintz
+                f34(i)=f34(i)-fint-fintz
+!c
+                fint=s1(i)*px2(i)+s4(i)*py2(i)
+                finsx=s6(i)*(b1221(i)+b1x(i,2))-s5(i)*(b1121(i)+b2x(i,2))
+                f12(i)=f12(i)-fint+fintx+finsx
+                f15(i)=f15(i)-fint-fintx-finsx
+                fint=s2(i)*py2(i)+s4(i)*px2(i)
+                finsy=s6(i)*(b2212(i)+b1y(i,2))-s5(i)*(b1122(i)+b2y(i,2))
+                f22(i)=f22(i)-fint+finty+finsy
+                f25(i)=f25(i)-fint-finty-finsy
+                fint=s3(i)*pz2(i)+(s6(i)*px2(i)+s5(i)*py2(i))*half
+                f32(i)=f32(i)-fint+fintz
+                f35(i)=f35(i)-fint-fintz
+!c
+                fint=s1(i)*px3(i)+s4(i)*py3(i)
+                finsx=-s6(i)*(b1122(i)+b1x(i,1))+s5(i)*(b1121(i)+b2x(i,1))
+                f13(i)=f13(i)-fint+fintx+finsx
+                f16(i)=f16(i)-fint-fintx-finsx
+                fint=s2(i)*py3(i)+s4(i)*px3(i)
+                finsy=-s6(i)*(b2212(i)+b1y(i,1))+s5(i)*(b1221(i)+b2y(i,1))
+                f23(i)=f23(i)-fint+finty+finsy
+                f26(i)=f26(i)-fint-finty-finsy
+                fint=s3(i)*pz3(i)+(s6(i)*px3(i)+s5(i)*py3(i))*half
+                f33(i)=f33(i)-fint+fintz
+                f36(i)=f36(i)-fint-fintz
+               end do
+!c   --- non constante part------------
+!c                                                                     12
+             do i=1,nel
+               s1_old(i) = s1(i)
+               s2_old(i) = s2(i)
+               s3_old(i) = s3(i)
+               s4_old(i) = s4(i)
+               s5_old(i) = s5(i)
+               s6_old(i) = s6(i)
+               s1(i) = zi*s1(i)
+               s2(i) = zi*s2(i)
+               s3(i) = zi*s3(i)
+               s4(i) = zi*s4(i)
+               s5(i) = zi*s5(i)
+               s6(i) = zi*s6(i)
+             end do
     
-          F11(I)=F11(I)-(S1_OLD(I)*PX1(I)+S4_OLD(I)*PY1(I)+S6_OLD(I)*PZ1(I))
-          F21(I)=F21(I)-(S2_OLD(I)*PY1(I)+S5_OLD(I)*PZ1(I)+S4_OLD(I)*PX1(I))
-          F31(I)=F31(I)-(S3_OLD(I)*PZ1(I)+S6_OLD(I)*PX1(I)+S5_OLD(I)*PY1(I))
+                  do i=1,nel
+                  nu1 = nu(i)/(one - nu(i))
+                  fxc =s1(i)-(s2(i)+s3(i))*nu(i)
+                  fyc =s2(i)-(s1(i)+s3(i))*nu(i)
+                  finsx = s1(i)*nu1
+                  finsy = s2(i)*nu1
+                  finsz = s3(i)*nu1
+                  fint=fxc*px1h(i)+s4(i)*py1h(i)
+                  fintx=(s1(i)-finsz)*px1(i)+s4(i)*py1(i)
+                  fintx=fintx+s6(i)*(b1xh(i,1)-b1xh(i,2)) &
+                            -s5(i)*(b2xh(i,1)-b2xh(i,2))
+                  f11(i)=f11(i)-fint+fintx
+                  f14(i)=f14(i)-fint-fintx
+                  fint=(s2(i)-finsz)*py1h(i)+s4(i)*px1h(i)
+                  finty=fyc*py1(i)+s4(i)*px1(i)
+                  finty=finty+s6(i)*(b1yh(i,1)-b1yh(i,2)) &
+                            -s5(i)*(b2yh(i,1)-b2yh(i,2))
+                  f21(i)=f21(i)-fint+finty
+                  f24(i)=f24(i)-fint-finty
+                  fint=(s3(i)-finsy)*pz1h(i)+ &
+                        (s6(i)*px1h(i)+s5(i)*py1h(i))*half
+                  fintz=(s3(i)-finsx)*pz1(i)
+                  f31(i)=f31(i)-fint+fintz
+                  f34(i)=f34(i)-fint-fintz
+!c
+                  fint=fxc*px2h(i)+s4(i)*py2h(i)
+                  fintx=(s1(i)-finsz)*px2(i)+s4(i)*py2(i)
+                  fintx=fintx+ &
+                        s6(i)*(b1221h(i)+b1xh(i,2))-s5(i)*(b1121h(i)+b2xh(i,2))
+                  f12(i)=f12(i)-fint+fintx
+                  f15(i)=f15(i)-fint-fintx
+                  fint=(s2(i)-finsz)*py2h(i)+s4(i)*px2h(i)
+                  finty=fyc*py2(i)+s4(i)*px2(i)
+                  finty=finty+ &
+                        s6(i)*(b2212h(i)+b1yh(i,2))-s5(i)*(b1122h(i)+b2yh(i,2))
+                  f22(i)=f22(i)-fint+finty
+                  f25(i)=f25(i)-fint-finty
+                  fint=(s3(i)-finsy)*pz2h(i)+ &
+                        (s6(i)*px2h(i)+s5(i)*py2h(i))*half
+                  fintz=(s3(i)-finsx)*pz2(i)
+                  f32(i)=f32(i)-fint+fintz
+                  f35(i)=f35(i)-fint-fintz
+!c
+                  fint=fxc*px3h(i)+s4(i)*py3h(i)
+                  fintx=(s1(i)-finsz)*px3(i)+s4(i)*py3(i)
+                  fintx=fintx &
+                        -s6(i)*(b1122h(i)+b1xh(i,1))+s5(i)*(b1121h(i)+b2xh(i,1))
+                  f13(i)=f13(i)-fint+fintx
+                  f16(i)=f16(i)-fint-fintx
+                  fint=(s2(i)-finsz)*py3h(i)+s4(i)*px3h(i)
+                  finty=fyc*py3(i)+s4(i)*px3(i)
+                  finty=finty &
+                        -s6(i)*(b2212h(i)+b1yh(i,1))+s5(i)*(b1221h(i)+b2yh(i,1))
+                  f23(i)=f23(i)-fint+finty
+                  f26(i)=f26(i)-fint-finty
+                  fint=(s3(i)-finsy)*pz3h(i)+ &
+                        (s6(i)*px3h(i)+s5(i)*py3h(i))*half
+                  fintz=(s3(i)-finsx)*pz3(i)
+                  f33(i)=f33(i)-fint+fintz
+                  f36(i)=f36(i)-fint-fintz
+                  end do
+    
+    
+    
+    
+                do i=1,nel
+    
+!   f(xyz)( n 1 2 3 4 5 6)//todo: a regerder coordonne de chaque node; function forme 1, 
+!            write(*,*) 'px1', px1(i)
+!            write(*,*) 'py1', py1(i)
+!            write(*,*) 'pz1', pz1(i)
+!    
+!            write(*,*) 'px2', px2(i)
+!            write(*,*) 'py2', py2(i)
+!            write(*,*) 'pz2', pz2(i)
+!    
+!            write(*,*) 'px3', px3(i)
+!            write(*,*) 'py3', py3(i)
+!            write(*,*) 'pz3', pz3(i)
+!    
+!            write(*,*) 'px4', px4(i)
+!            write(*,*) 'py4', py4(i)
+!            write(*,*) 'pz4', pz4(i)
+!            write(*,*) 'px5', px5(i)
+!            write(*,*) 'py5', py5(i)
+!            write(*,*) 'pz5', pz5(i)
+!    
+!            write(*,*) 'px6', px6(i)
+!            write(*,*) 'py6', py6(i)
+!            write(*,*) 'pz6', pz6(i)
+                     
+                      f11(i) = 0.
+                      f21(i) = 0.
+                      f31(i) = 0. 
+             
+                      f12(i) = 0.
+                      f22(i) = 0.
+                      f32(i) = 0. 
+             
+                      f13(i) = 0.
+                      f23(i) = 0.
+                      f33(i) = 0. 
+             
+                      f14(i) = 0.
+                      f24(i) = 0.
+                      f34(i) = 0. 
+             
+                      f15(i) = 0.
+                      f25(i) = 0.
+                      f35(i) = 0. 
+             
+                      f16(i) = 0.
+                      f26(i) = 0.
+                      f36(i) = 0. 
+    
+!            write(*,*) 'f11(i) = ', f11(i)
+!            write(*,*) 'f21(i) = ', f21(i)
+!            write(*,*) 'f31(i) = ', f31(i) 
+!  
+!            write(*,*) 'f12(i) = ', f12(i)
+!            write(*,*) 'f22(i) = ', f22(i)
+!            write(*,*) 'f32(i) = ', f32(i) 
+!  
+!            write(*,*) 'f13(i) = ', f13(i)
+!            write(*,*) 'f23(i) = ', f23(i)
+!            write(*,*) 'f33(i) = ', f33(i) 
+!  
+!            write(*,*) 'f14(i) = ', f14(i)
+!            write(*,*) 'f24(i) = ', f24(i)
+!            write(*,*) 'f34(i) = ', f34(i) 
+!  
+!            write(*,*) 'f15(i) = ', f15(i)
+!            write(*,*) 'f25(i) = ', f25(i)
+!            write(*,*) 'f35(i) = ', f35(i) 
+!  
+!            write(*,*) 'f16(i) = ', f16(i)
+!            write(*,*) 'f26(i) = ', f26(i)
+!            write(*,*) 'f36(i) = ', f36(i) 
+    
+          
+                   f11(i)=f11(i)-(s1_old(i)*px1(i)+s4_old(i)*py1(i)+s6_old(i)*pz1(i))
+                   f21(i)=f21(i)-(s2_old(i)*py1(i)+s5_old(i)*pz1(i)+s4_old(i)*px1(i))
+                   f31(i)=f31(i)-(s3_old(i)*pz1(i)+s6_old(i)*px1(i)+s5_old(i)*py1(i))
+    
+                   !!!!!!!!!!!!!!!!!!!
+                   f12(i)=f12(i)-(s1_old(i)*px2(i)+s4_old(i)*py2(i)+s6_old(i)*pz2(i))
+                   f22(i)=f22(i)-(s2_old(i)*py2(i)+s5_old(i)*pz2(i)+s4_old(i)*px2(i))
+                   f32(i)=f32(i)-(s3_old(i)*pz2(i)+s6_old(i)*px2(i)+s5_old(i)*py2(i))
+    
+                   !!!!!!!!!!!!!!!!!!!
+                   f13(i)=f13(i)-(s1_old(i)*px3(i)+s4_old(i)*py3(i)+s6_old(i)*pz3(i))
+                   f23(i)=f23(i)-(s2_old(i)*py3(i)+s5_old(i)*pz3(i)+s4_old(i)*px3(i))
+                   f33(i)=f33(i)-(s3_old(i)*pz3(i)+s6_old(i)*px3(i)+s5_old(i)*py3(i))
+    
+                   !!!!!!!!!!!!!!!!!!!          
+                   f14(i)=f14(i)-(s1_old(i)*px4(i)+s4_old(i)*py4(i)+s6_old(i)*pz4(i))
+                   f24(i)=f24(i)-(s2_old(i)*py4(i)+s5_old(i)*pz4(i)+s4_old(i)*px4(i))
+                   f34(i)=f34(i)-(s3_old(i)*pz4(i)+s6_old(i)*px4(i)+s5_old(i)*py4(i))
+    
+                   !!!!!!!!!!!!!!!!!!!          
+                   f15(i)=f15(i)-(s1_old(i)*px5(i)+s4_old(i)*py5(i)+s6_old(i)*pz5(i))
+                   f25(i)=f25(i)-(s2_old(i)*py5(i)+s5_old(i)*pz5(i)+s4_old(i)*px5(i))
+                   f35(i)=f35(i)-(s3_old(i)*pz5(i)+s6_old(i)*px5(i)+s5_old(i)*py5(i))
+    
+                   !!!!!!!!!!!!!!!!!!!          
+                   f16(i)=f16(i)-(s1_old(i)*px6(i)+s4_old(i)*py6(i)+s6_old(i)*pz6(i))
+                   f26(i)=f26(i)-(s2_old(i)*py6(i)+s5_old(i)*pz6(i)+s4_old(i)*px6(i))
+                   f36(i)=f36(i)-(s3_old(i)*pz6(i)+s6_old(i)*px6(i)+s5_old(i)*py6(i))
+             
+!         write(*,*) 'new for,ulation'
+!          write(*,*) 'f11(i) = ', f11(i)
+!          write(*,*) 'f21(i) = ', f21(i)
+!          write(*,*) 'f31(i) = ', f31(i) !
 
-          !!!!!!!!!!!!!!!!!!!
-          F12(I)=F12(I)-(S1_OLD(I)*PX2(I)+S4_OLD(I)*PY2(I)+S6_OLD(I)*PZ2(I))
-          F22(I)=F22(I)-(S2_OLD(I)*PY2(I)+S5_OLD(I)*PZ2(I)+S4_OLD(I)*PX2(I))
-          F32(I)=F32(I)-(S3_OLD(I)*PZ2(I)+S6_OLD(I)*PX2(I)+S5_OLD(I)*PY2(I))
+!          write(*,*) 'f12(i) = ', f12(i)
+!          write(*,*) 'f22(i) = ', f22(i)
+!          write(*,*) 'f32(i) = ', f32(i) !
 
-          !!!!!!!!!!!!!!!!!!!
-          F13(I)=F13(I)-(S1_OLD(I)*PX3(I)+S4_OLD(I)*PY3(I)+S6_OLD(I)*PZ3(I))
-          F23(I)=F23(I)-(S2_OLD(I)*PY3(I)+S5_OLD(I)*PZ3(I)+S4_OLD(I)*PX3(I))
-          F33(I)=F33(I)-(S3_OLD(I)*PZ3(I)+S6_OLD(I)*PX3(I)+S5_OLD(I)*PY3(I))
+!          write(*,*) 'f13(i) = ', f13(i)
+!          write(*,*) 'f23(i) = ', f23(i)
+!          write(*,*) 'f33(i) = ', f33(i) !
 
-          !!!!!!!!!!!!!!!!!!!          
-          F14(I)=F14(I)-(S1_OLD(I)*PX4(I)+S4_OLD(I)*PY4(I)+S6_OLD(I)*PZ4(I))
-          F24(I)=F24(I)-(S2_OLD(I)*PY4(I)+S5_OLD(I)*PZ4(I)+S4_OLD(I)*PX4(I))
-          F34(I)=F34(I)-(S3_OLD(I)*PZ4(I)+S6_OLD(I)*PX4(I)+S5_OLD(I)*PY4(I))
+!          write(*,*) 'f14(i) = ', f14(i)
+!          write(*,*) 'f24(i) = ', f24(i)
+!          write(*,*) 'f34(i) = ', f34(i) !
 
-          !!!!!!!!!!!!!!!!!!!          
-          F15(I)=F15(I)-(S1_OLD(I)*PX5(I)+S4_OLD(I)*PY5(I)+S6_OLD(I)*PZ5(I))
-          F25(I)=F25(I)-(S2_OLD(I)*PY5(I)+S5_OLD(I)*PZ5(I)+S4_OLD(I)*PX5(I))
-          F35(I)=F35(I)-(S3_OLD(I)*PZ5(I)+S6_OLD(I)*PX5(I)+S5_OLD(I)*PY5(I))
+!          write(*,*) 'f15(i) = ', f15(i)
+!          write(*,*) 'f25(i) = ', f25(i)
+!          write(*,*) 'f35(i) = ', f35(i) !
 
-          !!!!!!!!!!!!!!!!!!!          
-          F16(I)=F16(I)-(S1_OLD(I)*PX6(I)+S4_OLD(I)*PY6(I)+S6_OLD(I)*PZ6(I))
-          F26(I)=F26(I)-(S2_OLD(I)*PY6(I)+S5_OLD(I)*PZ6(I)+S4_OLD(I)*PX6(I))
-          F36(I)=F36(I)-(S3_OLD(I)*PZ6(I)+S6_OLD(I)*PX6(I)+S5_OLD(I)*PY6(I))
-      
-!         write(*,*) 'New for,ulation'
-!          write(*,*) 'F11(I) = ', F11(I)
-!          write(*,*) 'F21(I) = ', F21(I)
-!          write(*,*) 'F31(I) = ', F31(I) !
+!          write(*,*) 'f16(i) = ', f16(i)
+!          write(*,*) 'f26(i) = ', f26(i)
+!          write(*,*) 'f36(i) = ', f36(i) 
+    
+!    fx(i,n)=fx(i,n)-(s1(i)*px(i,n)+s4(i)*py(i,n)+s6(i)*pz(i,n))
+!    fy(i,n)=fy(i,n)-(s2(i)*py(i,n)+s5(i)*pz(i,n)+s4(i)*px(i,n))
+!    fz(i,n)=fz(i,n)-(s3(i)*pz(i,n)+s6(i)*px(i,n)+s5(i)*py(i,n))
+    
+    
+    
+! f13(i)=f13(i)-(s1(i)*px3(i)+s4(i)*py3(i)+s6(i)*pz3(i))
+! 
+! f23(i)=f23(i)-(s2(i)*py3(i)+s5(i)*pz3(i)+s4(i)*px3(i))
+!
+!f32(i)=f32(i)-(s3(i)*pz2(i)+s6(i)*px2(i)+s5(i)*py2(i))
+             end do
+!c----------------------------------------------    /
+!c----------------------------------------------    /
+!c   - post-traitement-valeur moyenne au sens a'=(_/  a dv ) /v
+             if (nlay > 1) then 
+             do i=1,nel
+                  fac(i) = off(i)*vol(i)/volg(i)
+                  sigm(i,1) = sigm(i,1) + fac(i) * sig(i,1)
+                  sigm(i,2) = sigm(i,2) + fac(i) * sig(i,2)
+                  sigm(i,3) = sigm(i,3) + fac(i) * sig(i,3)
+                  sigm(i,4) = sigm(i,4) + fac(i) * sig(i,4)
+                  sigm(i,5) = sigm(i,5) + fac(i) * sig(i,5)
+                  sigm(i,6) = sigm(i,6) + fac(i) * sig(i,6)
+                  rhom(i)   = rhom(i)   + fac(i) * rho(i)
+                  eintm(i)  = eintm(i)  + eint(i)*vol0(i)/vol0g(i)
+                  qm(i)     = qm(i)     + fac(i) * q(i)
+             end do
+             if (g_pla > 0) then
+                do i=1,nel
+                   eplasm(i)  = eplasm(i)  + fac(i) * epla(i)
+                end do
+             end if
+             if (g_epsd > 0) then
+                do i=1,nel
+                   epsdm(i) = epsdm(i) + fac(i) * epsd(i)
+                end do
+             end if
+             end if
+!      pause
 
-!          write(*,*) 'F12(I) = ', F12(I)
-!          write(*,*) 'F22(I) = ', F22(I)
-!          write(*,*) 'F32(I) = ', F32(I) !
-
-!          write(*,*) 'F13(I) = ', F13(I)
-!          write(*,*) 'F23(I) = ', F23(I)
-!          write(*,*) 'F33(I) = ', F33(I) !
-
-!          write(*,*) 'F14(I) = ', F14(I)
-!          write(*,*) 'F24(I) = ', F24(I)
-!          write(*,*) 'F34(I) = ', F34(I) !
-
-!          write(*,*) 'F15(I) = ', F15(I)
-!          write(*,*) 'F25(I) = ', F25(I)
-!          write(*,*) 'F35(I) = ', F35(I) !
-
-!          write(*,*) 'F16(I) = ', F16(I)
-!          write(*,*) 'F26(I) = ', F26(I)
-!          write(*,*) 'F36(I) = ', F36(I) 
-
-                !    FX(I,N)=FX(I,N)-(S1(I)*PX(I,N)+S4(I)*PY(I,N)+S6(I)*PZ(I,N))
-      !    FY(I,N)=FY(I,N)-(S2(I)*PY(I,N)+S5(I)*PZ(I,N)+S4(I)*PX(I,N))
-      !    FZ(I,N)=FZ(I,N)-(S3(I)*PZ(I,N)+S6(I)*PX(I,N)+S5(I)*PY(I,N))
-
-
-
-         ! F13(I)=F13(I)-(S1(I)*PX3(I)+S4(I)*PY3(I)+S6(I)*PZ3(I))
-         ! 
-         ! F23(I)=F23(I)-(S2(I)*PY3(I)+S5(I)*PZ3(I)+S4(I)*PX3(I))
-
-          !F32(I)=F32(I)-(S3(I)*PZ2(I)+S6(I)*PX2(I)+S5(I)*PY2(I))
-      ENDDO
-C----------------------------------------------    /
-C----------------------------------------------    /
-C   - post-traitement-valeur moyenne au sens a'=(_/  a dv ) /v
-      IF (NLAY > 1) THEN 
-      DO I=1,NEL
-         FAC(I) = OFF(I)*VOL(I)/VOLG(I)
-         SIGM(I,1) = SIGM(I,1) + FAC(I) * SIG(I,1)
-         SIGM(I,2) = SIGM(I,2) + FAC(I) * SIG(I,2)
-         SIGM(I,3) = SIGM(I,3) + FAC(I) * SIG(I,3)
-         SIGM(I,4) = SIGM(I,4) + FAC(I) * SIG(I,4)
-         SIGM(I,5) = SIGM(I,5) + FAC(I) * SIG(I,5)
-         SIGM(I,6) = SIGM(I,6) + FAC(I) * SIG(I,6)
-         RHOM(I)   = RHOM(I)   + FAC(I) * RHO(I)
-         EINTM(I)  = EINTM(I)  + EINT(I)*VOL0(I)/VOL0G(I)
-         QM(I)     = QM(I)     + FAC(I) * Q(I)
-      ENDDO
-      IF (G_PLA > 0) THEN
-        DO I=1,NEL
-          EPLASM(I)  = EPLASM(I)  + FAC(I) * EPLA(I)
-        ENDDO
-      ENDIF
-      IF (G_EPSD > 0) THEN
-        DO I=1,NEL
-          EPSDM(I) = EPSDM(I) + FAC(I) * EPSD(I)
-        ENDDO
-      ENDIF
-      ENDIF
-!      PAUSE
-
-C-----------
-      RETURN
-      END
+! ----------------------------------------------------------------------------------------------------------------------
+end subroutine s6fint3_2
+end module s6fint3_2_mod

@@ -136,6 +136,9 @@ C-----------------------------------------------
       USE S6CHOUR_CTL_MOD ,ONLY : S6CHOUR_CTL
       use glob_therm_mod
       USE SENSOR_MOD
+      USE srrota3_2_mod
+      USE s6fint3_2_mod
+
 C-----------------------------------------------
 C   I m p l i c i t   T y p e s
 C-----------------------------------------------
@@ -893,7 +896,7 @@ C----------------------------
      L   SVIS,       GBUF%WPLA,  LBUF%WPLA,   GBUF%G_WPLA,
      M   NLAY    )
         ELSE
-         CALL S6CFINT3_1(
+         CALL s6fint3_2(
      1   LBUF%SIG,          PX1,               PX2,               PX3,
      2   PX4,               PY1,               PY2,               PY3,
      3   PY4,               PZ1,               PZ2,               PZ3,
@@ -1256,7 +1259,7 @@ C--------------------------------
 !          write(*,*) 'R23',R23(I)
 !          write(*,*) 'R33',R33(I)
 !      ENDDO
-      CALL SRROTA3_1(
+      CALL SRROTA3_2(
      1   R11,     R21,     R31,     R12,
      2   R22,     R32,     R13,     R23,
      3   R33,     

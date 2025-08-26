@@ -138,6 +138,8 @@ C-----------------------------------------------
       USE SENSOR_MOD
       USE srrota3_2_mod
       USE s6fint3_2_mod
+      USE s6def03_2_mod
+      USE s6cdefc3_2_mod
 
 C-----------------------------------------------
 C   I m p l i c i t   T y p e s
@@ -588,7 +590,7 @@ C
         ENDDO
       END IF        
       
-      CALL S6CDEFC3_1(
+      CALL S6CDEFC3_2(
      1   PX1,     PX2,     PX3,     PX4,
      2   PY1,     PY2,     PY3,     PY4,
      3   PZ1,     PZ2,     PZ3,     PZ4,
@@ -744,7 +746,7 @@ C---------------------------------------------
           WT = W_GAUSS(ILAY,NLAY)
         ENDIF
 C
-        CALL SCDEFO3_1(
+        CALL scdefo3_2(
      1   DXX,        DXY,        DXZ,        DYX,
      2   DYY,        DYZ,        DZX,        DZY,
      3   DZZ,        D4,         D5,         D6,
@@ -759,7 +761,7 @@ C
      C   SIGZM,      VOLM,       USB,        LBUF%EINT,
      D   OFF,        OFFG,       GBUF%OFF,
      E   DSV,        LBUF%VOL0DP,VOLDP,      IPRES,
-     F   NEL    )
+     F   NEL,         dt1,     IRESP, ismdisp, iscau )
         DO I=1,NEL
           RHOO(I)= LBUF%RHO(I)
         ENDDO

@@ -1,269 +1,345 @@
-Copyright>        OpenRadioss
-Copyright>        Copyright (C) 1986-2025 Altair Engineering Inc.
-Copyright>
-Copyright>        This program is free software: you can redistribute it and/or modify
-Copyright>        it under the terms of the GNU Affero General Public License as published by
-Copyright>        the Free Software Foundation, either version 3 of the License, or
-Copyright>        (at your option) any later version.
-Copyright>
-Copyright>        This program is distributed in the hope that it will be useful,
-Copyright>        but WITHOUT ANY WARRANTY; without even the implied warranty of
-Copyright>        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-Copyright>        GNU Affero General Public License for more details.
-Copyright>
-Copyright>        You should have received a copy of the GNU Affero General Public License
-Copyright>        along with this program.  If not, see <https://www.gnu.org/licenses/>.
-Copyright>
-Copyright>
-Copyright>        Commercial Alternative: Altair Radioss Software
-Copyright>
-Copyright>        As an alternative to this open-source version, Altair also offers Altair Radioss
-Copyright>        software under a commercial license.  Contact Altair to discuss further if the
-Copyright>        commercial version may interest you: https://www.altair.com/radioss/.
+!Copyright>        OpenRadioss
+!Copyright>        Copyright (C) 1986-2025 Altair Engineering Inc.
+!Copyright>
+!Copyright>        This program is free software: you can redistribute it and/or modify
+!Copyright>        it under the terms of the GNU Affero General Public License as published by
+!Copyright>        the Free Software Foundation, either version 3 of the License, or
+!Copyright>        (at your option) any later version.
+!Copyright>
+!Copyright>        This program is distributed in the hope that it will be useful,
+!Copyright>        but WITHOUT ANY WARRANTY; without even the implied warranty of
+!Copyright>        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!Copyright>        GNU Affero General Public License for more details.
+!Copyright>
+!Copyright>        You should have received a copy of the GNU Affero General Public License
+!Copyright>        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+!Copyright>
+!Copyright>
+!Copyright>        Commercial Alternative: Altair Radioss Software
+!Copyright>
+!Copyright>        As an alternative to this open-source version, Altair also offers Altair Radioss
+!Copyright>        software under a commercial license.  Contact Altair to discuss further if the
+!Copyright>        commercial version may interest you: https://www.altair.com/radioss/.
       !||====================================================================
       !||    s6cdefc3   ../engine/source/elements/thickshell/solide6c/s6cdefo3.F
       !||--- called by ------------------------------------------------------
       !||    s6cforc3   ../engine/source/elements/thickshell/solide6c/s6cforc3.F
       !||====================================================================
 
+      module s6cdefc3_2_mod
+      contains
 
-      SUBROUTINE S6CDEFC3_1(
-     1   PX1,     PX2,     PX3,     PX4,
-     2   PY1,     PY2,     PY3,     PY4,
-     3   PZ1,     PZ2,     PZ3,     PZ4,
-     4   VX1,     VX2,     VX3,     VX4,
-     5   VX5,     VX6,     VY1,     VY2,
-     6   VY3,     VY4,     VY5,     VY6,
-     7   VZ1,     VZ2,     VZ3,     VZ4,
-     8   VZ5,     VZ6,     DXX,     DXY,
-     9   DXZ,     DYX,     DYY,     DYZ,
-     A   DZX,     DZY,     DZZ,     
-     B   WXX,     WYY,
-     C   WZZ,     DHXX,    DHXY,    DHXZ,
-     D   DHYX,    DHYY,    DHYZ,    DHZX,
-     E   DHZY,    DHZZ,    
-     F   PX1H,    PX2H,    PX3H,
-     G   PY1H,    PY2H,    PY3H,    PZ1H,
-     H   PZ2H,    PZ3H,    JI33,    B1X,
-     I   B1Y,     B2Y,     B2X,     B1122,
-     J   B1221,   B2212,   B1121,   B1XH,
-     K   B1YH,    B2XH,    B2YH,    B1122H,
-     L   B1221H,  B2212H,  B1121H,  DDHV,
-     M   NU,      NEL,
-     N   PX5,     PY5,     PZ5,
-     O   PX6,     PY6,     PZ6 )
-C   ---
-C-----------------------------------------------
-C   I m p l i c i t   T y p e s
-C-----------------------------------------------
-#include      "implicit_f.inc"
-C-----------------------------------------------
-C   G l o b a l   P a r a m e t e r s
-C-----------------------------------------------
-#include      "mvsiz_p.inc"
-C-----------------------------------------------
-C   C o m m o n   B l o c k s
-C-----------------------------------------------
-C-----------------------------------------------
-C   D u m m y   A r g u m e n t s
-C-----------------------------------------------
-      INTEGER, INTENT(IN) :: NEL
-C     REAL
-      my_real
-     .   VX1(*), VX2(*), VX3(*), VX4(*), VX5(*), VX6(*), 
-     .   VY1(*), VY2(*), VY3(*), VY4(*), VY5(*), VY6(*), 
-     .   VZ1(*), VZ2(*), VZ3(*), VZ4(*), VZ5(*), VZ6(*), 
-     .   PX1(*), PX2(*), PX3(*), PX4(*),  PX5(*), PX6(*),  
-     .   PY1(*), PY2(*), PY3(*), PY4(*),  PY5(*), PY6(*), 
-     .   PZ1(*), PZ2(*), PZ3(*), PZ4(*),  PZ5(*), PZ6(*),  
-     .   DXX(*), DXY(*), DXZ(*),
-     .   DYX(*), DYY(*), DYZ(*),
-     .   DZX(*), DZY(*), DZZ(*), 
-     .   WXX(*), WYY(*), WZZ(*),
-C   +++
-     .   PX1H(*), PX2H(*), PX3H(*), 
-     .   PY1H(*), PY2H(*), PY3H(*), 
-     .   PZ1H(*), PZ2H(*), PZ3H(*), 
-     .   JI33(*),B1X(MVSIZ,2),B1Y(MVSIZ,2),B2X(MVSIZ,2),B2Y(MVSIZ,2),
-     .   B1XH(MVSIZ,2),B1YH(MVSIZ,2),B2XH(MVSIZ,2),B2YH(MVSIZ,2),
-     .   B1122(*),B1221(*),B2212(*),B1121(*),
-     .   B1122H(*),B1221H(*),B2212H(*),B1121H(*),
-     .   DHXX(*), DHXY(*), DHXZ(*),  
-     .   DHYX(*), DHYY(*), DHYZ(*), 
-     .   DHZX(*), DHZY(*), DHZZ(*),
-     .   DDHV(*),NU(*)
-C-----------------------------------------------
-C   L o c a l   V a r i a b l e s
-C-----------------------------------------------
-      INTEGER  I, J
-C     REAL
-      my_real
-     .   VX14(MVSIZ), VY14(MVSIZ), VZ14(MVSIZ),
-     .   VX25(MVSIZ), VY25(MVSIZ), VZ25(MVSIZ),
-     .   VX36(MVSIZ), VY36(MVSIZ), VZ36(MVSIZ),
-     .   VX14N(MVSIZ), VY14N(MVSIZ), VZ14N(MVSIZ),
-     .   VX25N(MVSIZ), VY25N(MVSIZ), VZ25N(MVSIZ),
-     .   VX36N(MVSIZ), VY36N(MVSIZ), VZ36N(MVSIZ),
-     .   VX3614N(MVSIZ),VY3614N(MVSIZ),VX2514N(MVSIZ),VY2514N(MVSIZ),
-     .   VXHI(MVSIZ), VYHI(MVSIZ), VZHI(MVSIZ), DT1D2, DT1D1
-      my_real 
-     .  NU1,PXSVX,PYSVY,PZSVZ,PXAVX,PYAVY,PZAVZ,TERMAD
-C-----------------------------------------------
-      DO I=1,NEL
-       VX14(I)=VX1(I)+VX4(I)
-       VX25(I)=VX2(I)+VX5(I)
-       VX36(I)=VX3(I)+VX6(I)
-       VXHI(I)=VX4(I)+VX5(I)+VX6(I)-VX1(I)-VX2(I)-VX3(I)
-       VY14(I)=VY1(I)+VY4(I)
-       VY25(I)=VY2(I)+VY5(I)
-       VY36(I)=VY3(I)+VY6(I)
-       VYHI(I)=VY4(I)+VY5(I)+VY6(I)-VY1(I)-VY2(I)-VY3(I)
-       VZ14(I)=VZ1(I)+VZ4(I)
-       VZ25(I)=VZ2(I)+VZ5(I)
-       VZ36(I)=VZ3(I)+VZ6(I)
-       VZHI(I)=VZ4(I)+VZ5(I)+VZ6(I)-VZ1(I)-VZ2(I)-VZ3(I)
-      ENDDO
-      DO I=1,NEL
-       VX14N(I)=-VX1(I)+VX4(I)
-       VX25N(I)=-VX2(I)+VX5(I)
-       VX36N(I)=-VX3(I)+VX6(I)
-       VY14N(I)=-VY1(I)+VY4(I)
-       VY25N(I)=-VY2(I)+VY5(I)
-       VY36N(I)=-VY3(I)+VY6(I)
-       VZ14N(I)=-VZ1(I)+VZ4(I)
-       VZ25N(I)=-VZ2(I)+VZ5(I)
-       VZ36N(I)=-VZ3(I)+VZ6(I)
-C
-       VX3614N(I)=VX36N(I)-VX14N(I)
-       VY3614N(I)=VY36N(I)-VY14N(I)
-       VX2514N(I)=VX25N(I)-VX14N(I)
-       VY2514N(I)=VY25N(I)-VY14N(I)
-      ENDDO
-C                                                                     12
-C   ----------constant part--------------------------------------
-      DO I=1,NEL
-        DXX(I)=PX1(I)*VX14(I)+PX2(I)*VX25(I)+
-     .         PX3(I)*VX36(I)+PX4(I)*VXHI(I)
-        DYY(I)=PY1(I)*VY14(I)+PY2(I)*VY25(I)+
-     .         PY3(I)*VY36(I)+PY4(I)*VYHI(I)
-        DZZ(I)=PZ1(I)*VZ14(I)+PZ2(I)*VZ25(I)+
-     .         PZ3(I)*VZ36(I)+PZ4(I)*VZHI(I)
-        DXY(I)=PY1(I)*VX14(I)+PY2(I)*VX25(I)+
-     .         PY3(I)*VX36(I)+PY4(I)*VXHI(I)
-        DYX(I)=PX1(I)*VY14(I)+PX2(I)*VY25(I)+
-     .         PX3(I)*VY36(I)+PX4(I)*VYHI(I)
-C   --------shear traitement-------
-        DXZ(I)=JI33(I)*TWO*VXHI(I)
-     .         -B1122(I)*VX36N(I)+B1221(I)*VX25N(I)
-     .         +B2212(I)*(VY25N(I)-VY36N(I))  
-        DXZ(I)= DXZ(I)+JI33(I)*(VXHI(I)-VX14N(I))
-     .         -B1X(I,1)*VX3614N(I)+B1X(I,2)*VX2514N(I)  
-     .         -B1Y(I,1)*VY3614N(I)+B1Y(I,2)*VY2514N(I)  
-        DYZ(I)=JI33(I)*TWO*VYHI(I)
-     .         -B1122(I)*VY25N(I)+B1221(I)*VY36N(I)
-     .         +B1121(I)*(VX36N(I)-VX25N(I))  
-        DYZ(I)= DYZ(I)+ JI33(I)*(VYHI(I)-VY14N(I))
-     .         +B2X(I,1)*VX3614N(I)-B2X(I,2)*VX2514N(I)
-     .         +B2Y(I,1)*VY3614N(I)-B2Y(I,2)*VY2514N(I)  
-C
-        DZX(I)=HALF*(PX1(I)*VZ14(I)+PX2(I)*VZ25(I)+
-     .         PX3(I)*VZ36(I))
-        DZY(I)=HALF*(PY1(I)*VZ14(I)+PY2(I)*VZ25(I)+
-     .         PY3(I)*VZ36(I))
-      ENDDO
-C
-      DO I=1,NEL
-        WXX(I)=ZERO
-        WYY(I)=ZERO
-        WZZ(I)=ZERO
-      ENDDO
-C   ----------non-constant part--------------------------------------
+      ! ======================================================================================================================
+      !                                                   PROCEDURES
+      ! ======================================================================================================================
 
-      DO I=1,NEL
-        NU1 = NU(I)/(ONE - NU(I))
-        PXAVX = PX1(I)*VX14N(I)+PX2(I)*VX25N(I)+PX3(I)*VX36N(I)
-        PYAVY = PY1(I)*VY14N(I)+PY2(I)*VY25N(I)+PY3(I)*VY36N(I)
-        PZAVZ = PZ1(I)*VZ14N(I)+PZ2(I)*VZ25N(I)+PZ3(I)*VZ36N(I)
-        PXSVX = PX1H(I)*VX14(I)+PX2H(I)*VX25(I)+PX3H(I)*VX36(I)
-        PYSVY = PY1H(I)*VY14(I)+PY2H(I)*VY25(I)+PY3H(I)*VY36(I)
-        PZSVZ = PZ1H(I)*VZ14(I)+PZ2H(I)*VZ25(I)+PZ3H(I)*VZ36(I)
-        TERMAD=-NU(I)*PYAVY-NU1*PZAVZ
-        DDHV(I)= TERMAD
-        DHXX(I)= PXSVX+PXAVX+TERMAD
-        TERMAD=-NU(I)*PXSVX-NU1*PZSVZ
-        DDHV(I)= DDHV(I)+TERMAD
-        DHYY(I)= PYSVY+PYAVY+TERMAD
-        TERMAD=-NU(I)*(PXSVX+PYAVY)-NU1*(PXAVX+PYSVY)
-        DDHV(I)= DDHV(I)+TERMAD
-        DHZZ(I)= PZSVZ+PZAVZ+TERMAD
-        DHXY(I)=PY1(I)*VX14N(I)+PY2(I)*VX25N(I)+
-     .          PY3(I)*VX36N(I)+
-     .          PY1H(I)*VX14(I)+PY2H(I)*VX25(I)+
-     .          PY3H(I)*VX36(I)
-        DHYX(I)=PX1(I)*VY14N(I)+PX2(I)*VY25N(I)+
-     .          PX3(I)*VY36N(I)+
-     .          PX1H(I)*VY14(I)+PX2H(I)*VY25(I)+
-     .          PX3H(I)*VY36(I)
-!   --------shear traitement-------
-        DHXZ(I)=-B1122H(I)*VX36N(I)+B1221H(I)*VX25N(I)
-     .          +B2212H(I)*(VY25N(I)-VY36N(I))  
-        DHXZ(I)= DHXZ(I)
-     .         -B1XH(I,1)*VX3614N(I)+B1XH(I,2)*VX2514N(I)  
-     .         -B1YH(I,1)*VY3614N(I)+B1YH(I,2)*VY2514N(I)  
-        DHYZ(I)=-B1122H(I)*VY25N(I)+B1221H(I)*VY36N(I)
-     .          +B1121H(I)*(VX36N(I)-VX25N(I))  
-        DHYZ(I)= DHYZ(I) 
-     .         +B2XH(I,1)*VX3614N(I)-B2XH(I,2)*VX2514N(I)
-     .         +B2YH(I,1)*VY3614N(I)-B2YH(I,2)*VY2514N(I)  
-        DHZX(I)=HALF*(PX1H(I)*VZ14(I)+PX2H(I)*VZ25(I)+
-     .          PX3H(I)*VZ36(I))
-        DHZY(I)=HALF*(PY1H(I)*VZ14(I)+PY2H(I)*VZ25(I)+
-     .          PY3H(I)*VZ36(I))
-      ENDDO
+      !! \brief Compute strain rates and hourglass control for 6-node solid elements
+      !! \details Calculates strain rate tensor components (dxx, dyy, dzz, dxy, dxz, dyz)
+      !!          and hourglass control strain rates for 6-node thick shell/solid elements.
+      !!          Includes volumetric strain rate and spin rate calculations.
+      subroutine s6cdefc3_2( &
+         px1, px2, px3, px4, &
+         py1, py2, py3, py4, &
+         pz1, pz2, pz3, pz4, &
+         vx1, vx2, vx3, vx4, &
+         vx5, vx6, vy1, vy2, &
+         vy3, vy4, vy5, vy6, &
+         vz1, vz2, vz3, vz4, &
+         vz5, vz6, dxx, dxy, &
+         dxz, dyx, dyy, dyz, &
+         dzx, dzy, dzz, &
+         wxx, wyy, &
+         wzz, dhxx, dhxy, dhxz, &
+         dhyx, dhyy, dhyz, dhzx, &
+         dhzy, dhzz, &
+         px1h, px2h, px3h, &
+         py1h, py2h, py3h, pz1h, &
+         pz2h, pz3h, ji33, b1x, &
+         b1y, b2y, b2x, b1122, &
+         b1221, b2212, b1121, b1xh, &
+         b1yh, b2xh, b2yh, b1122h, &
+         b1221h, b2212h, b1121h, ddhv, &
+         nu, nel, &
+         px5, py5, pz5, &
+         px6, py6, pz6)
 
+      ! ----------------------------------------------------------------------------------------------------------------------
+      !                                                   MODULES
+      ! ----------------------------------------------------------------------------------------------------------------------
+         use PRECISION_MOD, only : WP
+     
+      ! ----------------------------------------------------------------------------------------------------------------------
+      !                                                   IMPLICIT NONE
+      ! ----------------------------------------------------------------------------------------------------------------------
+         implicit none
 
-      DO I=1,NEL
+      ! ----------------------------------------------------------------------------------------------------------------------
+      !                                                   ARGUMENTS
+      ! ----------------------------------------------------------------------------------------------------------------------
+         integer, intent(in) :: nel                                          !< Number of elements
 
+         real(kind=WP), intent(in) :: vx1(nel)                              !< X-velocity at node 1
+         real(kind=WP), intent(in) :: vx2(nel)                              !< X-velocity at node 2
+         real(kind=WP), intent(in) :: vx3(nel)                              !< X-velocity at node 3
+         real(kind=WP), intent(in) :: vx4(nel)                              !< X-velocity at node 4
+         real(kind=WP), intent(in) :: vx5(nel)                              !< X-velocity at node 5
+         real(kind=WP), intent(in) :: vx6(nel)                              !< X-velocity at node 6
+         real(kind=WP), intent(in) :: vy1(nel)                              !< Y-velocity at node 1
+         real(kind=WP), intent(in) :: vy2(nel)                              !< Y-velocity at node 2
+         real(kind=WP), intent(in) :: vy3(nel)                              !< Y-velocity at node 3
+         real(kind=WP), intent(in) :: vy4(nel)                              !< Y-velocity at node 4
+         real(kind=WP), intent(in) :: vy5(nel)                              !< Y-velocity at node 5
+         real(kind=WP), intent(in) :: vy6(nel)                              !< Y-velocity at node 6
+         real(kind=WP), intent(in) :: vz1(nel)                              !< Z-velocity at node 1
+         real(kind=WP), intent(in) :: vz2(nel)                              !< Z-velocity at node 2
+         real(kind=WP), intent(in) :: vz3(nel)                              !< Z-velocity at node 3
+         real(kind=WP), intent(in) :: vz4(nel)                              !< Z-velocity at node 4
+         real(kind=WP), intent(in) :: vz5(nel)                              !< Z-velocity at node 5
+         real(kind=WP), intent(in) :: vz6(nel)                              !< Z-velocity at node 6
 
-   !      DXX(I)=PX1(I)*VX14(I)+PX2(I)*VX25(I)+
-   !      .         PX3(I)*VX36(I)+PX4(I)*VXHI(I)
-   !         DYY(I)=PY1(I)*VY14(I)+PY2(I)*VY25(I)+
-   !      .         PY3(I)*VY36(I)+PY4(I)*VYHI(I)
-   !         DZZ(I)=PZ1(I)*VZ14(I)+PZ2(I)*VZ25(I)+
-   !      .         PZ3(I)*VZ36(I)+PZ4(I)*VZHI(I)
-   !         DXY(I)=PY1(I)*VX14(I)+PY2(I)*VX25(I)+
-   !      .         PY3(I)*VX36(I)+PY4(I)*VXHI(I)
-   !         DYX(I)=PX1(I)*VY14(I)+PX2(I)*VY25(I)+
-   !      .         PX3(I)*VY36(I)+PX4(I)*VYHI(I)
+         real(kind=WP), intent(in) :: px1(nel)                              !< Shape function derivative X1
+         real(kind=WP), intent(in) :: px2(nel)                              !< Shape function derivative X2
+         real(kind=WP), intent(in) :: px3(nel)                              !< Shape function derivative X3
+         real(kind=WP), intent(in) :: px4(nel)                              !< Shape function derivative X4
+         real(kind=WP), intent(in) :: px5(nel)                              !< Shape function derivative X5
+         real(kind=WP), intent(in) :: px6(nel)                              !< Shape function derivative X6
+         real(kind=WP), intent(in) :: py1(nel)                              !< Shape function derivative Y1
+         real(kind=WP), intent(in) :: py2(nel)                              !< Shape function derivative Y2
+         real(kind=WP), intent(in) :: py3(nel)                              !< Shape function derivative Y3
+         real(kind=WP), intent(in) :: py4(nel)                              !< Shape function derivative Y4
+         real(kind=WP), intent(in) :: py5(nel)                              !< Shape function derivative Y5
+         real(kind=WP), intent(in) :: py6(nel)                              !< Shape function derivative Y6
+         real(kind=WP), intent(in) :: pz1(nel)                              !< Shape function derivative Z1
+         real(kind=WP), intent(in) :: pz2(nel)                              !< Shape function derivative Z2
+         real(kind=WP), intent(in) :: pz3(nel)                              !< Shape function derivative Z3
+         real(kind=WP), intent(in) :: pz4(nel)                              !< Shape function derivative Z4
+         real(kind=WP), intent(in) :: pz5(nel)                              !< Shape function derivative Z5
+         real(kind=WP), intent(in) :: pz6(nel)                              !< Shape function derivative Z6
 
+         real(kind=WP), intent(in) :: px1h(nel)                             !< Hourglass shape function derivative X1
+         real(kind=WP), intent(in) :: px2h(nel)                             !< Hourglass shape function derivative X2
+         real(kind=WP), intent(in) :: px3h(nel)                             !< Hourglass shape function derivative X3
+         real(kind=WP), intent(in) :: py1h(nel)                             !< Hourglass shape function derivative Y1
+         real(kind=WP), intent(in) :: py2h(nel)                             !< Hourglass shape function derivative Y2
+         real(kind=WP), intent(in) :: py3h(nel)                             !< Hourglass shape function derivative Y3
+         real(kind=WP), intent(in) :: pz1h(nel)                             !< Hourglass shape function derivative Z1
+         real(kind=WP), intent(in) :: pz2h(nel)                             !< Hourglass shape function derivative Z2
+         real(kind=WP), intent(in) :: pz3h(nel)                             !< Hourglass shape function derivative Z3
 
-         DXX(I) = PX1(I)*VX1(I) + PX2(I)*VX2(I) + PX5(I)*VX5(I)+
-     .            PX3(I)*VX3(I) + PX6(I)*VX6(I) + PX4(I)*VX4(I)
+         real(kind=WP), intent(in) :: ji33(nel)                             !< Jacobian inverse component 33
+         real(kind=WP), intent(in) :: b1x(nel,2)                            !< B matrix X component 1
+         real(kind=WP), intent(in) :: b1y(nel,2)                            !< B matrix Y component 1
+         real(kind=WP), intent(in) :: b2x(nel,2)                            !< B matrix X component 2
+         real(kind=WP), intent(in) :: b2y(nel,2)                            !< B matrix Y component 2
+         real(kind=WP), intent(in) :: b1xh(nel,2)                           !< Hourglass B matrix X component 1
+         real(kind=WP), intent(in) :: b1yh(nel,2)                           !< Hourglass B matrix Y component 1
+         real(kind=WP), intent(in) :: b2xh(nel,2)                           !< Hourglass B matrix X component 2
+         real(kind=WP), intent(in) :: b2yh(nel,2)                           !< Hourglass B matrix Y component 2
 
-         DYY(I) = PY1(I)*VY1(I) + PY2(I)*VY2(I) + PY5(I)*VY5(I)+
-     .            PY3(I)*VY3(I) + PY6(I)*VY6(I) + PY4(I)*VY4(I)
+         real(kind=WP), intent(in) :: b1122(nel)                            !< B matrix component 1122
+         real(kind=WP), intent(in) :: b1221(nel)                            !< B matrix component 1221
+         real(kind=WP), intent(in) :: b2212(nel)                            !< B matrix component 2212
+         real(kind=WP), intent(in) :: b1121(nel)                            !< B matrix component 1121
+         real(kind=WP), intent(in) :: b1122h(nel)                           !< Hourglass B matrix component 1122
+         real(kind=WP), intent(in) :: b1221h(nel)                           !< Hourglass B matrix component 1221
+         real(kind=WP), intent(in) :: b2212h(nel)                           !< Hourglass B matrix component 2212
+         real(kind=WP), intent(in) :: b1121h(nel)                           !< Hourglass B matrix component 1121
 
-         DZZ(I) = PZ1(I)*VZ1(I) + PZ2(I)*VZ2(I) + PZ5(I)*VZ5(I)+
-     .            PZ3(I)*VZ3(I) + PZ6(I)*VZ6(I) + PZ4(I)*VZ4(I)
+         real(kind=WP), intent(in) :: nu(nel)                               !< Poisson's ratio
 
-         DXY(I) = PY1(I)*VX1(I) + PY2(I)*VX2(I) + PY5(I)*VX5(I)+
-     .            PY3(I)*VX3(I) + PY6(I)*VX6(I) + PY4(I)*VX4(I)
+         real(kind=WP), intent(out) :: dxx(nel)                             !< Strain rate XX component
+         real(kind=WP), intent(out) :: dxy(nel)                             !< Strain rate XY component
+         real(kind=WP), intent(out) :: dxz(nel)                             !< Strain rate XZ component
+         real(kind=WP), intent(out) :: dyx(nel)                             !< Strain rate YX component
+         real(kind=WP), intent(out) :: dyy(nel)                             !< Strain rate YY component
+         real(kind=WP), intent(out) :: dyz(nel)                             !< Strain rate YZ component
+         real(kind=WP), intent(out) :: dzx(nel)                             !< Strain rate ZX component
+         real(kind=WP), intent(out) :: dzy(nel)                             !< Strain rate ZY component
+         real(kind=WP), intent(out) :: dzz(nel)                             !< Strain rate ZZ component
 
-         DYX(I) = PX1(I)*VY1(I) + PX2(I)*VY2(I) + PX5(I)*VY5(I)+
-     .            PX3(I)*VY3(I) + PX6(I)*VY6(I) + PX4(I)*VY4(I)
+         real(kind=WP), intent(out) :: wxx(nel)                             !< Spin rate XX component
+         real(kind=WP), intent(out) :: wyy(nel)                             !< Spin rate YY component
+         real(kind=WP), intent(out) :: wzz(nel)                             !< Spin rate ZZ component
 
-         DXZ(I) = PZ1(I)*VX1(I) + PZ2(I)*VX2(I) + PZ5(I)*VX5(I)+
-     .            PZ3(I)*VX3(I) + PZ6(I)*VX6(I) + PZ4(I)*VX4(I)  
+         real(kind=WP), intent(out) :: dhxx(nel)                            !< Hourglass strain rate XX component
+         real(kind=WP), intent(out) :: dhxy(nel)                            !< Hourglass strain rate XY component
+         real(kind=WP), intent(out) :: dhxz(nel)                            !< Hourglass strain rate XZ component
+         real(kind=WP), intent(out) :: dhyx(nel)                            !< Hourglass strain rate YX component
+         real(kind=WP), intent(out) :: dhyy(nel)                            !< Hourglass strain rate YY component
+         real(kind=WP), intent(out) :: dhyz(nel)                            !< Hourglass strain rate YZ component
+         real(kind=WP), intent(out) :: dhzx(nel)                            !< Hourglass strain rate ZX component
+         real(kind=WP), intent(out) :: dhzy(nel)                            !< Hourglass strain rate ZY component
+         real(kind=WP), intent(out) :: dhzz(nel)                            !< Hourglass strain rate ZZ component
 
-         DZX(I) = PX1(I)*VZ1(I) + PX2(I)*VZ2(I) + PX5(I)*VZ5(I)+
-     .            PX3(I)*VZ3(I) + PX6(I)*VZ6(I) + PX4(I)*VZ4(I)   
+         real(kind=WP), intent(out) :: ddhv(nel)                            !< Volumetric strain rate
 
-         DZY(I) = PY1(I)*VZ1(I) + PY2(I)*VZ2(I) + PY5(I)*VZ5(I)+
-     .            PY3(I)*VZ3(I) + PY6(I)*VZ6(I) + PY4(I)*VZ4(I)
+      ! ----------------------------------------------------------------------------------------------------------------------
+      !                                                   LOCAL VARIABLES
+      ! ----------------------------------------------------------------------------------------------------------------------
+         integer :: i                                                        ! Loop counter
+         real(kind=WP) :: vx14(nel), vy14(nel), vz14(nel)
+         real(kind=WP) :: vx25(nel), vy25(nel), vz25(nel)
+         real(kind=WP) :: vx36(nel), vy36(nel), vz36(nel)
+         real(kind=WP) :: vx14n(nel), vy14n(nel), vz14n(nel)
+         real(kind=WP) :: vx25n(nel), vy25n(nel), vz25n(nel)
+         real(kind=WP) :: vx36n(nel), vy36n(nel), vz36n(nel)
+         real(kind=WP) :: vx3614n(nel), vy3614n(nel), vx2514n(nel), vy2514n(nel)
+         real(kind=WP) :: vxhi(nel), vyhi(nel), vzhi(nel)
+         real(kind=WP) :: nu1, pxsvx, pysvy, pzsvz, pxavx, pyavy, pzavz, termad
 
-         DYZ(I) = PZ1(I)*VY1(I) + PZ2(I)*VY2(I) + PZ5(I)*VY5(I)+
-     .            PZ3(I)*VY3(I) + PZ6(I)*VY6(I) + PZ4(I)*VY4(I)    
-      ENDDO
-C
+      ! ----------------------------------------------------------------------------------------------------------------------
+! ----------------------------------------------------------------------------------------------------------------------
+!                                                   BODY
+! ----------------------------------------------------------------------------------------------------------------------
+
+   ! Compute velocity combinations for finite element calculation
+   do i = 1, nel
+      vx14(i) = vx1(i) + vx4(i)
+      vx25(i) = vx2(i) + vx5(i)
+      vx36(i) = vx3(i) + vx6(i)
+      vxhi(i) = vx4(i) + vx5(i) + vx6(i) - vx1(i) - vx2(i) - vx3(i)
+      vy14(i) = vy1(i) + vy4(i)
+      vy25(i) = vy2(i) + vy5(i)
+      vy36(i) = vy3(i) + vy6(i)
+      vyhi(i) = vy4(i) + vy5(i) + vy6(i) - vy1(i) - vy2(i) - vy3(i)
+      vz14(i) = vz1(i) + vz4(i)
+      vz25(i) = vz2(i) + vz5(i)
+      vz36(i) = vz3(i) + vz6(i)
+      vzhi(i) = vz4(i) + vz5(i) + vz6(i) - vz1(i) - vz2(i) - vz3(i)
+   end do
+   
+   do i = 1, nel
+      vx14n(i) = -vx1(i) + vx4(i)
+      vx25n(i) = -vx2(i) + vx5(i)
+      vx36n(i) = -vx3(i) + vx6(i)
+      vy14n(i) = -vy1(i) + vy4(i)
+      vy25n(i) = -vy2(i) + vy5(i)
+      vy36n(i) = -vy3(i) + vy6(i)
+      vz14n(i) = -vz1(i) + vz4(i)
+      vz25n(i) = -vz2(i) + vz5(i)
+      vz36n(i) = -vz3(i) + vz6(i)
+
+      vx3614n(i) = vx36n(i) - vx14n(i)
+      vy3614n(i) = vy36n(i) - vy14n(i)
+      vx2514n(i) = vx25n(i) - vx14n(i)
+      vy2514n(i) = vy25n(i) - vy14n(i)
+   end do
+
+   ! Constant part - strain rate calculation
+   do i = 1, nel
+      dxx(i) = px1(i)*vx14(i) + px2(i)*vx25(i) + &
+                   px3(i)*vx36(i) + px4(i)*vxhi(i)
+      dyy(i) = py1(i)*vy14(i) + py2(i)*vy25(i) + &
+                   py3(i)*vy36(i) + py4(i)*vyhi(i)
+      dzz(i) = pz1(i)*vz14(i) + pz2(i)*vz25(i) + &
+                   pz3(i)*vz36(i) + pz4(i)*vzhi(i)
+      dxy(i) = py1(i)*vx14(i) + py2(i)*vx25(i) + &
+                   py3(i)*vx36(i) + py4(i)*vxhi(i)
+      dyx(i) = px1(i)*vy14(i) + px2(i)*vy25(i) + &
+                   px3(i)*vy36(i) + px4(i)*vyhi(i)
+      
+      ! Shear treatment
+      dxz(i) = ji33(i)*2.0_WP*vxhi(i) &
+                   - b1122(i)*vx36n(i) + b1221(i)*vx25n(i) &
+                   + b2212(i)*(vy25n(i) - vy36n(i))
+      dxz(i) = dxz(i) + ji33(i)*(vxhi(i) - vx14n(i)) &
+                   - b1x(i,1)*vx3614n(i) + b1x(i,2)*vx2514n(i) &
+                   - b1y(i,1)*vy3614n(i) + b1y(i,2)*vy2514n(i)
+      dyz(i) = ji33(i)*2.0_WP*vyhi(i) &
+                   - b1122(i)*vy25n(i) + b1221(i)*vy36n(i) &
+                   + b1121(i)*(vx36n(i) - vx25n(i))
+      dyz(i) = dyz(i) + ji33(i)*(vyhi(i) - vy14n(i)) &
+                   + b2x(i,1)*vx3614n(i) - b2x(i,2)*vx2514n(i) &
+                   + b2y(i,1)*vy3614n(i) - b2y(i,2)*vy2514n(i)
+
+      dzx(i) = 0.5_WP*(px1(i)*vz14(i) + px2(i)*vz25(i) + &
+                   px3(i)*vz36(i))
+      dzy(i) = 0.5_WP*(py1(i)*vz14(i) + py2(i)*vz25(i) + &
+                   py3(i)*vz36(i))
+   end do
+
+   ! Initialize spin rates
+   do i = 1, nel
+      wxx(i) = 0.0_WP
+      wyy(i) = 0.0_WP
+      wzz(i) = 0.0_WP
+   end do
+
+   ! Non-constant part - hourglass control
+   do i = 1, nel
+      nu1 = nu(i) / (1.0_WP - nu(i))
+      pxavx = px1(i)*vx14n(i) + px2(i)*vx25n(i) + px3(i)*vx36n(i)
+      pyavy = py1(i)*vy14n(i) + py2(i)*vy25n(i) + py3(i)*vy36n(i)
+      pzavz = pz1(i)*vz14n(i) + pz2(i)*vz25n(i) + pz3(i)*vz36n(i)
+      pxsvx = px1h(i)*vx14(i) + px2h(i)*vx25(i) + px3h(i)*vx36(i)
+      pysvy = py1h(i)*vy14(i) + py2h(i)*vy25(i) + py3h(i)*vz36(i)
+      pzsvz = pz1h(i)*vz14(i) + pz2h(i)*vz25(i) + pz3h(i)*vz36(i)
+      termad = -nu(i)*pyavy - nu1*pzavz
+      ddhv(i) = termad
+      dhxx(i) = pxsvx + pxavx + termad
+      termad = -nu(i)*pxsvx - nu1*pzsvz
+      ddhv(i) = ddhv(i) + termad
+      dhyy(i) = pysvy + pyavy + termad
+      termad = -nu(i)*(pxsvx + pyavy) - nu1*(pxavx + pysvy)
+      ddhv(i) = ddhv(i) + termad
+      dhzz(i) = pzsvz + pzavz + termad
+      dhxy(i) = py1(i)*vx14n(i) + py2(i)*vx25n(i) + &
+                     py3(i)*vx36n(i) + &
+                     py1h(i)*vx14(i) + py2h(i)*vx25(i) + &
+                     py3h(i)*vx36(i)
+      dhyx(i) = px1(i)*vy14n(i) + px2(i)*vy25n(i) + &
+                     px3(i)*vy36n(i) + &
+                     px1h(i)*vy14(i) + px2h(i)*vy25(i) + &
+                     px3h(i)*vy36(i)
+      
+      ! Shear treatment for hourglass
+      dhxz(i) = -b1122h(i)*vx36n(i) + b1221h(i)*vx25n(i) &
+                     + b2212h(i)*(vy25n(i) - vy36n(i))
+      dhxz(i) = dhxz(i) &
+                     - b1xh(i,1)*vx3614n(i) + b1xh(i,2)*vx2514n(i) &
+                     - b1yh(i,1)*vy3614n(i) + b1yh(i,2)*vy2514n(i)
+      dhyz(i) = -b1122h(i)*vy25n(i) + b1221h(i)*vy36n(i) &
+                     + b1121h(i)*(vx36n(i) - vx25n(i))
+      dhyz(i) = dhyz(i) &
+                     + b2xh(i,1)*vx3614n(i) - b2xh(i,2)*vx2514n(i) &
+                     + b2yh(i,1)*vy3614n(i) - b2yh(i,2)*vy2514n(i)
+      dhzx(i) = 0.5_WP*(px1h(i)*vz14(i) + px2h(i)*vz25(i) + &
+                     px3h(i)*vz36(i))
+      dhzy(i) = 0.5_WP*(py1h(i)*vz14(i) + py2h(i)*vz25(i) + &
+                     py3h(i)*vz36(i))
+   end do
+
+   ! Alternative strain rate calculation (direct node approach)
+   do i = 1, nel
+      dxx(i) = px1(i)*vx1(i) + px2(i)*vx2(i) + px5(i)*vx5(i) + &
+                   px3(i)*vx3(i) + px6(i)*vx6(i) + px4(i)*vx4(i)
+
+      dyy(i) = py1(i)*vy1(i) + py2(i)*vy2(i) + py5(i)*vy5(i) + &
+                   py3(i)*vy3(i) + py6(i)*vy6(i) + py4(i)*vy4(i)
+
+      dzz(i) = pz1(i)*vz1(i) + pz2(i)*vz2(i) + pz5(i)*vz5(i) + &
+                   pz3(i)*vz3(i) + pz6(i)*vz6(i) + pz4(i)*vz4(i)
+
+      dxy(i) = py1(i)*vx1(i) + py2(i)*vx2(i) + py5(i)*vx5(i) + &
+                   py3(i)*vx3(i) + py6(i)*vx6(i) + py4(i)*vx4(i)
+
+      dyx(i) = px1(i)*vy1(i) + px2(i)*vy2(i) + px5(i)*vy5(i) + &
+                   px3(i)*vy3(i) + px6(i)*vy6(i) + px4(i)*vy4(i)
+
+      dxz(i) = pz1(i)*vx1(i) + pz2(i)*vx2(i) + pz5(i)*vx5(i) + &
+                   pz3(i)*vx3(i) + pz6(i)*vx6(i) + pz4(i)*vx4(i)
+
+      dzx(i) = px1(i)*vz1(i) + px2(i)*vz2(i) + px5(i)*vz5(i) + &
+                   px3(i)*vz3(i) + px6(i)*vz6(i) + px4(i)*vz4(i)
+
+      dzy(i) = py1(i)*vz1(i) + py2(i)*vz2(i) + py5(i)*vz5(i) + &
+                   py3(i)*vz3(i) + py6(i)*vz6(i) + py4(i)*vz4(i)
+
+      dyz(i) = pz1(i)*vy1(i) + pz2(i)*vy2(i) + pz5(i)*vy5(i) + &
+                   pz3(i)*vy3(i) + pz6(i)*vy6(i) + pz4(i)*vy4(i)
+   end do
+!C
       RETURN
-      END
+
+      end subroutine s6cdefc3_2
+      end module s6cdefc3_2_mod

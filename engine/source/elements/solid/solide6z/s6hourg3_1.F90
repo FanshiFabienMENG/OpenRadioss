@@ -1,25 +1,25 @@
-Copyright>        OpenRadioss
-Copyright>        Copyright (C) 1986-2025 Altair Engineering Inc.
-Copyright>
-Copyright>        This program is free software: you can redistribute it and/or modify
-Copyright>        it under the terms of the GNU Affero General Public License as published by
-Copyright>        the Free Software Foundation, either version 3 of the License, or
-Copyright>        (at your option) any later version.
-Copyright>
-Copyright>        This program is distributed in the hope that it will be useful,
-Copyright>        but WITHOUT ANY WARRANTY; without even the implied warranty of
-Copyright>        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-Copyright>        GNU Affero General Public License for more details.
-Copyright>
-Copyright>        You should have received a copy of the GNU Affero General Public License
-Copyright>        along with this program.  If not, see <https://www.gnu.org/licenses/>.
-Copyright>
-Copyright>
-Copyright>        Commercial Alternative: Altair Radioss Software
-Copyright>
-Copyright>        As an alternative to this open-source version, Altair also offers Altair Radioss
-Copyright>        software under a commercial license.  Contact Altair to discuss further if the
-Copyright>        commercial version may interest you: https://www.altair.com/radioss/.
+!Copyright>        OpenRadioss
+!Copyright>        Copyright (C) 1986-2025 Altair Engineering Inc.
+!Copyright>
+!Copyright>        This program is free software: you can redistribute it and/or modify
+!Copyright>        it under the terms of the GNU Affero General Public License as published by
+!Copyright>        the Free Software Foundation, either version 3 of the License, or
+!Copyright>        (at your option) any later version.
+!Copyright>
+!Copyright>        This program is distributed in the hope that it will be useful,
+!Copyright>        but WITHOUT ANY WARRANTY; without even the implied warranty of
+!Copyright>        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!Copyright>        GNU Affero General Public License for more details.
+!Copyright>
+!Copyright>        You should have received a copy of the GNU Affero General Public License
+!Copyright>        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+!Copyright>
+!Copyright>
+!Copyright>        Commercial Alternative: Altair Radioss Software
+!Copyright>
+!Copyright>        As an alternative to this open-source version, Altair also offers Altair Radioss
+!Copyright>        software under a commercial license.  Contact Altair to discuss further if the
+!Copyright>        commercial version may interest you: https://www.altair.com/radioss/.
       !||====================================================================
       !||    s6chour3   ../engine/source/elements/thickshell/solide6c/s6chourg3.F
       !||--- called by ------------------------------------------------------
@@ -45,449 +45,534 @@ Copyright>        commercial version may interest you: https://www.altair.com/ra
 !     .     F21,F22,F23,F24,F25,F26,
 !     .     F31,F32,F33,F34,F35,F36,     
 !     .     NU,GBUF%HOURG,OFF,GBUF%VOL,GBUF%EINT,NEL,MAT)
-      SUBROUTINE S6CHOUR3_1(
-     .   PM, NPROPM, RHO,VOL,SSP,  !A VERIFIER CHAQUE PARAMETER
-     .   X1, X2, X3, X4, X5, X6, X7, X8,
-     .   Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8,
-     .   Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8,
-     .   VX1, VX2, VX3, VX4, VX5, VX6, VX7, VX8,
-     .   VY1, VY2, VY3, VY4, VY5, VY6, VY7, VY8,    
-     .   VZ1, VZ2, VZ3, VZ4, VZ5, VZ6, VZ7, VZ8,
-     .   F11,F12,F13,F15,F16,F17,
-     .   F21,F22,F23,F25,F26,F27,     
-     .   F31,F32,F33,F35,F36,F37,
-     .   NU ,FHOUR ,OFF,VOL0,EINT,NEL,
-     .   MAT,NPROPG,GEO,PID) !A VERIFIER CHAQUE PARAMETER
-!MAT PM, NPROPM,is verified
-C-----------------------------------------------
-C   M O D U L E S
-C-----------------------------------------------
-C-----------------------------------------------
-C   I M P L I C I T   T Y P E S
-C-----------------------------------------------
-       USE DEBUG_MOD
-#include      "implicit_f.inc"
-C-----------------------------------------------
-C   G L O B A L   P A R A M E T E R S
-C-----------------------------------------------
-#include      "mvsiz_p.inc"
-C-----------------------------------------------
-C   C O M M O N   B L O C K S
-C-----------------------------------------------
-#include      "com08_c.inc"
-C-----------------------------------------------
-C   D U M M Y   A R G U M E N T S
-C-----------------------------------------------
-      INTEGER , INTENT(IN)  :: NEL, NPROPM,MAT(*),NPROPG,PID(*)
-C     REAL
-      my_real, DIMENSION(MVSIZ) , INTENT(IN)  :: 
-     .   X1, X2, X3, X4, X5, X6, X7, X8, 
-     .   Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8,  
-     .   Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8,   
-     .   VZ1,VZ2,VZ3,VZ4,VZ5,VZ6,VZ7,VZ8,
-     .   VX1,VX2,VX3,VX4,VX5,VX6,VX7,VX8,
-     .   VY1,VY2,VY3,VY4,VY5,VY6,VY7,VY8,
-     .   RHO,VOL,SSP,NU,OFF,
-     .   PM(NPROPM,*),GEO(NPROPG,*)
-      my_real, DIMENSION(NEL) , INTENT(IN)  :: VOL0
-      my_real, DIMENSION(NEL) , INTENT(INOUT)  :: EINT
-      my_real, DIMENSION(MVSIZ) , INTENT(INOUT)  :: 
-     .   F11,F12,F13,F15,F16,F17,
-     .   F21,F22,F23,F25,F26,F27,
-     .   F31,F32,F33,F35,F36,F37
-      my_real, DIMENSION(NEL,3,4) , INTENT(INOUT)  :: FHOUR
-C-----------------------------------------------
-C   L O C A L   V A R I A B L E S
-C-----------------------------------------------
-      INTEGER :: I,J, MX,MT,Write_flag,hourglass   
-C                                                                     12
-      my_real
-     .   DETT ,  
-     .   JACI1, JACI2, JACI3,
-     .   JACI4, JACI5, JACI6,
-     .   JACI7, JACI8, JACI9,
-     .   X17(MVSIZ) , X28(MVSIZ) , X35(MVSIZ) , X46(MVSIZ),
-     .   Y17(MVSIZ) , Y28(MVSIZ) , Y35(MVSIZ) , Y46(MVSIZ),
-     .   Z17(MVSIZ) , Z28(MVSIZ) , Z35(MVSIZ) , Z46(MVSIZ),
-     .   JAC_59_68(MVSIZ), JAC_67_49(MVSIZ), JAC_48_57(MVSIZ),JAC_19_37(MVSIZ),
-     .   JACI12, JACI45, JACI78,
-     .   X_17_46 , X_28_35 ,
-     .   Y_17_46 , Y_28_35 ,
-     .   Z_17_46 , Z_28_35 ,
-     .   HX,HY,HZ,H1X,H1Y,H1Z,H2X,H2Y,H2Z,H3X,H3Y,H3Z,H4X,H4Y,H4Z,
-     .   PX1(MVSIZ), PX2(MVSIZ), PX3(MVSIZ), PX4(MVSIZ),  
-     .   PY1(MVSIZ), PY2(MVSIZ), PY3(MVSIZ), PY4(MVSIZ),  
-     .   PZ1(MVSIZ), PZ2(MVSIZ), PZ3(MVSIZ), PZ4(MVSIZ),  
-     .   PX1H1(MVSIZ),PX2H1(MVSIZ),PX3H1(MVSIZ),PX4H1(MVSIZ),   
-     .   PX1H2(MVSIZ),PX2H2(MVSIZ),PX3H2(MVSIZ),PX4H2(MVSIZ),   
-     .   PX1H3(MVSIZ),PX2H3(MVSIZ),PX3H3(MVSIZ),PX4H3(MVSIZ),   
-     .   PX1H4(MVSIZ),PX2H4(MVSIZ),PX3H4(MVSIZ),PX4H4(MVSIZ),        
-     .   JAC1(MVSIZ),JAC2(MVSIZ),JAC3(MVSIZ),
-     .   JAC4(MVSIZ),JAC5(MVSIZ),JAC6(MVSIZ),
-     .   JAC7(MVSIZ),JAC8(MVSIZ),JAC9(MVSIZ),DET(MVSIZ)
-      my_real
-!     .   G11(MVSIZ),G21(MVSIZ),G31(MVSIZ),G41(MVSIZ),
-!     .   G51(MVSIZ),G61(MVSIZ),G71(MVSIZ),G81(MVSIZ),
-!     .   G12(MVSIZ),G22(MVSIZ),G32(MVSIZ),G42(MVSIZ),
-!     .   G52(MVSIZ),G62(MVSIZ),G72(MVSIZ),G82(MVSIZ),
-!     .   G13(MVSIZ),G23(MVSIZ),G33(MVSIZ),G43(MVSIZ),
-!     .   G53(MVSIZ),G63(MVSIZ),G73(MVSIZ),G83(MVSIZ),
-!     .   G14(MVSIZ),G24(MVSIZ),G34(MVSIZ),G44(MVSIZ),
-!     .   G54(MVSIZ),G64(MVSIZ),G74(MVSIZ),G84(MVSIZ),
-     .   FCL(MVSIZ),NFHZ1(MVSIZ),NFHZ2(MVSIZ),VZ17,VZ28,VZ35,VZ46,
-     .   H1VZ,H2VZ,HGZ1(MVSIZ),HGZ2(MVSIZ),CC,
-     .   GG(MVSIZ) ,E_DT(MVSIZ),THK,THK_1(MVSIZ),
-     .   RHO0,G0,C1,NUU,CXX(MVSIZ),CAQ(MVSIZ),
-     .   G_3DT(MVSIZ),E0(MVSIZ),
-     .   NU1(MVSIZ),NU2(MVSIZ),NU3(MVSIZ),NU4(MVSIZ),
-     .   VX3478, VX2358, VX1467, VX1256, 
-     .   VY3478, VY2358, VY1467, VY1256,
-     .   VZ3478, VZ2358, VZ1467, VZ1256,
-     .   VX17, VY17, 
-     .   VX28, VY28, 
-     .   VX35, VY35, 
-     .   VX46, VY46, 
-     .   HGX1(MVSIZ), HGX2(MVSIZ), HGX3(MVSIZ), HGX4(MVSIZ),
-     .   HGY1(MVSIZ), HGY2(MVSIZ), HGY3(MVSIZ), HGY4(MVSIZ),
-     .   HGZ3(MVSIZ), HGZ4(MVSIZ),
-     .   JR_1(MVSIZ),JS_1(MVSIZ),JT_1(MVSIZ),NFHOUR(MVSIZ,3,4),
-     .   JR0(MVSIZ) ,JS0(MVSIZ) ,JT0(MVSIZ),
-     .   H11(MVSIZ), H22(MVSIZ), H33(MVSIZ),
-     .   H12(MVSIZ), H13(MVSIZ), H23(MVSIZ),
-     .   FHOUR2(MVSIZ,3,4), !//TODO: A corriger Comme entrer
-     .   E_R,E_S,E_T,
-     .   DFHOUR(MVSIZ,3,4),FHOURT(3,4),
-     ,   NFHX1(MVSIZ),NFHX2(MVSIZ),NFHX3(MVSIZ),NFHX4(MVSIZ),
-     ,   NFHY1(MVSIZ),NFHY2(MVSIZ),NFHY3(MVSIZ),NFHY4(MVSIZ),
-     ,   NFHZ3(MVSIZ),NFHZ4(MVSIZ),
-     .   F11_hgl(MVSIZ),F12_hgl(MVSIZ),F13_hgl(MVSIZ),F14_hgl(MVSIZ),F15_hgl(MVSIZ),F16_hgl(MVSIZ),
-     .   F17_hgl(MVSIZ),F18_hgl(MVSIZ),
-     .   F21_hgl(MVSIZ),F22_hgl(MVSIZ),F23_hgl(MVSIZ),F24_hgl(MVSIZ),F25_hgl(MVSIZ),F26_hgl(MVSIZ),
-     .   F27_hgl(MVSIZ),F28_hgl(MVSIZ),
-     .   F31_hgl(MVSIZ),F32_hgl(MVSIZ),F33_hgl(MVSIZ),F34_hgl(MVSIZ),F35_hgl(MVSIZ),F36_hgl(MVSIZ),
-     .   F37_hgl(MVSIZ),F38_hgl(MVSIZ),
-     .   HQ13P,HQ13N,HQ24P,HQ24N,FF
-C=======================================================================
-C Same in Isolid24
+      module s6hour3_2_mod
+      contains
 
-      Write_flag = 0
+      !! \brief Compute hourglass forces for 6-node solid elements
+      !! \details This subroutine calculates hourglass control forces for 6-node solid elements
+      !!          to prevent spurious zero-energy modes. It computes the hourglass forces and
+      !!          updates the nodal forces and internal energy.
+      subroutine s6hour3_2(                &
+            pm, npropm, rho, vol, ssp,      &
+            x1, x2, x3, x4, x5, x6, x7, x8, &
+            y1, y2, y3, y4, y5, y6, y7, y8, &
+            z1, z2, z3, z4, z5, z6, z7, z8, &
+            vx1, vx2, vx3, vx4, vx5, vx6, vx7, vx8, &
+            vy1, vy2, vy3, vy4, vy5, vy6, vy7, vy8, &
+            vz1, vz2, vz3, vz4, vz5, vz6, vz7, vz8, &
+            f11, f12, f13, f15, f16, f17, &
+            f21, f22, f23, f25, f26, f27, &
+            f31, f32, f33, f35, f36, f37, &
+            nu, fhour, off, vol0, eint, nel, &
+            mat, npropg, geo, pid,          &
+            dt1)
+
+
+      ! ----------------------------------------------------------------------------------------------------------------------
+      !                                                   MODULES
+      ! ----------------------------------------------------------------------------------------------------------------------
+!         use DEBUG_MOD
+         use PRECISION_MOD, only : WP
+         use CONSTANT_MOD, only : ZERO, ONE, TWO, THIRD, FOURTH, HALF, ONE_OVER_8, &
+                                              ONE_OVER_64, TWO_THIRD, EM20, ZEP00666666667
+
+      ! ----------------------------------------------------------------------------------------------------------------------
+      !                                                   IMPLICIT NONE
+      ! ----------------------------------------------------------------------------------------------------------------------
+         implicit none
+
+      ! ----------------------------------------------------------------------------------------------------------------------
+      !                                                   INCLUDED FILES
+      ! ----------------------------------------------------------------------------------------------------------------------
+!      #include "com08_c.inc"
+!      #include "mvsiz_p.inc"
+
+!A VERIFIER CHAQUE PARAMETER
+!MAT PM, NPROPM,is verified
+!C-----------------------------------------------
+!C   M O D U L E S
+!C-----------------------------------------------
+!C-----------------------------------------------
+!C   I M P L I C I T   T Y P E S
+!C-----------------------------------------------
+!       USE DEBUG_MOD
+!#include      "implicit_f.inc"
+!C-----------------------------------------------
+!C   G L O B A L   P A R A M E T E R S
+!C-----------------------------------------------
+!#include      "mvsiz_p.inc"
+!C-----------------------------------------------
+!C   C O M M O N   B L O C K S
+!C-----------------------------------------------
+!#include      "com08_c.inc"
+!C-----------------------------------------------
+!C   D U M M Y   A R G U M E N T S
+! ----------------------------------------------------------------------------------------------------------------------
+!                                                   ARGUMENTS
+! ----------------------------------------------------------------------------------------------------------------------
+         real(kind=WP),              intent(in) :: dt1 !< time step
+   integer                                   , intent(in)    :: nel         !< Number of elements
+   integer                                   , intent(in)    :: npropm      !< Number of material property columns
+   integer                                   , intent(in)    :: npropg      !< Number of property group columns
+   integer, dimension(nel)                   , intent(in)    :: mat         !< Material identifiers
+   integer, dimension(nel)                   , intent(in)    :: pid         !< Property identifiers
+   real(kind=WP), dimension(npropm,*)        , intent(in)    :: pm          !< Material properties
+   real(kind=WP), dimension(npropg,*)        , intent(in)    :: geo         !< Geometry properties
+   real(kind=WP), dimension(nel)             , intent(in)    :: rho         !< Density
+   real(kind=WP), dimension(nel)             , intent(in)    :: vol         !< Current volume
+   real(kind=WP), dimension(nel)             , intent(in)    :: ssp         !< Sound speed
+   real(kind=WP), dimension(nel)             , intent(in)    :: x1          !< X-coordinate of node 1
+   real(kind=WP), dimension(nel)             , intent(in)    :: x2          !< X-coordinate of node 2
+   real(kind=WP), dimension(nel)             , intent(in)    :: x3          !< X-coordinate of node 3
+   real(kind=WP), dimension(nel)             , intent(in)    :: x4          !< X-coordinate of node 4
+   real(kind=WP), dimension(nel)             , intent(in)    :: x5          !< X-coordinate of node 5
+   real(kind=WP), dimension(nel)             , intent(in)    :: x6          !< X-coordinate of node 6
+   real(kind=WP), dimension(nel)             , intent(in)    :: x7          !< X-coordinate of node 7
+   real(kind=WP), dimension(nel)             , intent(in)    :: x8          !< X-coordinate of node 8
+   real(kind=WP), dimension(nel)             , intent(in)    :: y1          !< Y-coordinate of node 1
+   real(kind=WP), dimension(nel)             , intent(in)    :: y2          !< Y-coordinate of node 2
+   real(kind=WP), dimension(nel)             , intent(in)    :: y3          !< Y-coordinate of node 3
+   real(kind=WP), dimension(nel)             , intent(in)    :: y4          !< Y-coordinate of node 4
+   real(kind=WP), dimension(nel)             , intent(in)    :: y5          !< Y-coordinate of node 5
+   real(kind=WP), dimension(nel)             , intent(in)    :: y6          !< Y-coordinate of node 6
+   real(kind=WP), dimension(nel)             , intent(in)    :: y7          !< Y-coordinate of node 7
+   real(kind=WP), dimension(nel)             , intent(in)    :: y8          !< Y-coordinate of node 8
+   real(kind=WP), dimension(nel)             , intent(in)    :: z1          !< Z-coordinate of node 1
+   real(kind=WP), dimension(nel)             , intent(in)    :: z2          !< Z-coordinate of node 2
+   real(kind=WP), dimension(nel)             , intent(in)    :: z3          !< Z-coordinate of node 3
+   real(kind=WP), dimension(nel)             , intent(in)    :: z4          !< Z-coordinate of node 4
+   real(kind=WP), dimension(nel)             , intent(in)    :: z5          !< Z-coordinate of node 5
+   real(kind=WP), dimension(nel)             , intent(in)    :: z6          !< Z-coordinate of node 6
+   real(kind=WP), dimension(nel)             , intent(in)    :: z7          !< Z-coordinate of node 7
+   real(kind=WP), dimension(nel)             , intent(in)    :: z8          !< Z-coordinate of node 8
+   real(kind=WP), dimension(nel)             , intent(in)    :: vx1         !< X-velocity of node 1
+   real(kind=WP), dimension(nel)             , intent(in)    :: vx2         !< X-velocity of node 2
+   real(kind=WP), dimension(nel)             , intent(in)    :: vx3         !< X-velocity of node 3
+   real(kind=WP), dimension(nel)             , intent(in)    :: vx4         !< X-velocity of node 4
+   real(kind=WP), dimension(nel)             , intent(in)    :: vx5         !< X-velocity of node 5
+   real(kind=WP), dimension(nel)             , intent(in)    :: vx6         !< X-velocity of node 6
+   real(kind=WP), dimension(nel)             , intent(in)    :: vx7         !< X-velocity of node 7
+   real(kind=WP), dimension(nel)             , intent(in)    :: vx8         !< X-velocity of node 8
+   real(kind=WP), dimension(nel)             , intent(in)    :: vy1         !< Y-velocity of node 1
+   real(kind=WP), dimension(nel)             , intent(in)    :: vy2         !< Y-velocity of node 2
+   real(kind=WP), dimension(nel)             , intent(in)    :: vy3         !< Y-velocity of node 3
+   real(kind=WP), dimension(nel)             , intent(in)    :: vy4         !< Y-velocity of node 4
+   real(kind=WP), dimension(nel)             , intent(in)    :: vy5         !< Y-velocity of node 5
+   real(kind=WP), dimension(nel)             , intent(in)    :: vy6         !< Y-velocity of node 6
+   real(kind=WP), dimension(nel)             , intent(in)    :: vy7         !< Y-velocity of node 7
+   real(kind=WP), dimension(nel)             , intent(in)    :: vy8         !< Y-velocity of node 8
+   real(kind=WP), dimension(nel)             , intent(in)    :: vz1         !< Z-velocity of node 1
+   real(kind=WP), dimension(nel)             , intent(in)    :: vz2         !< Z-velocity of node 2
+   real(kind=WP), dimension(nel)             , intent(in)    :: vz3         !< Z-velocity of node 3
+   real(kind=WP), dimension(nel)             , intent(in)    :: vz4         !< Z-velocity of node 4
+   real(kind=WP), dimension(nel)             , intent(in)    :: vz5         !< Z-velocity of node 5
+   real(kind=WP), dimension(nel)             , intent(in)    :: vz6         !< Z-velocity of node 6
+   real(kind=WP), dimension(nel)             , intent(in)    :: vz7         !< Z-velocity of node 7
+   real(kind=WP), dimension(nel)             , intent(in)    :: vz8         !< Z-velocity of node 8
+   real(kind=WP), dimension(nel)             , intent(in)    :: nu          !< Poisson's ratio
+   real(kind=WP), dimension(nel)             , intent(in)    :: off         !< Element activation flag
+   real(kind=WP), dimension(nel)             , intent(in)    :: vol0        !< Initial volume
+   real(kind=WP), dimension(nel)             , intent(inout) :: f11         !< X-force at node 1
+   real(kind=WP), dimension(nel)             , intent(inout) :: f12         !< X-force at node 2
+   real(kind=WP), dimension(nel)             , intent(inout) :: f13         !< X-force at node 3
+   real(kind=WP), dimension(nel)             , intent(inout) :: f15         !< X-force at node 5
+   real(kind=WP), dimension(nel)             , intent(inout) :: f16         !< X-force at node 6
+   real(kind=WP), dimension(nel)             , intent(inout) :: f17         !< X-force at node 7
+   real(kind=WP), dimension(nel)             , intent(inout) :: f21         !< Y-force at node 1
+   real(kind=WP), dimension(nel)             , intent(inout) :: f22         !< Y-force at node 2
+   real(kind=WP), dimension(nel)             , intent(inout) :: f23         !< Y-force at node 3
+   real(kind=WP), dimension(nel)             , intent(inout) :: f25         !< Y-force at node 5
+   real(kind=WP), dimension(nel)             , intent(inout) :: f26         !< Y-force at node 6
+   real(kind=WP), dimension(nel)             , intent(inout) :: f27         !< Y-force at node 7
+   real(kind=WP), dimension(nel)             , intent(inout) :: f31         !< Z-force at node 1
+   real(kind=WP), dimension(nel)             , intent(inout) :: f32         !< Z-force at node 2
+   real(kind=WP), dimension(nel)             , intent(inout) :: f33         !< Z-force at node 3
+   real(kind=WP), dimension(nel)             , intent(inout) :: f35         !< Z-force at node 5
+   real(kind=WP), dimension(nel)             , intent(inout) :: f36         !< Z-force at node 6
+   real(kind=WP), dimension(nel)             , intent(inout) :: f37         !< Z-force at node 7
+   real(kind=WP), dimension(nel,3,4)         , intent(inout) :: fhour       !< Hourglass forces
+   real(kind=WP), dimension(nel)             , intent(inout) :: eint        !< Internal energy
+!C-----------------------------------------------
+!C   L O C A L   V A R I A B L E S
+! ----------------------------------------------------------------------------------------------------------------------
+!                                                   LOCAL VARIABLES
+! ----------------------------------------------------------------------------------------------------------------------
+   integer :: i, j, mx, mt, write_flag, hourglass
+   integer :: nindx, ninievo, ilen
+   integer, dimension(nel) :: indx
+   integer, dimension(nel, 2) :: ipos
+   integer, dimension(:), allocatable :: initype, evotype, evoshap, comptyp, tab_id, &
+                                                            tab_el, fcrit
+
+   real(kind=WP) :: dett
+   real(kind=WP) :: jaci1, jaci2, jaci3, jaci4, jaci5, jaci6, jaci7, jaci8, jaci9
+   real(kind=WP) :: jaci12, jaci45, jaci78
+   real(kind=WP) :: x_17_46, x_28_35, y_17_46, y_28_35, z_17_46, z_28_35
+   real(kind=WP) :: hx, hy, hz, h1x, h1y, h1z, h2x, h2y, h2z, h3x, h3y, h3z, h4x, h4y, h4z
+   real(kind=WP) :: cc, rho0, g0, c1, nuu, thk
+   real(kind=WP) :: vx3478, vx2358, vx1467, vx1256
+   real(kind=WP) :: vy3478, vy2358, vy1467, vy1256
+   real(kind=WP) :: vz3478, vz2358, vz1467, vz1256
+   real(kind=WP) :: vx17, vy17, vx28, vy28, vx35, vy35, vx46, vy46
+   real(kind=WP) :: vz17, vz28, vz35, vz46, h1vz, h2vz
+   real(kind=WP) :: e_r, e_s, e_t
+   real(kind=WP) :: hq13p, hq13n, hq24p, hq24n, ff
+
+   real(kind=WP), dimension(nel) :: x17, x28, x35, x46
+   real(kind=WP), dimension(nel) :: y17, y28, y35, y46
+   real(kind=WP), dimension(nel) :: z17, z28, z35, z46
+   real(kind=WP), dimension(nel) :: jac_59_68, jac_67_49, jac_48_57, jac_19_37
+   real(kind=WP), dimension(nel) :: px1, px2, px3, px4
+   real(kind=WP), dimension(nel) :: py1, py2, py3, py4
+   real(kind=WP), dimension(nel) :: pz1, pz2, pz3, pz4
+   real(kind=WP), dimension(nel) :: px1h1, px2h1, px3h1, px4h1
+   real(kind=WP), dimension(nel) :: px1h2, px2h2, px3h2, px4h2
+   real(kind=WP), dimension(nel) :: px1h3, px2h3, px3h3, px4h3
+   real(kind=WP), dimension(nel) :: px1h4, px2h4, px3h4, px4h4
+   real(kind=WP), dimension(nel) :: jac1, jac2, jac3, jac4, jac5, jac6, jac7, jac8, jac9, det
+   real(kind=WP), dimension(nel) :: fcl, nfhz1, nfhz2, hgz1, hgz2
+   real(kind=WP), dimension(nel) :: gg, e_dt, thk_1
+   real(kind=WP), dimension(nel) :: cxx, caq
+   real(kind=WP), dimension(nel) :: g_3dt, e0
+   real(kind=WP), dimension(nel) :: nu1, nu2, nu3, nu4
+   real(kind=WP), dimension(nel) :: hgx1, hgx2, hgx3, hgx4
+   real(kind=WP), dimension(nel) :: hgy1, hgy2, hgy3, hgy4
+   real(kind=WP), dimension(nel) :: hgz3, hgz4
+   real(kind=WP), dimension(nel) :: jr_1, js_1, jt_1
+   real(kind=WP), dimension(nel) :: jr0, js0, jt0
+   real(kind=WP), dimension(nel) :: h11, h22, h33, h12, h13, h23
+   real(kind=WP), dimension(nel, 3, 4) :: fhour2, dfhour, nfhour
+   real(kind=WP), dimension(3, 4) :: fhourt
+   real(kind=WP), dimension(nel) :: nfhx1, nfhx2, nfhx3, nfhx4
+   real(kind=WP), dimension(nel) :: nfhy1, nfhy2, nfhy3, nfhy4
+   real(kind=WP), dimension(nel) :: nfhz3, nfhz4
+   real(kind=WP), dimension(nel) :: f11_hgl, f12_hgl, f13_hgl, f14_hgl, f15_hgl, f16_hgl
+   real(kind=WP), dimension(nel) :: f17_hgl, f18_hgl
+   real(kind=WP), dimension(nel) :: f21_hgl, f22_hgl, f23_hgl, f24_hgl, f25_hgl, f26_hgl
+   real(kind=WP), dimension(nel) :: f27_hgl, f28_hgl
+   real(kind=WP), dimension(nel) :: f31_hgl, f32_hgl, f33_hgl, f34_hgl, f35_hgl, f36_hgl
+   real(kind=WP), dimension(nel) :: f37_hgl, f38_hgl
+!C=======================================================================
+!C Same in Isolid24
+
+      write_flag = 0
       hourglass = 1
        
-      if (Write_flag == 1) THEN
-      DO I=1,NEL
-      write(*,*) 'I = ', I
-      write(*,*) 'X1(I) = ', X1(I)
-      write(*,*) 'X2(I) = ', X2(I)
-      write(*,*) 'X3(I) = ', X3(I)
-      write(*,*) 'X4(I) = ', X4(I)
-      write(*,*) 'X5(I) = ', X5(I)
-      write(*,*) 'X6(I) = ', X6(I)
-      write(*,*) 'X7(I) = ', X7(I)
-      write(*,*) 'X8(I) = ', X8(I)
-      write(*,*) 'Y1(I) = ', Y1(I)
-      write(*,*) 'Y2(I) = ', Y2(I)
-      write(*,*) 'Y3(I) = ', Y3(I)
-      write(*,*) 'Y4(I) = ', Y4(I)
-      write(*,*) 'Y5(I) = ', Y5(I)
-      write(*,*) 'Y6(I) = ', Y6(I)
-      write(*,*) 'Y7(I) = ', Y7(I)
-      write(*,*) 'Y8(I) = ', Y8(I)
-      write(*,*) 'Z1(I) = ', Z1(I)
-      write(*,*) 'Z2(I) = ', Z2(I)
-      write(*,*) 'Z3(I) = ', Z3(I)
-      write(*,*) 'Z4(I) = ', Z4(I)
-      write(*,*) 'Z5(I) = ', Z5(I)
-      write(*,*) 'Z6(I) = ', Z6(I)
-      write(*,*) 'Z7(I) = ', Z7(I)
-      write(*,*) 'Z8(I) = ', Z8(I)
+      if (write_flag == 1) then
+      do i=1,nel
+      write(*,*) 'i = ', i
+      write(*,*) 'x1(i) = ', x1(i)
+      write(*,*) 'x2(i) = ', x2(i)
+      write(*,*) 'x3(i) = ', x3(i)
+      write(*,*) 'x4(i) = ', x4(i)
+      write(*,*) 'x5(i) = ', x5(i)
+      write(*,*) 'x6(i) = ', x6(i)
+      write(*,*) 'x7(i) = ', x7(i)
+      write(*,*) 'x8(i) = ', x8(i)
+      write(*,*) 'y1(i) = ', y1(i)
+      write(*,*) 'y2(i) = ', y2(i)
+      write(*,*) 'y3(i) = ', y3(i)
+      write(*,*) 'y4(i) = ', y4(i)
+      write(*,*) 'y5(i) = ', y5(i)
+      write(*,*) 'y6(i) = ', y6(i)
+      write(*,*) 'y7(i) = ', y7(i)
+      write(*,*) 'y8(i) = ', y8(i)
+      write(*,*) 'z1(i) = ', z1(i)
+      write(*,*) 'z2(i) = ', z2(i)
+      write(*,*) 'z3(i) = ', z3(i)
+      write(*,*) 'z4(i) = ', z4(i)
+      write(*,*) 'z5(i) = ', z5(i)
+      write(*,*) 'z6(i) = ', z6(i)
+      write(*,*) 'z7(i) = ', z7(i)
+      write(*,*) 'z8(i) = ', z8(i)
 
-      write(*,*) 'VX1(I) = ', VX1(I)
-      write(*,*) 'VX2(I) = ', VX2(I)
-      write(*,*) 'VX3(I) = ', VX3(I)
-      write(*,*) 'VX4(I) = ', VX4(I)
-      write(*,*) 'VX5(I) = ', VX5(I)
-      write(*,*) 'VX6(I) = ', VX6(I)
-      write(*,*) 'VX7(I) = ', VX7(I)
-      write(*,*) 'VX8(I) = ', VX8(I)
-      write(*,*) 'VY1(I) = ', VY1(I)
-      write(*,*) 'VY2(I) = ', VY2(I)
-      write(*,*) 'VY3(I) = ', VY3(I)
-      write(*,*) 'VY4(I) = ', VY4(I)
-      write(*,*) 'VY5(I) = ', VY5(I)
-      write(*,*) 'VY6(I) = ', VY6(I)
-      write(*,*) 'VY7(I) = ', VY7(I)
-      write(*,*) 'VY8(I) = ', VY8(I)
-      write(*,*) 'VZ1(I) = ', VZ1(I)
-      write(*,*) 'VZ2(I) = ', VZ2(I)
-      write(*,*) 'VZ3(I) = ', VZ3(I)
-      write(*,*) 'VZ4(I) = ', VZ4(I)
-      write(*,*) 'VZ5(I) = ', VZ5(I)
-      write(*,*) 'VZ6(I) = ', VZ6(I)
-      write(*,*) 'VZ7(I) = ', VZ7(I)
-      write(*,*) 'VZ8(I) = ', VZ8(I)
+      write(*,*) 'vx1(i) = ', vx1(i)
+      write(*,*) 'vx2(i) = ', vx2(i)
+      write(*,*) 'vx3(i) = ', vx3(i)
+      write(*,*) 'vx4(i) = ', vx4(i)
+      write(*,*) 'vx5(i) = ', vx5(i)
+      write(*,*) 'vx6(i) = ', vx6(i)
+      write(*,*) 'vx7(i) = ', vx7(i)
+      write(*,*) 'vx8(i) = ', vx8(i)
+      write(*,*) 'vy1(i) = ', vy1(i)
+      write(*,*) 'vy2(i) = ', vy2(i)
+      write(*,*) 'vy3(i) = ', vy3(i)
+      write(*,*) 'vy4(i) = ', vy4(i)
+      write(*,*) 'vy5(i) = ', vy5(i)
+      write(*,*) 'vy6(i) = ', vy6(i)
+      write(*,*) 'vy7(i) = ', vy7(i)
+      write(*,*) 'vy8(i) = ', vy8(i)
+      write(*,*) 'vz1(i) = ', vz1(i)
+      write(*,*) 'vz2(i) = ', vz2(i)
+      write(*,*) 'vz3(i) = ', vz3(i)
+      write(*,*) 'vz4(i) = ', vz4(i)
+      write(*,*) 'vz5(i) = ', vz5(i)
+      write(*,*) 'vz6(i) = ', vz6(i)
+      write(*,*) 'vz7(i) = ', vz7(i)
+      write(*,*) 'vz8(i) = ', vz8(i)
       !!pause
-      ENDDO 
-      ENDIF
+      end do 
+      end if
 
-       MX = MAT(1) !//TODO:(A VERIFIER MAT ? ) 
-!       MX = 1
-!//TODO:INPUT
-! PM  !//TODO:INPUT
-       RHO0=PM(1,MX)
-       !//TODO: Compare with NU(*)
-       NUU=PM(21,MX) 
-!//TODO:A distinguish
-       G0=PM(22,MX)
-       C1=PM(32,MX)  
-       if (Write_flag == 1) THEN
-       write(*,*) 'MX = ', MX
-       write(*,*) 'RHO0=',RHO0,' NUU=',NUU,' G0=',G0,' C1=',C1 
-       endif
-! RHO0= 7.8500000000000008E-009
-! NUU= 0.29999999999999999
-! G0= 80769.230769230766
-! C1= 174999.99999999997 
+       mx = mat(1) !//todo:(a verifier mat ? ) 
+   !       mx = 1
+   !//todo:input
+   ! pm  !//todo:input
+       rho0=pm(1,mx)
+       !//todo: compare with nu(*)
+       nuu=pm(21,mx) 
+   !//todo:a distinguish
+       g0=pm(22,mx)
+       c1=pm(32,mx)  
+       if (write_flag == 1) then
+       write(*,*) 'mx = ', mx
+       write(*,*) 'rho0=',rho0,' nuu=',nuu,' g0=',g0,' c1=',c1 
+       end if
+   ! rho0= 7.8500000000000008e-009
+   ! nuu= 0.29999999999999999
+   ! g0= 80769.230769230766
+   ! c1= 174999.99999999997 
       
-!   DO I=1,NEL       
-!     GG(I)=HALF*RHO0*CXX(I)*CXX(I)*(ONE -TWO*NU)/(ONE-NU)     
-!    ENDDO
-      DO I=1,NEL
-        CXX(I) = SSP(I) !//TODO:A VERIFIER 
+   !   do i=1,nel       
+   !     gg(i)=half*rho0*cxx(i)*cxx(i)*(one -two*nu)/(one-nu)     
+   !    end do
+      do i=1,nel
+        cxx(i) = ssp(i) !//todo:a verifier 
         
-        GG(I)=HALF*RHO0*CXX(I)*CXX(I)*(ONE -TWO*NUU)/(ONE-NUU)     
-        !GG(I)=1.
-        if (Write_flag == 1) THEN
-        write(*,*) 'NU(I)',NU(I) !//Identique à NUU
-        write(*,*) 'CXX(I)',CXX(I)
-        write(*,*) 'GG',GG(I)
-        endif
-      ENDDO
+        gg(i)=half*rho0*cxx(i)*cxx(i)*(one -two*nuu)/(one-nuu)     
+        !gg(i)=1.
+        if (write_flag == 1) then
+        write(*,*) 'nu(i)',nu(i) !//identique à nuu
+        write(*,*) 'cxx(i)',cxx(i)
+        write(*,*) 'gg',gg(i)
+        end if
+      end do
       
 
-      MT = PID(1)
+      mt = pid(1)
 
-      DO I=1,NEL
+      do i=1,nel
         
-         CAQ(I)=FOURTH*OFF(I)*GEO(13,MT)
-         if (Write_flag == 1) THEN
-         write(*,*) 'GEO(13,MT)',GEO(13,MT)
-         write(*,*) 'CAQ',CAQ(I)
-         endif
-        !CAQ(I) = 0.25
-        !FHOUR(I,1,1) = 0. 
-        !FHOUR(I,1,2) = 0. 
-        !FHOUR(I,1,3) = 0.
-        !FHOUR(I,1,4) = 0.  
-        !FHOUR(I,2,1) = 0. 
-        !FHOUR(I,2,2) = 0. 
-        !FHOUR(I,2,3) = 0.
-        !FHOUR(I,2,4) = 0. 
-        !FHOUR2(I,3,1) = 0. 
-        !FHOUR2(I,3,1) = FHOUR(I,1)
-        !FHOUR2(I,3,2) = 0. 
-        !FHOUR2(I,3,2) = FHOUR(I,2)
-        !FHOUR2(I,3,3) = 0.
-        !FHOUR2(I,3,4) = 0. 
+         caq(i)=fourth*off(i)*geo(13,mt)
+         if (write_flag == 1) then
+         write(*,*) 'geo(13,mt)',geo(13,mt)
+         write(*,*) 'caq',caq(i)
+         end if
+        !caq(i) = 0.25
+        !fhour(i,1,1) = 0. 
+        !fhour(i,1,2) = 0. 
+        !fhour(i,1,3) = 0.
+        !fhour(i,1,4) = 0.  
+        !fhour(i,2,1) = 0. 
+        !fhour(i,2,2) = 0. 
+        !fhour(i,2,3) = 0.
+        !fhour(i,2,4) = 0. 
+        !fhour2(i,3,1) = 0. 
+        !fhour2(i,3,1) = fhour(i,1)
+        !fhour2(i,3,2) = 0. 
+        !fhour2(i,3,2) = fhour(i,2)
+        !fhour2(i,3,3) = 0.
+        !fhour2(i,3,4) = 0. 
 
-      ENDDO
+      end do
 
-   !   DO I=1,NEL
-   !     G_3DT(I)=THIRD*OFF(I)*GG(I)*DT1
-   !     E0(I)=TWO*(ONE+NU)*GG(I)
-    !  ENDDO
+   !   do i=1,nel
+   !     g_3dt(i)=third*off(i)*gg(i)*dt1
+   !     e0(i)=two*(one+nu)*gg(i)
+    !  enddo
 
-      DO I=1,NEL
-        G_3DT(I)=THIRD*OFF(I)*GG(I)*DT1
-        E0(I)=TWO*(ONE+NU(I))*GG(I)
-        if (Write_flag == 1) THEN
-        write(*,*) 'G_3DT',G_3DT(I)
-        write(*,*) 'E0',E0(I)
+      do i=1,nel
+        g_3dt(i)=third*off(i)*gg(i)*dt1
+        e0(i)=two*(one+nu(i))*gg(i)
+        if (write_flag == 1) then
+        write(*,*) 'g_3dt',g_3dt(i)
+        write(*,*) 'e0',e0(i)
         endif
-      ENDDO      
+      enddo      
 
-C//TODO:A VERIFIER
-      DO I=1,NEL
-       ! write(*,*) 'NUUUUUUUUUUUUU'
-        NU1(I) =TWO/(ONE-NUU)
-        NU2(I) =NUU*NU1(I)
-        NU3(I) =TWO_THIRD*(ONE + NUU)
-        NU4(I) =NUU
-        if (Write_flag == 1) THEN
-        write(*,*) 'NU1=',NU1(I)
-        write(*,*) 'NU2=',NU2(I)
-        write(*,*) 'NU3=',NU3(I)
-        write(*,*) 'NU4=',NU4(I)
-        endif
-      ENDDO   
-      !!pause
+!c//todo:a verifier
+   do i=1,nel
+    ! write(*,*) 'nuuuuuuuuuuuuu'
+     nu1(i) =two/(one-nuu)
+     nu2(i) =nuu*nu1(i)
+     nu3(i) =two_third*(one + nuu)
+     nu4(i) =nuu
+     if (write_flag == 1) then
+     write(*,*) 'nu1=',nu1(i)
+     write(*,*) 'nu2=',nu2(i)
+     write(*,*) 'nu3=',nu3(i)
+     write(*,*) 'nu4=',nu4(i)
+     endif
+   enddo   
+   !!pause
 
-      DO I=1,NEL
-        FCL(I)=CAQ(I)*RHO(I)*VOL(I)**THIRD
-        FCL(I)=ZEP00666666667*FCL(I)*CXX(I)
-        if (Write_flag == 1) THEN
-        write(*,*) 'FCL=',FCL(I)
-        endif
-      ENDDO
+   do i=1,nel
+     fcl(i)=caq(i)*rho(i)*vol(i)**third
+     fcl(i)=zep00666666667*fcl(i)*cxx(i)
+     if (write_flag == 1) then
+     write(*,*) 'fcl=',fcl(i)
+     endif
+   enddo
 
 
     
-C
-      DO I=1,NEL
-C!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!//szderi3        
-        X17(I)=X7(I)-X1(I)
-        X28(I)=X8(I)-X2(I)
-        X35(I)=X5(I)-X3(I)
-        X46(I)=X6(I)-X4(I)
+!c
+   do i=1,nel
+!c!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!//szderi3        
+     x17(i)=x7(i)-x1(i)
+     x28(i)=x8(i)-x2(i)
+     x35(i)=x5(i)-x3(i)
+     x46(i)=x6(i)-x4(i)
 
-        Y17(I)=Y7(I)-Y1(I)
-        Y28(I)=Y8(I)-Y2(I)
-        Y35(I)=Y5(I)-Y3(I)
-        Y46(I)=Y6(I)-Y4(I)
+     y17(i)=y7(i)-y1(i)
+     y28(i)=y8(i)-y2(i)
+     y35(i)=y5(i)-y3(i)
+     y46(i)=y6(i)-y4(i)
 
-        Z17(I)=Z7(I)-Z1(I)
-        Z28(I)=Z8(I)-Z2(I)
-        Z35(I)=Z5(I)-Z3(I)
-        Z46(I)=Z6(I)-Z4(I)
-      END DO
+     z17(i)=z7(i)-z1(i)
+     z28(i)=z8(i)-z2(i)
+     z35(i)=z5(i)-z3(i)
+     z46(i)=z6(i)-z4(i)
+   end do
 
-C JACOBIAN MATRIX
-      DO I=1,NEL
-C//
-        JAC4(I)=X17(I)+X28(I)-X35(I)-X46(I)
-        JAC5(I)=Y17(I)+Y28(I)-Y35(I)-Y46(I)
-        JAC6(I)=Z17(I)+Z28(I)-Z35(I)-Z46(I)
+!c jacobian matrix
+   do i=1,nel
+!c//
+     jac4(i)=x17(i)+x28(i)-x35(i)-x46(i)
+     jac5(i)=y17(i)+y28(i)-y35(i)-y46(i)
+     jac6(i)=z17(i)+z28(i)-z35(i)-z46(i)
 
-        X_17_46=X17(I)+X46(I)
-        X_28_35=X28(I)+X35(I)
-        Y_17_46=Y17(I)+Y46(I)
-        Y_28_35=Y28(I)+Y35(I)
-        Z_17_46=Z17(I)+Z46(I)
-        Z_28_35=Z28(I)+Z35(I)
+     x_17_46=x17(i)+x46(i)
+     x_28_35=x28(i)+x35(i)
+     y_17_46=y17(i)+y46(i)
+     y_28_35=y28(i)+y35(i)
+     z_17_46=z17(i)+z46(i)
+     z_28_35=z28(i)+z35(i)
 
-        JAC7(I)=X_17_46+X_28_35
-        JAC8(I)=Y_17_46+Y_28_35
-        JAC9(I)=Z_17_46+Z_28_35
-        JAC1(I)=X_17_46-X_28_35
-        JAC2(I)=Y_17_46-Y_28_35
-        JAC3(I)=Z_17_46-Z_28_35
-        
-        JAC_59_68(I)=JAC5(I)*JAC9(I)-JAC6(I)*JAC8(I)
-        JAC_67_49(I)=JAC6(I)*JAC7(I)-JAC4(I)*JAC9(I)
-        JAC_19_37(I)=JAC1(I)*JAC9(I)-JAC3(I)*JAC7(I)
-        JAC_48_57(I)=JAC4(I)*JAC8(I)-JAC5(I)*JAC7(I)
+     jac7(i)=x_17_46+x_28_35
+     jac8(i)=y_17_46+y_28_35
+     jac9(i)=z_17_46+z_28_35
+     jac1(i)=x_17_46-x_28_35
+     jac2(i)=y_17_46-y_28_35
+     jac3(i)=z_17_46-z_28_35
+     
+     jac_59_68(i)=jac5(i)*jac9(i)-jac6(i)*jac8(i)
+     jac_67_49(i)=jac6(i)*jac7(i)-jac4(i)*jac9(i)
+     jac_19_37(i)=jac1(i)*jac9(i)-jac3(i)*jac7(i)
+     jac_48_57(i)=jac4(i)*jac8(i)-jac5(i)*jac7(i)
 
 
-        DET(I)=ONE_OVER_64*(JAC1(I)*JAC_59_68(I)+JAC2(I)*JAC_67_49(I)+JAC3(I)*JAC_48_57(I))
-        if (Write_flag == 1) THEN
-        write(*,*) 'JAC1 = ', JAC1(I)
-        write(*,*) 'JAC2 = ', JAC2(I)
-        write(*,*) 'JAC3 = ', JAC3(I)
-        write(*,*) 'JAC4 = ', JAC4(I)
-        write(*,*) 'JAC5 = ', JAC5(I)
-        write(*,*) 'JAC6 = ', JAC6(I)
-        write(*,*) 'JAC7 = ', JAC7(I)
-        write(*,*) 'JAC8 = ', JAC8(I)
-        write(*,*) 'JAC9 = ', JAC9(I)
-        write(*,*) 'DET = ', DET(I)
-        !pause
-        endif 
+     det(i)=one_over_64*(jac1(i)*jac_59_68(i)+jac2(i)*jac_67_49(i)+jac3(i)*jac_48_57(i))
+     if (write_flag == 1) then
+     write(*,*) 'jac1 = ', jac1(i)
+     write(*,*) 'jac2 = ', jac2(i)
+     write(*,*) 'jac3 = ', jac3(i)
+     write(*,*) 'jac4 = ', jac4(i)
+     write(*,*) 'jac5 = ', jac5(i)
+     write(*,*) 'jac6 = ', jac6(i)
+     write(*,*) 'jac7 = ', jac7(i)
+     write(*,*) 'jac8 = ', jac8(i)
+     write(*,*) 'jac9 = ', jac9(i)
+     write(*,*) 'det = ', det(i)
+     !pause
+     endif 
 
-        THK =FOURTH*JAC5(I) !//TODO: A VERIFIER
-        THK_1(I) =ONE/THK !//TODO: A VERIFIER
-      ENDDO
+     thk =fourth*jac5(i) !//todo: a verifier
+     thk_1(i) =one/thk !//todo: a verifier
+   enddo
 
 
   
-C JACOBIAN MATRIX INVERSE 
-      DO I=1,NEL
-C//same in the szderi3    
-        DETT=ONE_OVER_64/DET(I)
-        JACI1=DETT*JAC_59_68(I)
-        JACI4=DETT*JAC_67_49(I)
-        JACI7=DETT*JAC_48_57(I)
-        JACI2=DETT*(-JAC2(I)*JAC9(I)+JAC3(I)*JAC8(I))
-        JACI5=DETT*( JAC1(I)*JAC9(I)-JAC3(I)*JAC7(I))
-        JACI8=DETT*(-JAC1(I)*JAC8(I)+JAC2(I)*JAC7(I))
-        JACI3=DETT*( JAC2(I)*JAC6(I)-JAC3(I)*JAC5(I))
-        JACI6=DETT*(-JAC1(I)*JAC6(I)+JAC3(I)*JAC4(I))
-        JACI9=DETT*( JAC1(I)*JAC5(I)-JAC2(I)*JAC4(I))
-C
-        JACI12=JACI1-JACI2
-        JACI45=JACI4-JACI5
-        JACI78=JACI7-JACI8
-        PX2(I)= JACI12-JACI3
-        PY2(I)= JACI45-JACI6
-        PZ2(I)= JACI78-JACI9
-        PX4(I)=-JACI12-JACI3
-        PY4(I)=-JACI45-JACI6
-        PZ4(I)=-JACI78-JACI9
+!c jacobian matrix inverse 
+   do i=1,nel
+!c//same in the szderi3    
+     dett=one_over_64/det(i)
+     jaci1=dett*jac_59_68(i)
+     jaci4=dett*jac_67_49(i)
+     jaci7=dett*jac_48_57(i)
+     jaci2=dett*(-jac2(i)*jac9(i)+jac3(i)*jac8(i))
+     jaci5=dett*( jac1(i)*jac9(i)-jac3(i)*jac7(i))
+     jaci8=dett*(-jac1(i)*jac8(i)+jac2(i)*jac7(i))
+     jaci3=dett*( jac2(i)*jac6(i)-jac3(i)*jac5(i))
+     jaci6=dett*(-jac1(i)*jac6(i)+jac3(i)*jac4(i))
+     jaci9=dett*( jac1(i)*jac5(i)-jac2(i)*jac4(i))
+!c
+     jaci12=jaci1-jaci2
+     jaci45=jaci4-jaci5
+     jaci78=jaci7-jaci8
+     px2(i)= jaci12-jaci3
+     py2(i)= jaci45-jaci6
+     pz2(i)= jaci78-jaci9
+     px4(i)=-jaci12-jaci3
+     py4(i)=-jaci45-jaci6
+     pz4(i)=-jaci78-jaci9
 
-        JACI12=JACI1+JACI2
-        JACI45=JACI4+JACI5
-        JACI78=JACI7+JACI8
-        PX1(I)=-JACI12-JACI3
-        PY1(I)=-JACI45-JACI6
-        PZ1(I)=-JACI78-JACI9
-        PX3(I)=JACI12-JACI3
-        PY3(I)=JACI45-JACI6
-        PZ3(I)=JACI78-JACI9
-        if (Write_flag == 1) THEN
-        write(*,*) 'JACI1 = ', JACI1
-        write(*,*) 'JACI2 = ', JACI2
-        write(*,*) 'JACI3 = ', JACI3
-        write(*,*) 'JACI4 = ', JACI4
-        write(*,*) 'JACI5 = ', JACI5
-        write(*,*) 'JACI6 = ', JACI6
-        write(*,*) 'JACI7 = ', JACI7
-        write(*,*) 'JACI8 = ', JACI8
-        write(*,*) 'JACI9 = ', JACI9
+     jaci12=jaci1+jaci2
+     jaci45=jaci4+jaci5
+     jaci78=jaci7+jaci8
+     px1(i)=-jaci12-jaci3
+     py1(i)=-jaci45-jaci6
+     pz1(i)=-jaci78-jaci9
+     px3(i)=jaci12-jaci3
+     py3(i)=jaci45-jaci6
+     pz3(i)=jaci78-jaci9
+     if (write_flag == 1) then
+     write(*,*) 'jaci1 = ', jaci1
+     write(*,*) 'jaci2 = ', jaci2
+     write(*,*) 'jaci3 = ', jaci3
+     write(*,*) 'jaci4 = ', jaci4
+     write(*,*) 'jaci5 = ', jaci5
+     write(*,*) 'jaci6 = ', jaci6
+     write(*,*) 'jaci7 = ', jaci7
+     write(*,*) 'jaci8 = ', jaci8
+     write(*,*) 'jaci9 = ', jaci9
 
-        
-            write(*,*) 'PX1(I) = ', PX1(I)
-            write(*,*) 'PX2(I) = ', PX2(I)
-            write(*,*) 'PX3(I) = ', PX3(I)
-            write(*,*) 'PX4(I) = ', PX4(I)
-            write(*,*) 'PY1(I) = ', PY1(I)
-            write(*,*) 'PY2(I) = ', PY2(I)
-            write(*,*) 'PY3(I) = ', PY3(I)
-            write(*,*) 'PY4(I) = ', PY4(I)
-            write(*,*) 'PZ1(I) = ', PZ1(I)
-            write(*,*) 'PZ2(I) = ', PZ2(I)
-            write(*,*) 'PZ3(I) = ', PZ3(I)
-            write(*,*) 'PZ4(I) = ', PZ4(I)      
-            write(*,*) 'I = ', I
-        
-      !pause
-        endif
+     
+      write(*,*) 'px1(i) = ', px1(i)
+      write(*,*) 'px2(i) = ', px2(i)
+      write(*,*) 'px3(i) = ', px3(i)
+      write(*,*) 'px4(i) = ', px4(i)
+      write(*,*) 'py1(i) = ', py1(i)
+      write(*,*) 'py2(i) = ', py2(i)
+      write(*,*) 'py3(i) = ', py3(i)
+      write(*,*) 'py4(i) = ', py4(i)
+      write(*,*) 'pz1(i) = ', pz1(i)
+      write(*,*) 'pz2(i) = ', pz2(i)
+      write(*,*) 'pz3(i) = ', pz3(i)
+      write(*,*) 'pz4(i) = ', pz4(i)      
+      write(*,*) 'i = ', i
+     
+   !pause
+     endif
 
 
 
-      ENDDO
+   enddo
 
-C we do it in the same order of SZDERI3
-C H3
-C 1 -1 1 -1 1 -1 1 -1
-       DO I=1,NEL
-         H3X=X1(I)-X2(I)+X3(I)-X4(I)+X5(I)-X6(I)+X7(I)-X8(I)
-         H3Y=Y1(I)-Y2(I)+Y3(I)-Y4(I)+Y5(I)-Y6(I)+Y7(I)-Y8(I)
-         H3Z=Z1(I)-Z2(I)+Z3(I)-Z4(I)+Z5(I)-Z6(I)+Z7(I)-Z8(I)   
-         HX=ONE_OVER_8*H3X
-         HY=ONE_OVER_8*H3Y
-         HZ=ONE_OVER_8*H3Z
-         PX1H3(I)=PX1(I)*HX+ PY1(I)*HY+PZ1(I)*HZ
-         PX2H3(I)=PX2(I)*HX+ PY2(I)*HY+PZ2(I)*HZ
-         PX3H3(I)=PX3(I)*HX+ PY3(I)*HY+PZ3(I)*HZ
-         PX4H3(I)=PX4(I)*HX+ PY4(I)*HY+PZ4(I)*HZ
-         if (Write_flag == 1) THEN
-         write(*,*) 'PX1H3(I) = ', PX1H3(I)
-         write(*,*) 'PX2H3(I) = ', PX2H3(I)
-         write(*,*) 'PX3H3(I) = ', PX3H3(I)
-         write(*,*) 'PX4H3(I) = ', PX4H3(I)
-         write(*,*) 'I = ', I
-         pause
-         endif
+!c we do it in the same order of szderi3
+!c h3
+!c 1 -1 1 -1 1 -1 1 -1
+   do i=1,nel
+     h3x=x1(i)-x2(i)+x3(i)-x4(i)+x5(i)-x6(i)+x7(i)-x8(i)
+     h3y=y1(i)-y2(i)+y3(i)-y4(i)+y5(i)-y6(i)+y7(i)-y8(i)
+     h3z=z1(i)-z2(i)+z3(i)-z4(i)+z5(i)-z6(i)+z7(i)-z8(i)   
+     hx=one_over_8*h3x
+     hy=one_over_8*h3y
+     hz=one_over_8*h3z
+     px1h3(i)=px1(i)*hx+ py1(i)*hy+pz1(i)*hz
+     px2h3(i)=px2(i)*hx+ py2(i)*hy+pz2(i)*hz
+     px3h3(i)=px3(i)*hx+ py3(i)*hy+pz3(i)*hz
+     px4h3(i)=px4(i)*hx+ py4(i)*hy+pz4(i)*hz
+     if (write_flag == 1) then
+     write(*,*) 'px1h3(i) = ', px1h3(i)
+     write(*,*) 'px2h3(i) = ', px2h3(i)
+     write(*,*) 'px3h3(i) = ', px3h3(i)
+     write(*,*) 'px4h3(i) = ', px4h3(i)
+     write(*,*) 'i = ', i
+     !pause
+     endif
 
-       END DO   
+   end do   
 !//A VERIFIER       
 !       DO I=1,NEL
 !         G13(I)= ONE_OVER_8-PX1H3(I)
@@ -499,28 +584,28 @@ C 1 -1 1 -1 1 -1 1 -1
 !         G73(I)= ONE_OVER_8+PX1H3(I)
 !         G83(I)=-ONE_OVER_8+PX2H3(I)
 !       ENDDO
-C   H1
-C 1 1 -1 -1 -1 -1 1 1
-       DO I=1,NEL
-         H1X=X1(I)+X2(I)-X3(I)-X4(I)-X5(I)-X6(I)+X7(I)+X8(I)
-         H1Y=Y1(I)+Y2(I)-Y3(I)-Y4(I)-Y5(I)-Y6(I)+Y7(I)+Y8(I)
-         H1Z=Z1(I)+Z2(I)-Z3(I)-Z4(I)-Z5(I)-Z6(I)+Z7(I)+Z8(I)
-         HX=ONE_OVER_8*H1X
-         HY=ONE_OVER_8*H1Y
-         HZ=ONE_OVER_8*H1Z
-         PX1H1(I)=PX1(I)*HX+ PY1(I)*HY+PZ1(I)*HZ
-         PX2H1(I)=PX2(I)*HX+ PY2(I)*HY+PZ2(I)*HZ
-         PX3H1(I)=PX3(I)*HX+ PY3(I)*HY+PZ3(I)*HZ
-         PX4H1(I)=PX4(I)*HX+ PY4(I)*HY+PZ4(I)*HZ
-         if (Write_flag == 1) THEN
-         write(*,*) 'PX1H1(I) = ', PX1H1(I)
-         write(*,*) 'PX2H1(I) = ', PX2H1(I)
-         write(*,*) 'PX3H1(I) = ', PX3H1(I)
-         write(*,*) 'PX4H1(I) = ', PX4H1(I)
-         write(*,*) 'I = ', I
-         pause 
-         endif
-       END DO
+!C!    H1
+!c! 1 1 -1 -1 -1 -1 1 1
+   do i=1,nel
+     h1x=x1(i)+x2(i)-x3(i)-x4(i)-x5(i)-x6(i)+x7(i)+x8(i)
+     h1y=y1(i)+y2(i)-y3(i)-y4(i)-y5(i)-y6(i)+y7(i)+y8(i)
+     h1z=z1(i)+z2(i)-z3(i)-z4(i)-z5(i)-z6(i)+z7(i)+z8(i)
+     hx=one_over_8*h1x
+     hy=one_over_8*h1y
+     hz=one_over_8*h1z
+     px1h1(i)=px1(i)*hx+ py1(i)*hy+pz1(i)*hz
+     px2h1(i)=px2(i)*hx+ py2(i)*hy+pz2(i)*hz
+     px3h1(i)=px3(i)*hx+ py3(i)*hy+pz3(i)*hz
+     px4h1(i)=px4(i)*hx+ py4(i)*hy+pz4(i)*hz
+     if (write_flag == 1) then
+     write(*,*) 'px1h1(i) = ', px1h1(i)
+     write(*,*) 'px2h1(i) = ', px2h1(i)
+     write(*,*) 'px3h1(i) = ', px3h1(i)
+     write(*,*) 'px4h1(i) = ', px4h1(i)
+     write(*,*) 'i = ', i
+     !pause 
+     endif
+   end do
 !//A VERIFIER  
 !       DO I=1,NEL
 !         G11(I)= ONE_OVER_8-PX1H1(I)
@@ -532,28 +617,28 @@ C 1 1 -1 -1 -1 -1 1 1
 !         G71(I)= ONE_OVER_8+PX1H1(I)
 !         G81(I)= ONE_OVER_8+PX2H1(I)
 !       ENDDO
-C   H2
-C 1 -1 -1 1 -1 1 1 -1
-       DO I=1,NEL
-         H2X=X1(I)-X2(I)-X3(I)+X4(I)-X5(I)+X6(I)+X7(I)-X8(I)
-         H2Y=Y1(I)-Y2(I)-Y3(I)+Y4(I)-Y5(I)+Y6(I)+Y7(I)-Y8(I)
-         H2Z=Z1(I)-Z2(I)-Z3(I)+Z4(I)-Z5(I)+Z6(I)+Z7(I)-Z8(I)
-         HX=ONE_OVER_8*H2X
-         HY=ONE_OVER_8*H2Y
-         HZ=ONE_OVER_8*H2Z   
-         PX1H2(I)=PX1(I)*HX+ PY1(I)*HY+PZ1(I)*HZ
-         PX2H2(I)=PX2(I)*HX+ PY2(I)*HY+PZ2(I)*HZ
-         PX3H2(I)=PX3(I)*HX+ PY3(I)*HY+PZ3(I)*HZ
-         PX4H2(I)=PX4(I)*HX+ PY4(I)*HY+PZ4(I)*HZ
-         if (Write_flag == 1) THEN
-         write(*,*) 'PX1H2(I) = ', PX1H2(I)
-         write(*,*) 'PX2H2(I) = ', PX2H2(I)
-         write(*,*) 'PX3H2(I) = ', PX3H2(I)
-         write(*,*) 'PX4H2(I) = ', PX4H2(I)
-         write(*,*) 'I = ', I
-         !pause
-         endif
-       END DO
+!C   H2
+!c 1 -1 -1 1 -1 1 1 -1
+   do i=1,nel
+     h2x=x1(i)-x2(i)-x3(i)+x4(i)-x5(i)+x6(i)+x7(i)-x8(i)
+     h2y=y1(i)-y2(i)-y3(i)+y4(i)-y5(i)+y6(i)+y7(i)-y8(i)
+     h2z=z1(i)-z2(i)-z3(i)+z4(i)-z5(i)+z6(i)+z7(i)-z8(i)
+     hx=one_over_8*h2x
+     hy=one_over_8*h2y
+     hz=one_over_8*h2z   
+     px1h2(i)=px1(i)*hx+ py1(i)*hy+pz1(i)*hz
+     px2h2(i)=px2(i)*hx+ py2(i)*hy+pz2(i)*hz
+     px3h2(i)=px3(i)*hx+ py3(i)*hy+pz3(i)*hz
+     px4h2(i)=px4(i)*hx+ py4(i)*hy+pz4(i)*hz
+     if (write_flag == 1) then
+     write(*,*) 'px1h2(i) = ', px1h2(i)
+     write(*,*) 'px2h2(i) = ', px2h2(i)
+     write(*,*) 'px3h2(i) = ', px3h2(i)
+     write(*,*) 'px4h2(i) = ', px4h2(i)
+     write(*,*) 'i = ', i
+     !pause
+     endif
+   end do
 !//A VERIFIER  
 !       DO I=1,NEL
 !         G12(I)= ONE_OVER_8-PX1H2(I)
@@ -565,29 +650,29 @@ C 1 -1 -1 1 -1 1 1 -1
 !         G72(I)= ONE_OVER_8+PX1H2(I)
 !         G82(I)=-ONE_OVER_8+PX2H2(I)
 !       ENDDO
-C   H4       
-C -1 1 -1 1 1 -1 1 -1
-       DO I=1,NEL
-         H4X=-X1(I)+X2(I)-X3(I)+X4(I)+X5(I)-X6(I)+X7(I)-X8(I)
-         H4Y=-Y1(I)+Y2(I)-Y3(I)+Y4(I)+Y5(I)-Y6(I)+Y7(I)-Y8(I)
-         H4Z=-Z1(I)+Z2(I)-Z3(I)+Z4(I)+Z5(I)-Z6(I)+Z7(I)-Z8(I)   
-         HX=ONE_OVER_8*H4X
-         HY=ONE_OVER_8*H4Y
-         HZ=ONE_OVER_8*H4Z   
-         PX1H4(I)=PX1(I)*HX+ PY1(I)*HY+PZ1(I)*HZ
-         PX2H4(I)=PX2(I)*HX+ PY2(I)*HY+PZ2(I)*HZ
-         PX3H4(I)=PX3(I)*HX+ PY3(I)*HY+PZ3(I)*HZ
-         PX4H4(I)=PX4(I)*HX+ PY4(I)*HY+PZ4(I)*HZ
+!C   H4       
+!C -1 1 -1 1 1 -1 1 -1
+      do i=1,nel
+        h4x=-x1(i)+x2(i)-x3(i)+x4(i)+x5(i)-x6(i)+x7(i)-x8(i)
+        h4y=-y1(i)+y2(i)-y3(i)+y4(i)+y5(i)-y6(i)+y7(i)-y8(i)
+        h4z=-z1(i)+z2(i)-z3(i)+z4(i)+z5(i)-z6(i)+z7(i)-z8(i)   
+        hx=one_over_8*h4x
+        hy=one_over_8*h4y
+        hz=one_over_8*h4z   
+        px1h4(i)=px1(i)*hx+ py1(i)*hy+pz1(i)*hz
+        px2h4(i)=px2(i)*hx+ py2(i)*hy+pz2(i)*hz
+        px3h4(i)=px3(i)*hx+ py3(i)*hy+pz3(i)*hz
+        px4h4(i)=px4(i)*hx+ py4(i)*hy+pz4(i)*hz
 
-         if (Write_flag == 1) THEN
-         write(*,*) 'PX1H4(I) = ', PX1H4(I)
-         write(*,*) 'PX2H4(I) = ', PX2H4(I)
-         write(*,*) 'PX3H4(I) = ', PX3H4(I)
-         write(*,*) 'PX4H4(I) = ', PX4H4(I)
-         write(*,*) 'I = ', I
-         !pause  
-         endif
-       END DO
+        if (write_flag == 1) then
+        write(*,*) 'px1h4(i) = ', px1h4(i)
+        write(*,*) 'px2h4(i) = ', px2h4(i)
+        write(*,*) 'px3h4(i) = ', px3h4(i)
+        write(*,*) 'px4h4(i) = ', px4h4(i)
+        write(*,*) 'i = ', i
+        !pause  
+        endif
+      end do
 
 
 !//A VERIFIER 
@@ -602,8 +687,8 @@ C -1 1 -1 1 1 -1 1 -1
 !         G84(I)=-ONE_OVER_8+PX2H4(I)
 !       ENDDO
 
-C!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!//szderi3 
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCccccccccccc
+!C!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!//szderi3 
+!CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCccccccccccc
 !       DO I=1,NEL
 !         VZ17=VZ1(I)-VZ7(I)
 !         VZ28=VZ2(I)-VZ8(I)
@@ -622,621 +707,619 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCccccccccccc
 !       ENDDO
 
 !//
-!!To Calculate q/dt
-C!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!//szhour3       
-      DO I=1,NEL
-       VX3478=VX3(I)-VX4(I)-VX7(I)+VX8(I)
-       VX2358=VX2(I)-VX3(I)-VX5(I)+VX8(I)
-       VX1467=VX1(I)-VX4(I)-VX6(I)+VX7(I)
-       VX1256=VX1(I)-VX2(I)-VX5(I)+VX6(I)
-C
-       VY3478=VY3(I)-VY4(I)-VY7(I)+VY8(I)
-       VY2358=VY2(I)-VY3(I)-VY5(I)+VY8(I)
-       VY1467=VY1(I)-VY4(I)-VY6(I)+VY7(I)
-       VY1256=VY1(I)-VY2(I)-VY5(I)+VY6(I)
-C
-       VZ3478=VZ3(I)-VZ4(I)-VZ7(I)+VZ8(I)
-       VZ2358=VZ2(I)-VZ3(I)-VZ5(I)+VZ8(I)
-       VZ1467=VZ1(I)-VZ4(I)-VZ6(I)+VZ7(I)
-       VZ1256=VZ1(I)-VZ2(I)-VZ5(I)+VZ6(I)
-       if (Write_flag == 1) THEN
-       write(*,*) 'VX1467',VX1467
-       write(*,*) 'VX2358',VX2358
-       write(*,*) 'HGX3',HGX3(I) 
+!!!To Calculate q/dt
+!C!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!//szhour3       
+      do i=1,nel
+       vx3478=vx3(i)-vx4(i)-vx7(i)+vx8(i)
+       vx2358=vx2(i)-vx3(i)-vx5(i)+vx8(i)
+       vx1467=vx1(i)-vx4(i)-vx6(i)+vx7(i)
+       vx1256=vx1(i)-vx2(i)-vx5(i)+vx6(i)
+   !c
+       vy3478=vy3(i)-vy4(i)-vy7(i)+vy8(i)
+       vy2358=vy2(i)-vy3(i)-vy5(i)+vy8(i)
+       vy1467=vy1(i)-vy4(i)-vy6(i)+vy7(i)
+       vy1256=vy1(i)-vy2(i)-vy5(i)+vy6(i)
+   !c
+       vz3478=vz3(i)-vz4(i)-vz7(i)+vz8(i)
+       vz2358=vz2(i)-vz3(i)-vz5(i)+vz8(i)
+       vz1467=vz1(i)-vz4(i)-vz6(i)+vz7(i)
+       vz1256=vz1(i)-vz2(i)-vz5(i)+vz6(i)
+       if (write_flag == 1) then
+       write(*,*) 'vx1467',vx1467
+       write(*,*) 'vx2358',vx2358
+       write(*,*) 'hgx3',hgx3(i) 
        endif
 
-       HGX3(I)=(VX1467-VX2358)*ONE_OVER_8
+       hgx3(i)=(vx1467-vx2358)*one_over_8
 
 
-       HGX1(I)=(VX1467+VX2358)*ONE_OVER_8
-       HGX2(I)=(VX1256-VX3478)*ONE_OVER_8
-       HGX4(I)=-(VX1256+VX3478)*ONE_OVER_8       
-C
-       HGY3(I)=(VY1467-VY2358)*ONE_OVER_8
-       HGY1(I)=(VY1467+VY2358)*ONE_OVER_8
-       HGY2(I)=(VY1256-VY3478)*ONE_OVER_8
-       HGY4(I)=-(VY1256+VY3478)*ONE_OVER_8       
-C
-       HGZ3(I)=(VZ1467-VZ2358)*ONE_OVER_8
-       HGZ1(I)=(VZ1467+VZ2358)*ONE_OVER_8
-       HGZ2(I)=(VZ1256-VZ3478)*ONE_OVER_8
-       HGZ4(I)=-(VZ1256+VZ3478)*ONE_OVER_8      
-!A VERIFIER    
-       if (Write_flag == 1) THEN    
+       hgx1(i)=(vx1467+vx2358)*one_over_8
+       hgx2(i)=(vx1256-vx3478)*one_over_8
+       hgx4(i)=-(vx1256+vx3478)*one_over_8       
+   !c
+       hgy3(i)=(vy1467-vy2358)*one_over_8
+       hgy1(i)=(vy1467+vy2358)*one_over_8
+       hgy2(i)=(vy1256-vy3478)*one_over_8
+       hgy4(i)=-(vy1256+vy3478)*one_over_8       
+   !c
+       hgz3(i)=(vz1467-vz2358)*one_over_8
+       hgz1(i)=(vz1467+vz2358)*one_over_8
+       hgz2(i)=(vz1256-vz3478)*one_over_8
+       hgz4(i)=-(vz1256+vz3478)*one_over_8      
+   !a verifier    
+       if (write_flag == 1) then    
 
-         write(*,*) 'Atention please !!!!! HGX3'
-         write(*,*) 'HGX1',HGX1(I)
-         write(*,*) 'HGX2',HGX2(I)
-         write(*,*) 'HGX3',HGX3(I)
-         write(*,*) 'HGX4',HGX4(I)
+         write(*,*) 'atention please !!!!! hgx3'
+         write(*,*) 'hgx1',hgx1(i)
+         write(*,*) 'hgx2',hgx2(i)
+         write(*,*) 'hgx3',hgx3(i)
+         write(*,*) 'hgx4',hgx4(i)
 
-         write(*,*) 'HGY1',HGY1(I)
-         write(*,*) 'HGY2',HGY2(I)
-         write(*,*) 'HGY3',HGY3(I)
-         write(*,*) 'HGY4',HGY4(I)
+         write(*,*) 'hgy1',hgy1(i)
+         write(*,*) 'hgy2',hgy2(i)
+         write(*,*) 'hgy3',hgy3(i)
+         write(*,*) 'hgy4',hgy4(i)
 
-         write(*,*) 'HGZ1',HGZ1(I)
-         write(*,*) 'HGZ2',HGZ2(I)
-         write(*,*) 'HGZ3',HGZ3(I)
-         write(*,*) 'HGZ4',HGZ4(I)
-         write(*,*) 'I = ', I
+         write(*,*) 'hgz1',hgz1(i)
+         write(*,*) 'hgz2',hgz2(i)
+         write(*,*) 'hgz3',hgz3(i)
+         write(*,*) 'hgz4',hgz4(i)
+         write(*,*) 'i = ', i
        endif  
-      ENDDO
-
-      DO I=1,NEL
-        VX17=VX1(I)-VX7(I)
-        VX28=VX2(I)-VX8(I)
-        VX35=VX3(I)-VX5(I)
-        VX46=VX4(I)-VX6(I)
-        VY17=VY1(I)-VY7(I)
-        VY28=VY2(I)-VY8(I)
-        VY35=VY3(I)-VY5(I)
-        VY46=VY4(I)-VY6(I)
-        VZ17=VZ1(I)-VZ7(I)
-        VZ28=VZ2(I)-VZ8(I)
-        VZ35=VZ3(I)-VZ5(I)
-        VZ46=VZ4(I)-VZ6(I)
-      
-
-
-
-C   alpha =1 ->eta zeta   
-C 1 1 -1 -1 -1 -1 1 1
-!VY1467=VY1(I)-VY4(I)-VY6(I)+VY7(I)
-!VZ2358=VZ2(I)-VZ3(I)-VZ5(I)+VZ8(I)
-!HGX1(I)=(VX1467+VX2358)*ONE_OVER_8
-     
-        HGX1(I)= HGX1(I)
-     &          -(PX1H1(I)*VX17+PX2H1(I)*VX28
-     &            +PX3H1(I)*VX35+PX4H1(I)*VX46)
-        HGY1(I)= HGY1(I)
-     &          -(PX1H1(I)*VY17+PX2H1(I)*VY28
-     &            +PX3H1(I)*VY35+PX4H1(I)*VY46)
-        HGZ1(I)= HGZ1(I)
-     &          -(PX1H1(I)*VZ17+PX2H1(I)*VZ28
-     &            +PX3H1(I)*VZ35+PX4H1(I)*VZ46)
-! write(*,*) 'HGX1',HGX1(I)
-! write(*,*) 'HGY1',HGY1(I)
-! write(*,*) 'HGZ1',HGZ1(I)
-C   alpha =2 ->zeta ksi   
-C 1 -1 -1 1 -1 1 1 -1
-        HGX2(I)= HGX2(I)
-     &          -(PX1H2(I)*VX17+PX2H2(I)*VX28
-     &            +PX3H2(I)*VX35+PX4H2(I)*VX46)
-        HGY2(I)= HGY2(I)
-     &          -(PX1H2(I)*VY17+PX2H2(I)*VY28
-     &            +PX3H2(I)*VY35+PX4H2(I)*VY46)
-        HGZ2(I)= HGZ2(I)
-     &          -(PX1H2(I)*VZ17+PX2H2(I)*VZ28
-     &            +PX3H2(I)*VZ35+PX4H2(I)*VZ46)
-! write(*,*) 'HGX2',HGX2(I)
-! write(*,*) 'HGY2',HGY2(I)
-! write(*,*) 'HGZ2',HGZ2(I)
-C   alpha =3 ->ksi eta    
-C 1 -1 1 -1 1 -1 1 -1
-        HGX3(I)= HGX3(I)
-     &          -(PX1H3(I)*VX17+PX2H3(I)*VX28
-     &            +PX3H3(I)*VX35+PX4H3(I)*VX46)
-        HGY3(I)= HGY3(I)
-     &          -(PX1H3(I)*VY17+PX2H3(I)*VY28
-     &            +PX3H3(I)*VY35+PX4H3(I)*VY46)
-        HGZ3(I)= HGZ3(I)
-     &          -(PX1H3(I)*VZ17+PX2H3(I)*VZ28
-     &            +PX3H3(I)*VZ35+PX4H3(I)*VZ46)
-!  write(*,*) 'HGX3',HGX3(I)
-! write(*,*) 'HGY3',HGY3(I)
-!  write(*,*) 'HGZ3',HGZ3(I)
-C
-C   alpha =4 ->ksi eta zeta
-C -1 1 -1 1 1 -1 1 -1
-        HGX4(I)= HGX4(I)
-     &          -(PX1H4(I)*VX17+PX2H4(I)*VX28
-     &            +PX3H4(I)*VX35+PX4H4(I)*VX46)
-        HGY4(I)= HGY4(I)
-     &          -(PX1H4(I)*VY17+PX2H4(I)*VY28
-     &            +PX3H4(I)*VY35+PX4H4(I)*VY46)
-        HGZ4(I)= HGZ4(I)
-     &          -(PX1H4(I)*VZ17+PX2H4(I)*VZ28
-     &            +PX3H4(I)*VZ35+PX4H4(I)*VZ46)
-! write(*,*) 'HGX4',HGX4(I)
-! write(*,*) 'HGY4',HGY4(I)
-! write(*,*) 'HGZ4',HGZ4(I)
-      if (Write_flag == 1) THEN
-      write(*,*) 'HGX1',HGX1(I)
-      write(*,*) 'HGX2',HGX2(I)
-      write(*,*) 'HGX3',HGX3(I)
-      write(*,*) 'HGX4',HGX4(I)
-
-      write(*,*) 'HGY1',HGY1(I)
-      write(*,*) 'HGY2',HGY2(I)
-      write(*,*) 'HGY3',HGY3(I)
-      write(*,*) 'HGY4',HGY4(I)
-
-      write(*,*) 'HGZ1',HGZ1(I)
-      write(*,*) 'HGZ2',HGZ2(I)
-      write(*,*) 'HGZ3',HGZ3(I)
-      write(*,*) 'HGZ4',HGZ4(I)
-
-      write(*,*) 'I = ', I
-      !pause
-      endif 
-      ENDDO
-      !q!!!!!!! above
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      DO I=1,NEL 
-! write(*,*) 'a'
-        JR0(I) = JAC1(I)
-        JS0(I) = JAC5(I)
-        JT0(I) = JAC9(I)
-!  JAC1 R,         JAC5 S,         JAC9 T
-      JR_1(I) = ONE/MAX(EM20,JR0(I))
-      JS_1(I) = ONE/MAX(EM20,JS0(I))
-      JT_1(I) = ONE/MAX(EM20,JT0(I))
-      H11(I) = JS0(I)*JT0(I)*JR_1(I)
-      H22(I) = JR0(I)*JT0(I)*JS_1(I)
-      H33(I) = JR0(I)*JS0(I)*JT_1(I)
-      H12(I) = JT0(I)
-      H13(I) = JS0(I)
-      H23(I) = JR0(I)
-      if (Write_flag == 1) THEN
-      write(*,*) 'JR0',JR0(I)
-      write(*,*) 'JS0',JS0(I)
-      write(*,*) 'JT0',JT0(I)
-
-      write(*,*) 'JR_1',JR_1(I)
-      write(*,*) 'JS_1',JS_1(I)
-      write(*,*) 'JT_1',JT_1(I)
-     
-
-      write(*,*) 'H11',H11(I)
-      write(*,*) 'H22',H22(I)
-      write(*,*) 'H33',H33(I)
-      write(*,*) 'H12',H12(I)
-      write(*,*) 'H13',H13(I)
-      write(*,*) 'H23',H23(I)
-
-      write(*,*) 'I = ', I
-      write(*,*) 'OFF',OFF(I)
-      pause
-      endif
-
-!      !Hii
-      ENDDO
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCc      
-    !   DO I=1,NEL
-    !    write(*,*) 'b'
-    !    FHOUR(I,1,1) = FHOUR(I,1,1)*OFF(I)
-    !    FHOUR(I,1,2) = FHOUR(I,1,2)*OFF(I)
-    !    FHOUR(I,1,3) = FHOUR(I,1,3)*OFF(I)
-    !    FHOUR(I,1,4) = FHOUR(I,1,4)*OFF(I)
-    !    FHOUR(I,2,1) = FHOUR(I,2,1)*OFF(I)
-    !    FHOUR(I,2,2) = FHOUR(I,2,2)*OFF(I)
-    !    FHOUR(I,2,3) = FHOUR(I,2,3)*OFF(I)
-    !    FHOUR(I,2,4) = FHOUR(I,2,4)*OFF(I)
-    !    FHOUR(I,3,1) = FHOUR(I,3,1)*OFF(I)
-    !    FHOUR(I,3,2) = FHOUR(I,3,2)*OFF(I)
-    !    FHOUR(I,3,3) = FHOUR(I,3,3)*OFF(I)
-    !    FHOUR(I,3,4) = FHOUR(I,3,4)*OFF(I)
-    !   ENDDO
-      DO I=1,NEL
-!        !//TODO: A VERIFIER G_3DT         
-        E_R =G_3DT(I)*JR_1(I)
-        E_S =G_3DT(I)*JS_1(I)
-        E_T =G_3DT(I)*JT_1(I)
-
-        
-        if (Write_flag == 1) THEN
-        write(*,*) 'I = ', I
-        write(*,*) 'E_R = ', E_R
-        write(*,*) 'E_S = ', E_S
-        write(*,*) 'E_T = ', E_T
-        endif
-
-        DFHOUR(I,1,1) = E_R*HGX1(I)
-        DFHOUR(I,1,2) = E_R*HGX2(I)
-        DFHOUR(I,1,3) = E_R*HGX3(I)
-        DFHOUR(I,1,4) = E_R*HGX4(I)
-
-        DFHOUR(I,2,1) = E_S*HGY1(I)
-        DFHOUR(I,2,2) = E_S*HGY2(I)
-        DFHOUR(I,2,3) = E_S*HGY3(I)
-        DFHOUR(I,2,4) = E_S*HGY4(I)
-      
-        DFHOUR(I,3,1) = E_T*HGZ1(I)
-        DFHOUR(I,3,2) = E_T*HGZ2(I)
-        DFHOUR(I,3,3) = E_T*HGZ3(I)
-        DFHOUR(I,3,4) = E_T*HGZ4(I)  
-
-        if (Write_flag == 1) THEN   
-        write(*,*) 'FHOUR(I,1,1) = ',FHOUR(I,1,1)
-        write(*,*) 'FHOUR(I,1,2) = ',FHOUR(I,1,2)
-        write(*,*) 'FHOUR(I,1,3) = ',FHOUR(I,1,3)
-        write(*,*) 'FHOUR(I,1,4) = ',FHOUR(I,1,4)
-        write(*,*) 'FHOUR(I,2,1) = ',FHOUR(I,2,1)
-        write(*,*) 'FHOUR(I,2,2) = ',FHOUR(I,2,2)
-        write(*,*) 'FHOUR(I,2,3) = ',FHOUR(I,2,3)
-        write(*,*) 'FHOUR(I,2,4) = ',FHOUR(I,2,4)
-        write(*,*) 'FHOUR(I,3,1) = ',FHOUR(I,3,1)
-        write(*,*) 'FHOUR(I,3,2) = ',FHOUR(I,3,2)
-        write(*,*) 'FHOUR(I,3,3) = ',FHOUR(I,3,3)
-        write(*,*) 'FHOUR(I,3,4) = ',FHOUR(I,3,4)
-
-        write(*,*) 'DFHOUR(I,1,1) = ',DFHOUR(I,1,1)
-        write(*,*) 'DFHOUR(I,1,2) = ',DFHOUR(I,1,2)
-        write(*,*) 'DFHOUR(I,1,3) = ',DFHOUR(I,1,3)
-        write(*,*) 'DFHOUR(I,1,4) = ',DFHOUR(I,1,4)
-        write(*,*) 'DFHOUR(I,2,1) = ',DFHOUR(I,2,1)
-        write(*,*) 'DFHOUR(I,2,2) = ',DFHOUR(I,2,2)
-        write(*,*) 'DFHOUR(I,2,3) = ',DFHOUR(I,2,3)
-        write(*,*) 'DFHOUR(I,2,4) = ',DFHOUR(I,2,4)
-        write(*,*) 'DFHOUR(I,3,1) = ',DFHOUR(I,3,1)
-        write(*,*) 'DFHOUR(I,3,2) = ',DFHOUR(I,3,2)
-        write(*,*) 'DFHOUR(I,3,3) = ',DFHOUR(I,3,3)
-        write(*,*) 'DFHOUR(I,3,4) = ',DFHOUR(I,3,4)
-        endif
-C
-        FHOUR(I,1,1) = FHOUR(I,1,1) + DFHOUR(I,1,1)
-        FHOUR(I,1,2) = FHOUR(I,1,2) + DFHOUR(I,1,2)
-        FHOUR(I,1,3) = FHOUR(I,1,3) + DFHOUR(I,1,3)
-        FHOUR(I,1,4) = FHOUR(I,1,4) + DFHOUR(I,1,4)
-        FHOUR(I,2,1) = FHOUR(I,2,1) + DFHOUR(I,2,1)
-        FHOUR(I,2,2) = FHOUR(I,2,2) + DFHOUR(I,2,2)
-        FHOUR(I,2,3) = FHOUR(I,2,3) + DFHOUR(I,2,3)
-        FHOUR(I,2,4) = FHOUR(I,2,4) + DFHOUR(I,2,4)
-        FHOUR(I,3,1) = FHOUR(I,3,1) + DFHOUR(I,3,1)
-        FHOUR(I,3,2) = FHOUR(I,3,2) + DFHOUR(I,3,2)
-        FHOUR(I,3,3) = FHOUR(I,3,3) + DFHOUR(I,3,3)
-        FHOUR(I,3,4) = FHOUR(I,3,4) + DFHOUR(I,3,4)
-        
-        if (Write_flag == 1) THEN   
-        write(*,*) 'FHOUR(I,1,1) = ',FHOUR(I,1,1)
-        write(*,*) 'FHOUR(I,1,2) = ',FHOUR(I,1,2)
-        write(*,*) 'FHOUR(I,1,3) = ',FHOUR(I,1,3)
-        write(*,*) 'FHOUR(I,1,4) = ',FHOUR(I,1,4)
- 
-        write(*,*) 'FHOUR(I,2,1) = ',FHOUR(I,2,1)
-        write(*,*) 'FHOUR(I,2,2) = ',FHOUR(I,2,2)
-        write(*,*) 'FHOUR(I,2,3) = ',FHOUR(I,2,3)
-        write(*,*) 'FHOUR(I,2,4) = ',FHOUR(I,2,4)
- 
-        write(*,*) 'FHOUR(I,3,1) = ',FHOUR(I,3,1)
-        write(*,*) 'FHOUR(I,3,2) = ',FHOUR(I,3,2)
-        write(*,*) 'FHOUR(I,3,3) = ',FHOUR(I,3,3)
-        write(*,*) 'FHOUR(I,3,4) = ',FHOUR(I,3,4)
-        
-        endif 
-        !pause
-      ENDDO
-      !!pause
-      DO I=1,NEL
-
-!       write(*,*) 'FHOUR(I,1,1)*JR0(I)', FHOUR(I,1,1)*JR0(I)  
-!       write(*,*) 'FCL(I)*HGX1(I)', FCL(I)*HGX1(I)  
-!!       write(*,*) 'FHOUR(I,2,2)*JR0(I)', FHOUR(I,2,2)*JR0(I)  
-!       write(*,*) 'FCL(I)*HGY2(I)', FCL(I)*HGY2(I) 
-!       write(*,*) 'FHOUR(I,3,3)*JR0(I)', FHOUR(I,3,3)*JR0(I)  
-!       write(*,*) 'FCL(I)*HGZ3(I)', FCL(I)*HGZ3(I)
-!       !//TODO:FCL
-        FHOURT(1,1) = FHOUR(I,1,1)*JR0(I)+FCL(I)*HGX1(I)
-        FHOURT(1,2) = FHOUR(I,1,2)*JR0(I)+FCL(I)*HGX2(I)
-        FHOURT(1,3) = FHOUR(I,1,3)*JR0(I)+FCL(I)*HGX3(I)
-        FHOURT(1,4) = FHOUR(I,1,4)*JR0(I)+FCL(I)*HGX4(I)
-        FHOURT(2,1) = FHOUR(I,2,1)*JS0(I)+FCL(I)*HGY1(I)
-        FHOURT(2,2) = FHOUR(I,2,2)*JS0(I)+FCL(I)*HGY2(I)
-        FHOURT(2,3) = FHOUR(I,2,3)*JS0(I)+FCL(I)*HGY3(I)
-        FHOURT(2,4) = FHOUR(I,2,4)*JS0(I)+FCL(I)*HGY4(I)
-        FHOURT(3,1) = FHOUR(I,3,1)*JT0(I)+FCL(I)*HGZ1(I)
-        FHOURT(3,2) = FHOUR(I,3,2)*JT0(I)+FCL(I)*HGZ2(I)
-        FHOURT(3,3) = FHOUR(I,3,3)*JT0(I)+FCL(I)*HGZ3(I)
-        FHOURT(3,4) = FHOUR(I,3,4)*JT0(I)+FCL(I)*HGZ4(I)
-        if (Write_flag == 1) THEN
-        write(*,*) 'FHOURT(1,1) = ',FHOURT(1,1)
-        write(*,*) 'FHOURT(1,2) = ',FHOURT(1,2)
-        write(*,*) 'FHOURT(1,3) = ',FHOURT(1,3)
-        write(*,*) 'FHOURT(1,4) = ',FHOURT(1,4)
- 
-        write(*,*) 'FHOURT(2,1) = ',FHOURT(2,1)
-        write(*,*) 'FHOURT(2,2) = ',FHOURT(2,2)
-        write(*,*) 'FHOURT(2,3) = ',FHOURT(2,3)
-        write(*,*) 'FHOURT(2,4) = ',FHOURT(2,4)
- 
-        write(*,*) 'FHOURT(3,1) = ',FHOURT(3,1)
-        write(*,*) 'FHOURT(3,2) = ',FHOURT(3,2)
-        write(*,*) 'FHOURT(3,3) = ',FHOURT(3,3)
-        write(*,*) 'FHOURT(3,4) = ',FHOURT(3,4)
-        endif
-C NFHX1 NFHOUR(I,3(XYZ),4(1,2,3,4))
-!//TODO:NU1 NNU2 NU3
-!      !NFHOUR(I,1,1) NFHX1(I)
-        NFHOUR(I,1,1) = (H22(I)+H33(I))*FHOURT(1,1)
-     .              +H12(I)*FHOURT(2,2)+H13(I)*FHOURT(3,3)
-       !NFHOUR(I,2,2) NFHY2(I)
-        NFHOUR(I,2,2) = (H11(I)+H33(I))*FHOURT(2,2)
-     .              +H23(I)*FHOURT(3,3)+H12(I)*FHOURT(1,1)
-       !NFHOUR(I,3,3) NFHZ3(I)
-        NFHOUR(I,3,3) = (H11(I)+H22(I))*FHOURT(3,3)
-     .              +H13(I)*FHOURT(1,1)+H23(I)*FHOURT(2,2)
-       !NFHOUR(I,1,2) NFHX2(I)
-        NFHOUR(I,1,2) = NU1(I)*H11(I)*FHOURT(1,2)
-     .             +NU2(I)*H12(I)*FHOURT(2,1)
-       !NFHOUR(I,1,3) NFHX3(I)
-        NFHOUR(I,1,3) = NU1(I)*H11(I)*FHOURT(1,3)
-     .             +NU2(I)*H13(I)*FHOURT(3,1)
-       !NFHOUR(I,2,1) NFHY1(I)
-        NFHOUR(I,2,1) = NU1(I)*H22(I)*FHOURT(2,1)
-     .             +NU2(I)*H12(I)*FHOURT(1,2)
-       !NFHOUR(I,3,1)  NFHZ1(I) NFHZ1(I) = CC*FHOUR(I,1) + FCL(I)*HGZ1(I)
-        NFHOUR(I,3,1) = NU1(I)*H33(I)*FHOURT(3,1)
-     .             +NU2(I)*H13(I)*FHOURT(1,3)
-       !NFHOUR(I,2,3) NFHY3(I)
-        NFHOUR(I,2,3) = NU1(I)*H22(I)*FHOURT(2,3)
-     .             +NU2(I)*H23(I)*FHOURT(3,2)
-       !NFHOUR(I,3,2)  NFHZ2(I) NFHZ2(I) = CC*FHOUR(I,2) + FCL(I)*HGZ2(I)
-        NFHOUR(I,3,2)= NU1(I)*H33(I)*FHOURT(3,2)
-     .             +NU2(I)*H23(I)*FHOURT(2,3)
-       !NFHOUR(I,1,4) NFHX4(I)
-        NFHOUR(I,1,4) = NU3(I)*H11(I)*FHOURT(1,4)
-       !NFHOUR(I,2,4) NFHY4(I)
-        NFHOUR(I,2,4) = NU3(I)*H22(I)*FHOURT(2,4)
-       !NFHOUR(I,3,4)  NFHZ4(I)
-        NFHOUR(I,3,4) = NU3(I)*H33(I)*FHOURT(3,4)
-        
-        if (Write_flag == 1) THEN
-      write(*,*) 'NFHOUR(I,1,1) = ',NFHOUR(I,1,1)
-      write(*,*) 'NFHOUR(I,1,2) = ',NFHOUR(I,1,2)
-      write(*,*) 'NFHOUR(I,1,3) = ',NFHOUR(I,1,3)
-      write(*,*) 'NFHOUR(I,1,4) = ',NFHOUR(I,1,4)
- 
-      write(*,*) 'NFHOUR(I,2,1) = ',NFHOUR(I,2,1)
-      write(*,*) 'NFHOUR(I,2,2) = ',NFHOUR(I,2,2)
-      write(*,*) 'NFHOUR(I,2,3) = ',NFHOUR(I,2,3)
-      write(*,*) 'NFHOUR(I,2,4) = ',NFHOUR(I,2,4)
- 
-      write(*,*) 'NFHOUR(I,3,1) = ',NFHOUR(I,3,1)
-      write(*,*) 'NFHOUR(I,3,2) = ',NFHOUR(I,3,2)
-      write(*,*) 'NFHOUR(I,3,3) = ',NFHOUR(I,3,3)
-      write(*,*) 'NFHOUR(I,3,4) = ',NFHOUR(I,3,4)
-      
-      write(*,*) 'I = ', I
-        endif
-      ENDDO
-      !!pause
-      
-      DO I=1,NEL
-        HQ13P = (NFHOUR(I,1,1)+NFHOUR(I,1,3))*ONE_OVER_8
-        HQ13N = (NFHOUR(I,1,1)-NFHOUR(I,1,3))*ONE_OVER_8
-        HQ24P = (NFHOUR(I,1,2)+NFHOUR(I,1,4))*ONE_OVER_8
-        HQ24N = (NFHOUR(I,1,2)-NFHOUR(I,1,4))*ONE_OVER_8
-        FF =-PX1H1(I)*NFHOUR(I,1,1)-PX1H2(I)*NFHOUR(I,1,2)
-     .      -PX1H3(I)*NFHOUR(I,1,3)-PX1H4(I)*NFHOUR(I,1,4)
-        F11_hgl(I) =-(HQ13P+HQ24N+FF)
-        F17_hgl(I) =-(HQ13P+HQ24P-FF)
-        FF =-PX2H1(I)*NFHOUR(I,1,1)-PX2H2(I)*NFHOUR(I,1,2)
-     .      -PX2H3(I)*NFHOUR(I,1,3)-PX2H4(I)*NFHOUR(I,1,4)
-        F12_hgl(I) =-(HQ13N-HQ24N+FF)
-        F18_hgl(I) =-(HQ13N-HQ24P-FF)
-        FF =-PX3H1(I)*NFHOUR(I,1,1)-PX3H2(I)*NFHOUR(I,1,2)
-     .      -PX3H3(I)*NFHOUR(I,1,3)-PX3H4(I)*NFHOUR(I,1,4)
-        F13_hgl(I) =-(-HQ13N-HQ24P+FF)
-        F15_hgl(I) =-(-HQ13N-HQ24N-FF)
-        FF =-PX4H1(I)*NFHOUR(I,1,1)-PX4H2(I)*NFHOUR(I,1,2)
-     .      -PX4H3(I)*NFHOUR(I,1,3)-PX4H4(I)*NFHOUR(I,1,4)
-        F14_hgl(I) =-(-HQ13P+HQ24P+FF)
-        F16_hgl(I) =-(-HQ13P+HQ24N-FF)
-       ENDDO
-       DO I=1,NEL
-        HQ13P = (NFHOUR(I,2,1)+NFHOUR(I,2,3))*ONE_OVER_8
-        HQ13N = (NFHOUR(I,2,1)-NFHOUR(I,2,3))*ONE_OVER_8
-        HQ24P = (NFHOUR(I,2,2)+NFHOUR(I,2,4))*ONE_OVER_8
-        HQ24N = (NFHOUR(I,2,2)-NFHOUR(I,2,4))*ONE_OVER_8
-        FF =-PX1H1(I)*NFHOUR(I,2,1)-PX1H2(I)*NFHOUR(I,2,2)
-     .      -PX1H3(I)*NFHOUR(I,2,3)-PX1H4(I)*NFHOUR(I,2,4)
-        F21_hgl(I) =-(HQ13P+HQ24N+FF)
-        F27_hgl(I) =-(HQ13P+HQ24P-FF)
-        FF =-PX2H1(I)*NFHOUR(I,2,1)-PX2H2(I)*NFHOUR(I,2,2)
-     .      -PX2H3(I)*NFHOUR(I,2,3)-PX2H4(I)*NFHOUR(I,2,4)
-        F22_hgl(I) =-(HQ13N-HQ24N+FF)
-        F28_hgl(I) =-(HQ13N-HQ24P-FF)
-        FF =-PX3H1(I)*NFHOUR(I,2,1)-PX3H2(I)*NFHOUR(I,2,2)
-     .      -PX3H3(I)*NFHOUR(I,2,3)-PX3H4(I)*NFHOUR(I,2,4)
-        F23_hgl(I) =-(-HQ13N-HQ24P+FF)
-        F25_hgl(I) =-(-HQ13N-HQ24N-FF)
-        FF =-PX4H1(I)*NFHOUR(I,2,1)-PX4H2(I)*NFHOUR(I,2,2)
-     .      -PX4H3(I)*NFHOUR(I,2,3)-PX4H4(I)*NFHOUR(I,2,4)
-        F24_hgl(I) =-(-HQ13P+HQ24P+FF)
-        F26_hgl(I) =-(-HQ13P+HQ24N-FF)
-       ENDDO
-       DO I=1,NEL
-        HQ13P = (NFHOUR(I,3,1)+NFHOUR(I,3,3))*ONE_OVER_8
-        HQ13N = (NFHOUR(I,3,1)-NFHOUR(I,3,3))*ONE_OVER_8
-        HQ24P = (NFHOUR(I,3,2)+NFHOUR(I,3,4))*ONE_OVER_8
-        HQ24N = (NFHOUR(I,3,2)-NFHOUR(I,3,4))*ONE_OVER_8
-        FF =-PX1H1(I)*NFHOUR(I,3,1)-PX1H2(I)*NFHOUR(I,3,2)
-     .      -PX1H3(I)*NFHOUR(I,3,3)-PX1H4(I)*NFHOUR(I,3,4)
-        F31_hgl(I) =-(HQ13P+HQ24N+FF)
-        F37_hgl(I) =-(HQ13P+HQ24P-FF)
-        FF =-PX2H1(I)*NFHOUR(I,3,1)-PX2H2(I)*NFHOUR(I,3,2)
-     .      -PX2H3(I)*NFHOUR(I,3,3)-PX2H4(I)*NFHOUR(I,3,4)
-        F32_hgl(I) =-(HQ13N-HQ24N+FF)
-        F38_hgl(I) =-(HQ13N-HQ24P-FF)
-        FF =-PX3H1(I)*NFHOUR(I,3,1)-PX3H2(I)*NFHOUR(I,3,2)
-     .      -PX3H3(I)*NFHOUR(I,3,3)-PX3H4(I)*NFHOUR(I,3,4)
-        F33_hgl(I) =-(-HQ13N-HQ24P+FF)
-        F35_hgl(I) =-(-HQ13N-HQ24N-FF)
-        FF =-PX4H1(I)*NFHOUR(I,3,1)-PX4H2(I)*NFHOUR(I,3,2)
-     .      -PX4H3(I)*NFHOUR(I,3,3)-PX4H4(I)*NFHOUR(I,3,4)
-        F34_hgl(I) =-(-HQ13P+HQ24P+FF)
-        F36_hgl(I) =-(-HQ13P+HQ24N-FF)
-       ENDDO
-C------------------------------------------------
-C
-
-      DO I=1,NEL
-         if (Write_flag == 1) then
-          write(*,*) 'I = ', I
-          write(*,*) 'F11_hgl(I) = ', F11_hgl(I)
-          write(*,*) 'F21_hgl(I) = ', F21_hgl(I)
-          write(*,*) 'F31_hgl(I) = ', F31_hgl(I) 
-          write(*,*) 'F12_hgl(I) = ', F12_hgl(I)
-          write(*,*) 'F22_hgl(I) = ', F22_hgl(I)
-          write(*,*) 'F32_hgl(I) = ', F32_hgl(I) 
-          write(*,*) 'F13_hgl(I) = ', F13_hgl(I)   
-          write(*,*) 'F23_hgl(I) = ', F23_hgl(I)        
-          write(*,*) 'F33_hgl(I) = ', F33_hgl(I) 
-          write(*,*) 'F14_hgl(I) = ', F14_hgl(I)
-          write(*,*) 'F24_hgl(I) = ', F24_hgl(I)
-          write(*,*) 'F34_hgl(I) = ', F34_hgl(I) 
-          write(*,*) 'F15_hgl(I) = ', F15_hgl(I)
-          write(*,*) 'F25_hgl(I) = ', F25_hgl(I)
-          write(*,*) 'F35_hgl(I) = ', F35_hgl(I) 
-          write(*,*) 'F16_hgl(I) = ', F16_hgl(I)  
-          write(*,*) 'F26_hgl(I) = ', F26_hgl(I)
-          write(*,*) 'F36_hgl(I) = ', F36_hgl(I) 
-          write(*,*) 'F17_hgl(I) = ', F17_hgl(I)
-          write(*,*) 'F27_hgl(I) = ', F27_hgl(I)
-          write(*,*) 'F37_hgl(I) = ', F37_hgl(I)          
-          write(*,*) 'F18_hgl(I) = ', F18_hgl(I)
-          write(*,*) 'F28_hgl(I) = ', F28_hgl(I)
-          write(*,*) 'F38_hgl(I) = ', F38_hgl(I)
-          endif 
-       
       enddo
 
-      DO I=1,NEL
-           
-          if (hourglass == 0) THEN
-          F11_hgl(I)=0.
-          F21_hgl(I)=0.
-          F31_hgl(I)=0. 
-          F12_hgl(I)=0.
-          F22_hgl(I)=0.
-          F32_hgl(I)=0. 
-          F13_hgl(I)=0.   
-          F23_hgl(I)=0.        
-          F33_hgl(I)=0. 
-          F14_hgl(I)=0.
-          F24_hgl(I)=0.
-          F34_hgl(I)=0. 
-          F15_hgl(I)=0.
-          F25_hgl(I)=0.
-          F35_hgl(I)=0. 
-          F16_hgl(I)=0.  
-          F26_hgl(I)=0.
-          F36_hgl(I)=0. 
-          F17_hgl(I)=0.
-          F27_hgl(I)=0.
-          F37_hgl(I)=0.       
-          F18_hgl(I)=0.
-          F28_hgl(I)=0.
-          F38_hgl(I)=0. 
+      do i=1,nel
+        vx17=vx1(i)-vx7(i)
+        vx28=vx2(i)-vx8(i)
+        vx35=vx3(i)-vx5(i)
+        vx46=vx4(i)-vx6(i)
+        vy17=vy1(i)-vy7(i)
+        vy28=vy2(i)-vy8(i)
+        vy35=vy3(i)-vy5(i)
+        vy46=vy4(i)-vy6(i)
+        vz17=vz1(i)-vz7(i)
+        vz28=vz2(i)-vz8(i)
+        vz35=vz3(i)-vz5(i)
+        vz46=vz4(i)-vz6(i)
 
-!          write(*,*) 'Ncycle =', NC_DEBUG 
-!          PAUSE
+
+!C   alpha =1 ->eta zeta   
+!C 1 1 -1 -1 -1 -1 1 1
+!vy1467=vy1(i)-vy4(i)-vy6(i)+vy7(i)
+!vz2358=vz2(i)-vz3(i)-vz5(i)+vz8(i)
+!hgx1(i)=(vx1467+vx2358)*one_over_8
+    
+    hgx1(i)= hgx1(i) &
+             -(px1h1(i)*vx17+px2h1(i)*vx28 &
+               +px3h1(i)*vx35+px4h1(i)*vx46)
+    hgy1(i)= hgy1(i) &
+             -(px1h1(i)*vy17+px2h1(i)*vy28 &
+               +px3h1(i)*vy35+px4h1(i)*vy46)
+    hgz1(i)= hgz1(i) &
+             -(px1h1(i)*vz17+px2h1(i)*vz28 &
+               +px3h1(i)*vz35+px4h1(i)*vz46)
+! write(*,*) 'hgx1',hgx1(i)
+! write(*,*) 'hgy1',hgy1(i)
+! write(*,*) 'hgz1',hgz1(i)
+!c   alpha =2 ->zeta ksi   
+!c 1 -1 -1 1 -1 1 1 -1
+    hgx2(i)= hgx2(i) &
+             -(px1h2(i)*vx17+px2h2(i)*vx28 &
+               +px3h2(i)*vx35+px4h2(i)*vx46)
+    hgy2(i)= hgy2(i) &
+             -(px1h2(i)*vy17+px2h2(i)*vy28 &
+               +px3h2(i)*vy35+px4h2(i)*vy46)
+    hgz2(i)= hgz2(i) &
+             -(px1h2(i)*vz17+px2h2(i)*vz28 &
+               +px3h2(i)*vz35+px4h2(i)*vz46)
+! write(*,*) 'hgx2',hgx2(i)
+! write(*,*) 'hgy2',hgy2(i)
+! write(*,*) 'hgz2',hgz2(i)
+!c   alpha =3 ->ksi eta    
+!c 1 -1 1 -1 1 -1 1 -1
+    hgx3(i)= hgx3(i) &
+             -(px1h3(i)*vx17+px2h3(i)*vx28 &
+               +px3h3(i)*vx35+px4h3(i)*vx46)
+    hgy3(i)= hgy3(i) &
+             -(px1h3(i)*vy17+px2h3(i)*vy28 &
+               +px3h3(i)*vy35+px4h3(i)*vy46)
+    hgz3(i)= hgz3(i) &
+             -(px1h3(i)*vz17+px2h3(i)*vz28 &
+               +px3h3(i)*vz35+px4h3(i)*vz46)
+!  write(*,*) 'hgx3',hgx3(i)
+! write(*,*) 'hgy3',hgy3(i)
+!  write(*,*) 'hgz3',hgz3(i)
+!c
+!c   alpha =4 ->ksi eta zeta
+!c -1 1 -1 1 1 -1 1 -1
+    hgx4(i)= hgx4(i) &
+             -(px1h4(i)*vx17+px2h4(i)*vx28 &
+               +px3h4(i)*vx35+px4h4(i)*vx46)
+    hgy4(i)= hgy4(i) &
+             -(px1h4(i)*vy17+px2h4(i)*vy28 &
+               +px3h4(i)*vy35+px4h4(i)*vy46)
+    hgz4(i)= hgz4(i) &
+             -(px1h4(i)*vz17+px2h4(i)*vz28 &
+               +px3h4(i)*vz35+px4h4(i)*vz46)
+! write(*,*) 'hgx4',hgx4(i)
+! write(*,*) 'hgy4',hgy4(i)
+! write(*,*) 'hgz4',hgz4(i)
+     if (write_flag == 1) then
+     write(*,*) 'hgx1',hgx1(i)
+     write(*,*) 'hgx2',hgx2(i)
+     write(*,*) 'hgx3',hgx3(i)
+     write(*,*) 'hgx4',hgx4(i)
+
+     write(*,*) 'hgy1',hgy1(i)
+     write(*,*) 'hgy2',hgy2(i)
+     write(*,*) 'hgy3',hgy3(i)
+     write(*,*) 'hgy4',hgy4(i)
+
+     write(*,*) 'hgz1',hgz1(i)
+     write(*,*) 'hgz2',hgz2(i)
+     write(*,*) 'hgz3',hgz3(i)
+     write(*,*) 'hgz4',hgz4(i)
+
+     write(*,*) 'i = ', i
+     !pause
+     endif 
+     enddo
+      !q!!!!!!! above
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   do i=1,nel 
+! write(*,*) 'a'
+     jr0(i) = jac1(i)
+     js0(i) = jac5(i)
+     jt0(i) = jac9(i)
+!  jac1 r,         jac5 s,         jac9 t
+   jr_1(i) = one/max(em20,jr0(i))
+   js_1(i) = one/max(em20,js0(i))
+   jt_1(i) = one/max(em20,jt0(i))
+   h11(i) = js0(i)*jt0(i)*jr_1(i)
+   h22(i) = jr0(i)*jt0(i)*js_1(i)
+   h33(i) = jr0(i)*js0(i)*jt_1(i)
+   h12(i) = jt0(i)
+   h13(i) = js0(i)
+   h23(i) = jr0(i)
+   if (write_flag == 1) then
+   write(*,*) 'jr0',jr0(i)
+   write(*,*) 'js0',js0(i)
+   write(*,*) 'jt0',jt0(i)
+
+   write(*,*) 'jr_1',jr_1(i)
+   write(*,*) 'js_1',js_1(i)
+   write(*,*) 'jt_1',jt_1(i)
+     
+
+   write(*,*) 'h11',h11(i)
+   write(*,*) 'h22',h22(i)
+   write(*,*) 'h33',h33(i)
+   write(*,*) 'h12',h12(i)
+   write(*,*) 'h13',h13(i)
+   write(*,*) 'h23',h23(i)
+
+   write(*,*) 'i = ', i
+   write(*,*) 'off',off(i)
+   !pause
+   endif
+
+!      !hii
+   enddo
+!ccccccccccccccccccccccccccccccccccc      
+    !   do i=1,nel
+    !    write(*,*) 'b'
+    !    fhour(i,1,1) = fhour(i,1,1)*off(i)
+    !    fhour(i,1,2) = fhour(i,1,2)*off(i)
+    !    fhour(i,1,3) = fhour(i,1,3)*off(i)
+    !    fhour(i,1,4) = fhour(i,1,4)*off(i)
+    !    fhour(i,2,1) = fhour(i,2,1)*off(i)
+    !    fhour(i,2,2) = fhour(i,2,2)*off(i)
+    !    fhour(i,2,3) = fhour(i,2,3)*off(i)
+    !    fhour(i,2,4) = fhour(i,2,4)*off(i)
+    !    fhour(i,3,1) = fhour(i,3,1)*off(i)
+    !    fhour(i,3,2) = fhour(i,3,2)*off(i)
+    !    fhour(i,3,3) = fhour(i,3,3)*off(i)
+    !    fhour(i,3,4) = fhour(i,3,4)*off(i)
+    !   enddo
+   do i=1,nel
+!        !//todo: a verifier g_3dt         
+     e_r =g_3dt(i)*jr_1(i)
+     e_s =g_3dt(i)*js_1(i)
+     e_t =g_3dt(i)*jt_1(i)
+
+     
+     if (write_flag == 1) then
+     write(*,*) 'i = ', i
+     write(*,*) 'e_r = ', e_r
+     write(*,*) 'e_s = ', e_s
+     write(*,*) 'e_t = ', e_t
+     endif
+
+     dfhour(i,1,1) = e_r*hgx1(i)
+     dfhour(i,1,2) = e_r*hgx2(i)
+     dfhour(i,1,3) = e_r*hgx3(i)
+     dfhour(i,1,4) = e_r*hgx4(i)
+
+     dfhour(i,2,1) = e_s*hgy1(i)
+     dfhour(i,2,2) = e_s*hgy2(i)
+     dfhour(i,2,3) = e_s*hgy3(i)
+     dfhour(i,2,4) = e_s*hgy4(i)
+   
+     dfhour(i,3,1) = e_t*hgz1(i)
+     dfhour(i,3,2) = e_t*hgz2(i)
+     dfhour(i,3,3) = e_t*hgz3(i)
+     dfhour(i,3,4) = e_t*hgz4(i)  
+
+     if (write_flag == 1) then   
+     write(*,*) 'fhour(i,1,1) = ',fhour(i,1,1)
+     write(*,*) 'fhour(i,1,2) = ',fhour(i,1,2)
+     write(*,*) 'fhour(i,1,3) = ',fhour(i,1,3)
+     write(*,*) 'fhour(i,1,4) = ',fhour(i,1,4)
+     write(*,*) 'fhour(i,2,1) = ',fhour(i,2,1)
+     write(*,*) 'fhour(i,2,2) = ',fhour(i,2,2)
+     write(*,*) 'fhour(i,2,3) = ',fhour(i,2,3)
+     write(*,*) 'fhour(i,2,4) = ',fhour(i,2,4)
+     write(*,*) 'fhour(i,3,1) = ',fhour(i,3,1)
+     write(*,*) 'fhour(i,3,2) = ',fhour(i,3,2)
+     write(*,*) 'fhour(i,3,3) = ',fhour(i,3,3)
+     write(*,*) 'fhour(i,3,4) = ',fhour(i,3,4)
+
+     write(*,*) 'dfhour(i,1,1) = ',dfhour(i,1,1)
+     write(*,*) 'dfhour(i,1,2) = ',dfhour(i,1,2)
+     write(*,*) 'dfhour(i,1,3) = ',dfhour(i,1,3)
+     write(*,*) 'dfhour(i,1,4) = ',dfhour(i,1,4)
+     write(*,*) 'dfhour(i,2,1) = ',dfhour(i,2,1)
+     write(*,*) 'dfhour(i,2,2) = ',dfhour(i,2,2)
+     write(*,*) 'dfhour(i,2,3) = ',dfhour(i,2,3)
+     write(*,*) 'dfhour(i,2,4) = ',dfhour(i,2,4)
+     write(*,*) 'dfhour(i,3,1) = ',dfhour(i,3,1)
+     write(*,*) 'dfhour(i,3,2) = ',dfhour(i,3,2)
+     write(*,*) 'dfhour(i,3,3) = ',dfhour(i,3,3)
+     write(*,*) 'dfhour(i,3,4) = ',dfhour(i,3,4)
+     endif
+!c
+     fhour(i,1,1) = fhour(i,1,1) + dfhour(i,1,1)
+     fhour(i,1,2) = fhour(i,1,2) + dfhour(i,1,2)
+     fhour(i,1,3) = fhour(i,1,3) + dfhour(i,1,3)
+     fhour(i,1,4) = fhour(i,1,4) + dfhour(i,1,4)
+     fhour(i,2,1) = fhour(i,2,1) + dfhour(i,2,1)
+     fhour(i,2,2) = fhour(i,2,2) + dfhour(i,2,2)
+     fhour(i,2,3) = fhour(i,2,3) + dfhour(i,2,3)
+     fhour(i,2,4) = fhour(i,2,4) + dfhour(i,2,4)
+     fhour(i,3,1) = fhour(i,3,1) + dfhour(i,3,1)
+     fhour(i,3,2) = fhour(i,3,2) + dfhour(i,3,2)
+     fhour(i,3,3) = fhour(i,3,3) + dfhour(i,3,3)
+     fhour(i,3,4) = fhour(i,3,4) + dfhour(i,3,4)
+     
+     if (write_flag == 1) then   
+     write(*,*) 'fhour(i,1,1) = ',fhour(i,1,1)
+     write(*,*) 'fhour(i,1,2) = ',fhour(i,1,2)
+     write(*,*) 'fhour(i,1,3) = ',fhour(i,1,3)
+     write(*,*) 'fhour(i,1,4) = ',fhour(i,1,4)
+ 
+     write(*,*) 'fhour(i,2,1) = ',fhour(i,2,1)
+     write(*,*) 'fhour(i,2,2) = ',fhour(i,2,2)
+     write(*,*) 'fhour(i,2,3) = ',fhour(i,2,3)
+     write(*,*) 'fhour(i,2,4) = ',fhour(i,2,4)
+ 
+     write(*,*) 'fhour(i,3,1) = ',fhour(i,3,1)
+     write(*,*) 'fhour(i,3,2) = ',fhour(i,3,2)
+     write(*,*) 'fhour(i,3,3) = ',fhour(i,3,3)
+     write(*,*) 'fhour(i,3,4) = ',fhour(i,3,4)
+     endif 
+     !pause
+   enddo
+   !!pause
+   do i=1,nel
+
+!       write(*,*) 'fhour(i,1,1)*jr0(i)', fhour(i,1,1)*jr0(i)  
+!       write(*,*) 'fcl(i)*hgx1(i)', fcl(i)*hgx1(i)  
+!!       write(*,*) 'fhour(i,2,2)*jr0(i)', fhour(i,2,2)*jr0(i)  
+!       write(*,*) 'fcl(i)*hgy2(i)', fcl(i)*hgy2(i) 
+!       write(*,*) 'fhour(i,3,3)*jr0(i)', fhour(i,3,3)*jr0(i)  
+!       write(*,*) 'fcl(i)*hgz3(i)', fcl(i)*hgz3(i)
+!       !//todo:fcl
+     fhourt(1,1) = fhour(i,1,1)*jr0(i)+fcl(i)*hgx1(i)
+     fhourt(1,2) = fhour(i,1,2)*jr0(i)+fcl(i)*hgx2(i)
+     fhourt(1,3) = fhour(i,1,3)*jr0(i)+fcl(i)*hgx3(i)
+     fhourt(1,4) = fhour(i,1,4)*jr0(i)+fcl(i)*hgx4(i)
+     fhourt(2,1) = fhour(i,2,1)*js0(i)+fcl(i)*hgy1(i)
+     fhourt(2,2) = fhour(i,2,2)*js0(i)+fcl(i)*hgy2(i)
+     fhourt(2,3) = fhour(i,2,3)*js0(i)+fcl(i)*hgy3(i)
+     fhourt(2,4) = fhour(i,2,4)*js0(i)+fcl(i)*hgy4(i)
+     fhourt(3,1) = fhour(i,3,1)*jt0(i)+fcl(i)*hgz1(i)
+     fhourt(3,2) = fhour(i,3,2)*jt0(i)+fcl(i)*hgz2(i)
+     fhourt(3,3) = fhour(i,3,3)*jt0(i)+fcl(i)*hgz3(i)
+     fhourt(3,4) = fhour(i,3,4)*jt0(i)+fcl(i)*hgz4(i)
+     if (write_flag == 1) then
+     write(*,*) 'fhourt(1,1) = ',fhourt(1,1)
+     write(*,*) 'fhourt(1,2) = ',fhourt(1,2)
+     write(*,*) 'fhourt(1,3) = ',fhourt(1,3)
+     write(*,*) 'fhourt(1,4) = ',fhourt(1,4)
+ 
+     write(*,*) 'fhourt(2,1) = ',fhourt(2,1)
+     write(*,*) 'fhourt(2,2) = ',fhourt(2,2)
+     write(*,*) 'fhourt(2,3) = ',fhourt(2,3)
+     write(*,*) 'fhourt(2,4) = ',fhourt(2,4)
+ 
+     write(*,*) 'fhourt(3,1) = ',fhourt(3,1)
+     write(*,*) 'fhourt(3,2) = ',fhourt(3,2)
+     write(*,*) 'fhourt(3,3) = ',fhourt(3,3)
+     write(*,*) 'fhourt(3,4) = ',fhourt(3,4)
+     endif
+!C NFHX1 NFHOUR(I,3(XYZ),4(1,2,3,4))
+!//TODO:NU1 NNU2 NU3
+!      !nfhour(i,1,1) nfhx1(i)
+   nfhour(i,1,1) = (h22(i)+h33(i))*fhourt(1,1) &
+                   +h12(i)*fhourt(2,2)+h13(i)*fhourt(3,3)
+       !nfhour(i,2,2) nfhy2(i)
+   nfhour(i,2,2) = (h11(i)+h33(i))*fhourt(2,2) &
+                   +h23(i)*fhourt(3,3)+h12(i)*fhourt(1,1)
+       !nfhour(i,3,3) nfhz3(i)
+   nfhour(i,3,3) = (h11(i)+h22(i))*fhourt(3,3) &
+                   +h13(i)*fhourt(1,1)+h23(i)*fhourt(2,2)
+       !nfhour(i,1,2) nfhx2(i)
+   nfhour(i,1,2) = nu1(i)*h11(i)*fhourt(1,2) &
+                   +nu2(i)*h12(i)*fhourt(2,1)
+       !nfhour(i,1,3) nfhx3(i)
+   nfhour(i,1,3) = nu1(i)*h11(i)*fhourt(1,3) &
+                   +nu2(i)*h13(i)*fhourt(3,1)
+       !nfhour(i,2,1) nfhy1(i)
+   nfhour(i,2,1) = nu1(i)*h22(i)*fhourt(2,1) &
+                   +nu2(i)*h12(i)*fhourt(1,2)
+       !nfhour(i,3,1)  nfhz1(i) nfhz1(i) = cc*fhour(i,1) + fcl(i)*hgz1(i)
+   nfhour(i,3,1) = nu1(i)*h33(i)*fhourt(3,1) &
+                   +nu2(i)*h13(i)*fhourt(1,3)
+       !nfhour(i,2,3) nfhy3(i)
+   nfhour(i,2,3) = nu1(i)*h22(i)*fhourt(2,3) &
+                   +nu2(i)*h23(i)*fhourt(3,2)
+       !nfhour(i,3,2)  nfhz2(i) nfhz2(i) = cc*fhour(i,2) + fcl(i)*hgz2(i)
+   nfhour(i,3,2)= nu1(i)*h33(i)*fhourt(3,2) &
+                  +nu2(i)*h23(i)*fhourt(2,3)
+       !nfhour(i,1,4) nfhx4(i)
+   nfhour(i,1,4) = nu3(i)*h11(i)*fhourt(1,4)
+       !nfhour(i,2,4) nfhy4(i)
+   nfhour(i,2,4) = nu3(i)*h22(i)*fhourt(2,4)
+       !nfhour(i,3,4)  nfhz4(i)
+   nfhour(i,3,4) = nu3(i)*h33(i)*fhourt(3,4)
+   
+   if (write_flag == 1) then
+      write(*,*) 'nfhour(i,1,1) = ',nfhour(i,1,1)
+      write(*,*) 'nfhour(i,1,2) = ',nfhour(i,1,2)
+      write(*,*) 'nfhour(i,1,3) = ',nfhour(i,1,3)
+      write(*,*) 'nfhour(i,1,4) = ',nfhour(i,1,4)
+ 
+      write(*,*) 'nfhour(i,2,1) = ',nfhour(i,2,1)
+      write(*,*) 'nfhour(i,2,2) = ',nfhour(i,2,2)
+      write(*,*) 'nfhour(i,2,3) = ',nfhour(i,2,3)
+      write(*,*) 'nfhour(i,2,4) = ',nfhour(i,2,4)
+ 
+      write(*,*) 'nfhour(i,3,1) = ',nfhour(i,3,1)
+      write(*,*) 'nfhour(i,3,2) = ',nfhour(i,3,2)
+      write(*,*) 'nfhour(i,3,3) = ',nfhour(i,3,3)
+      write(*,*) 'nfhour(i,3,4) = ',nfhour(i,3,4)
+      
+      write(*,*) 'i = ', i
+   end if
+   end do
+   !!pause
+   
+   do i=1,nel
+     hq13p = (nfhour(i,1,1)+nfhour(i,1,3))*one_over_8
+     hq13n = (nfhour(i,1,1)-nfhour(i,1,3))*one_over_8
+     hq24p = (nfhour(i,1,2)+nfhour(i,1,4))*one_over_8
+     hq24n = (nfhour(i,1,2)-nfhour(i,1,4))*one_over_8
+     ff =-px1h1(i)*nfhour(i,1,1)-px1h2(i)*nfhour(i,1,2) &
+         -px1h3(i)*nfhour(i,1,3)-px1h4(i)*nfhour(i,1,4)
+     f11_hgl(i) =-(hq13p+hq24n+ff)
+     f17_hgl(i) =-(hq13p+hq24p-ff)
+     ff =-px2h1(i)*nfhour(i,1,1)-px2h2(i)*nfhour(i,1,2) &
+         -px2h3(i)*nfhour(i,1,3)-px2h4(i)*nfhour(i,1,4)
+     f12_hgl(i) =-(hq13n-hq24n+ff)
+     f18_hgl(i) =-(hq13n-hq24p-ff)
+     ff =-px3h1(i)*nfhour(i,1,1)-px3h2(i)*nfhour(i,1,2) &
+         -px3h3(i)*nfhour(i,1,3)-px3h4(i)*nfhour(i,1,4)
+     f13_hgl(i) =-(-hq13n-hq24p+ff)
+     f15_hgl(i) =-(-hq13n-hq24n-ff)
+     ff =-px4h1(i)*nfhour(i,1,1)-px4h2(i)*nfhour(i,1,2) &
+         -px4h3(i)*nfhour(i,1,3)-px4h4(i)*nfhour(i,1,4)
+     f14_hgl(i) =-(-hq13p+hq24p+ff)
+     f16_hgl(i) =-(-hq13p+hq24n-ff)
+   end do
+   do i=1,nel
+     hq13p = (nfhour(i,2,1)+nfhour(i,2,3))*one_over_8
+     hq13n = (nfhour(i,2,1)-nfhour(i,2,3))*one_over_8
+     hq24p = (nfhour(i,2,2)+nfhour(i,2,4))*one_over_8
+     hq24n = (nfhour(i,2,2)-nfhour(i,2,4))*one_over_8
+     ff =-px1h1(i)*nfhour(i,2,1)-px1h2(i)*nfhour(i,2,2) &
+         -px1h3(i)*nfhour(i,2,3)-px1h4(i)*nfhour(i,2,4)
+     f21_hgl(i) =-(hq13p+hq24n+ff)
+     f27_hgl(i) =-(hq13p+hq24p-ff)
+     ff =-px2h1(i)*nfhour(i,2,1)-px2h2(i)*nfhour(i,2,2) &
+         -px2h3(i)*nfhour(i,2,3)-px2h4(i)*nfhour(i,2,4)
+     f22_hgl(i) =-(hq13n-hq24n+ff)
+     f28_hgl(i) =-(hq13n-hq24p-ff)
+     ff =-px3h1(i)*nfhour(i,2,1)-px3h2(i)*nfhour(i,2,2) &
+         -px3h3(i)*nfhour(i,2,3)-px3h4(i)*nfhour(i,2,4)
+     f23_hgl(i) =-(-hq13n-hq24p+ff)
+     f25_hgl(i) =-(-hq13n-hq24n-ff)
+     ff =-px4h1(i)*nfhour(i,2,1)-px4h2(i)*nfhour(i,2,2) &
+         -px4h3(i)*nfhour(i,2,3)-px4h4(i)*nfhour(i,2,4)
+     f24_hgl(i) =-(-hq13p+hq24p+ff)
+     f26_hgl(i) =-(-hq13p+hq24n-ff)
+   end do
+   do i=1,nel
+     hq13p = (nfhour(i,3,1)+nfhour(i,3,3))*one_over_8
+     hq13n = (nfhour(i,3,1)-nfhour(i,3,3))*one_over_8
+     hq24p = (nfhour(i,3,2)+nfhour(i,3,4))*one_over_8
+     hq24n = (nfhour(i,3,2)-nfhour(i,3,4))*one_over_8
+     ff =-px1h1(i)*nfhour(i,3,1)-px1h2(i)*nfhour(i,3,2) &
+         -px1h3(i)*nfhour(i,3,3)-px1h4(i)*nfhour(i,3,4)
+     f31_hgl(i) =-(hq13p+hq24n+ff)
+     f37_hgl(i) =-(hq13p+hq24p-ff)
+     ff =-px2h1(i)*nfhour(i,3,1)-px2h2(i)*nfhour(i,3,2) &
+         -px2h3(i)*nfhour(i,3,3)-px2h4(i)*nfhour(i,3,4)
+     f32_hgl(i) =-(hq13n-hq24n+ff)
+     f38_hgl(i) =-(hq13n-hq24p-ff)
+     ff =-px3h1(i)*nfhour(i,3,1)-px3h2(i)*nfhour(i,3,2) &
+         -px3h3(i)*nfhour(i,3,3)-px3h4(i)*nfhour(i,3,4)
+     f33_hgl(i) =-(-hq13n-hq24p+ff)
+     f35_hgl(i) =-(-hq13n-hq24n-ff)
+     ff =-px4h1(i)*nfhour(i,3,1)-px4h2(i)*nfhour(i,3,2) &
+         -px4h3(i)*nfhour(i,3,3)-px4h4(i)*nfhour(i,3,4)
+     f34_hgl(i) =-(-hq13p+hq24p+ff)
+     f36_hgl(i) =-(-hq13p+hq24n-ff)
+   end do
+!c------------------------------------------------
+!c
+
+      do i=1,nel
+    if (write_flag == 1) then
+     write(*,*) 'i = ', i
+     write(*,*) 'f11_hgl(i) = ', f11_hgl(i)
+     write(*,*) 'f21_hgl(i) = ', f21_hgl(i)
+     write(*,*) 'f31_hgl(i) = ', f31_hgl(i) 
+     write(*,*) 'f12_hgl(i) = ', f12_hgl(i)
+     write(*,*) 'f22_hgl(i) = ', f22_hgl(i)
+     write(*,*) 'f32_hgl(i) = ', f32_hgl(i) 
+     write(*,*) 'f13_hgl(i) = ', f13_hgl(i)   
+     write(*,*) 'f23_hgl(i) = ', f23_hgl(i)        
+     write(*,*) 'f33_hgl(i) = ', f33_hgl(i) 
+     write(*,*) 'f14_hgl(i) = ', f14_hgl(i)
+     write(*,*) 'f24_hgl(i) = ', f24_hgl(i)
+     write(*,*) 'f34_hgl(i) = ', f34_hgl(i) 
+     write(*,*) 'f15_hgl(i) = ', f15_hgl(i)
+     write(*,*) 'f25_hgl(i) = ', f25_hgl(i)
+     write(*,*) 'f35_hgl(i) = ', f35_hgl(i) 
+     write(*,*) 'f16_hgl(i) = ', f16_hgl(i)  
+     write(*,*) 'f26_hgl(i) = ', f26_hgl(i)
+     write(*,*) 'f36_hgl(i) = ', f36_hgl(i) 
+     write(*,*) 'f17_hgl(i) = ', f17_hgl(i)
+     write(*,*) 'f27_hgl(i) = ', f27_hgl(i)
+     write(*,*) 'f37_hgl(i) = ', f37_hgl(i)          
+     write(*,*) 'f18_hgl(i) = ', f18_hgl(i)
+     write(*,*) 'f28_hgl(i) = ', f28_hgl(i)
+     write(*,*) 'f38_hgl(i) = ', f38_hgl(i)
+     end if 
+       
+      end do
+
+      do i=1,nel
+           
+          if (hourglass == 0) then
+          f11_hgl(i)=zero
+          f21_hgl(i)=zero
+          f31_hgl(i)=zero 
+          f12_hgl(i)=zero
+          f22_hgl(i)=zero
+          f32_hgl(i)=zero 
+          f13_hgl(i)=zero   
+          f23_hgl(i)=zero        
+          f33_hgl(i)=zero 
+          f14_hgl(i)=zero
+          f24_hgl(i)=zero
+          f34_hgl(i)=zero 
+          f15_hgl(i)=zero
+          f25_hgl(i)=zero
+          f35_hgl(i)=zero 
+          f16_hgl(i)=zero  
+          f26_hgl(i)=zero
+          f36_hgl(i)=zero 
+          f17_hgl(i)=zero
+          f27_hgl(i)=zero
+          f37_hgl(i)=zero       
+          f18_hgl(i)=zero
+          f28_hgl(i)=zero
+          f38_hgl(i)=zero 
+
+   !          write(*,*) 'ncycle =', nc_debug 
+   !          pause
           endif
 
-        F11(I) =F11(I)+F11_hgl(I)    
-        F12(I) =F12(I)+F12_hgl(I)
-        F13(I) =F13(I)+F13_hgl(I) + F14_hgl(I) ! F14                
-        F15(I) =F15(I)+F15_hgl(I) 
-        F16(I) =F16(I)+F16_hgl(I)
-        F17(I) =F17(I)+F17_hgl(I) + F18_hgl(I) ! F18             
-        F21(I) =F21(I)+F21_hgl(I)
-        F22(I) =F22(I)+F22_hgl(I)
-        F23(I) =F23(I)+F23_hgl(I) + F24_hgl(I) ! F24               
-        F25(I) =F25(I)+F25_hgl(I) 
-        F26(I) =F26(I)+F26_hgl(I)
-        F27(I) =F27(I)+F27_hgl(I) + F28_hgl(I) ! F28
-        F31(I) =F31(I)+F31_hgl(I)
-        F32(I) =F32(I)+F32_hgl(I)
-        F33(I) =F33(I)+F33_hgl(I) + F34_hgl(I) ! F34          
-        F35(I) =F35(I)+F35_hgl(I)
-        F36(I) =F36(I)+F36_hgl(I)
-        F37(I) =F37(I)+F37_hgl(I) + F38_hgl(I) ! F38
+        f11(i) = f11(i) + f11_hgl(i)    
+        f12(i) = f12(i) + f12_hgl(i)
+        f13(i) = f13(i) + f13_hgl(i) + f14_hgl(i) ! f14                
+        f15(i) = f15(i) + f15_hgl(i) 
+        f16(i) = f16(i) + f16_hgl(i)
+        f17(i) = f17(i) + f17_hgl(i) + f18_hgl(i) ! f18             
+        f21(i) = f21(i) + f21_hgl(i)
+        f22(i) = f22(i) + f22_hgl(i)
+        f23(i) = f23(i) + f23_hgl(i) + f24_hgl(i) ! f24               
+        f25(i) = f25(i) + f25_hgl(i) 
+        f26(i) = f26(i) + f26_hgl(i)
+        f27(i) = f27(i) + f27_hgl(i) + f28_hgl(i) ! f28
+        f31(i) = f31(i) + f31_hgl(i)
+        f32(i) = f32(i) + f32_hgl(i)
+        f33(i) = f33(i) + f33_hgl(i) + f34_hgl(i) ! f34          
+        f35(i) = f35(i) + f35_hgl(i)
+        f36(i) = f36(i) + f36_hgl(i)
+        f37(i) = f37(i) + f37_hgl(i) + f38_hgl(i) ! f38
 
-      !F11(I) =F11(I) ! F14     
-      !F12(I) =F12(I)
-      !F13(I) =F13(I)                 
-      !F15(I) =F15(I) ! F18
-      !F16(I) =F16(I)
-      !F17(I) =F17(I)
-      !F21(I) =F21(I) ! F24
-      !F22(I) =F22(I)
-      !F23(I) =F23(I)             
-      !F25(I) =F25(I) ! F28
-      !F26(I) =F26(I)
-      !F27(I) =F27(I)
-      !F31(I) =F31(I) ! F34
-      !F32(I) =F32(I)
-      !F33(I) =F33(I)               
-      !F35(I) =F35(I) ! F38
-      !F36(I) =F36(I)
-      !F37(I) =F37(I)       
-                  
- 
-      ENDDO
+      !f11(i) = f11(i) ! f14     
+      !f12(i) = f12(i)
+      !f13(i) = f13(i)                 
+      !f15(i) = f15(i) ! f18
+      !f16(i) = f16(i)
+      !f17(i) = f17(i)
+      !f21(i) = f21(i) ! f24
+      !f22(i) = f22(i)
+      !f23(i) = f23(i)             
+      !f25(i) = f25(i) ! f28
+      !f26(i) = f26(i)
+      !f27(i) = f27(i)
+      !f31(i) = f31(i) ! f34
+      !f32(i) = f32(i)
+      !f33(i) = f33(i)               
+      !f35(i) = f35(i) ! f38
+      !f36(i) = f36(i)
+      !f37(i) = f37(i)       
+            
+    
+      end do
 
       
-C------------------------------------------------
-C
-!      DO I=1,NEL
-!        F11(I) =F11(I)-G11(I)*NFHX1(I)-G12(I)*NFHX2(I)-G13(I)*NFHX3(I)-G14(I)*NFHX4(I)
-!        F12(I) =F12(I)-G21(I)*NFHX1(I)-G22(I)*NFHX2(I)-G23(I)*NFHX3(I)-G24(I)*NFHX4(I)
-!        F13(I) =F13(I)-G31(I)*NFHX1(I)-G32(I)*NFHX2(I)-G33(I)*NFHX3(I)-G34(I)*NFHX4(I)
-!     .                -G41(I)*NFHX1(I)-G42(I)*NFHX2(I)-G43(I)*NFHX3(I)-G44(I)*NFHX4(I) ! F14        
-!        F15(I) =F15(I)-G51(I)*NFHX1(I)-G52(I)*NFHX2(I)-G53(I)*NFHX3(I)-G54(I)*NFHX4(I)
-!        F16(I) =F16(I)-G61(I)*NFHX1(I)-G62(I)*NFHX2(I)-G63(I)*NFHX3(I)-G64(I)*NFHX4(I)
-!        F17(I) =F17(I)-G71(I)*NFHX1(I)-G72(I)*NFHX2(I)-G73(I)*NFHX3(I)-G74(I)*NFHX4(I)
-!     .                -G81(I)*NFHX1(I)-G82(I)*NFHX2(I)-G83(I)*NFHX3(I)-G84(I)*NFHX4(I) ! F18
+   !c------------------------------------------------
+   !c
+   !      do i=1,nel
+   !        f11(i) = f11(i) - g11(i)*nfhx1(i) - g12(i)*nfhx2(i) - g13(i)*nfhx3(i) - g14(i)*nfhx4(i)
+   !        f12(i) = f12(i) - g21(i)*nfhx1(i) - g22(i)*nfhx2(i) - g23(i)*nfhx3(i) - g24(i)*nfhx4(i)
+   !        f13(i) = f13(i) - g31(i)*nfhx1(i) - g32(i)*nfhx2(i) - g33(i)*nfhx3(i) - g34(i)*nfhx4(i)
+   !     .                - g41(i)*nfhx1(i) - g42(i)*nfhx2(i) - g43(i)*nfhx3(i) - g44(i)*nfhx4(i) ! f14        
+   !        f15(i) = f15(i) - g51(i)*nfhx1(i) - g52(i)*nfhx2(i) - g53(i)*nfhx3(i) - g54(i)*nfhx4(i)
+   !        f16(i) = f16(i) - g61(i)*nfhx1(i) - g62(i)*nfhx2(i) - g63(i)*nfhx3(i) - g64(i)*nfhx4(i)
+   !        f17(i) = f17(i) - g71(i)*nfhx1(i) - g72(i)*nfhx2(i) - g73(i)*nfhx3(i) - g74(i)*nfhx4(i)
+   !     .                - g81(i)*nfhx1(i) - g82(i)*nfhx2(i) - g83(i)*nfhx3(i) - g84(i)*nfhx4(i) ! f18
 
 
 
-!        F21(I) =F21(I)-G11(I)*NFHY1(I)-G12(I)*NFHY2(I)-G13(I)*NFHY3(I)-G14(I)*NFHY4(I)
-!        F22(I) =F22(I)-G21(I)*NFHY1(I)-G22(I)*NFHY2(I)-G23(I)*NFHY3(I)-G24(I)*NFHY4(I)
-!        F23(I) =F23(I)-G31(I)*NFHY1(I)-G32(I)*NFHY2(I)-G33(I)*NFHY3(I)-G34(I)*NFHY4(I)
-!     .                -G41(I)*NFHY1(I)-G42(I)*NFHY2(I)-G43(I)*NFHY3(I)-G44(I)*NFHY4(I) ! F24
-!        F25(I) =F25(I)-G51(I)*NFHY1(I)-G52(I)*NFHY2(I)-G53(I)*NFHY3(I)-G54(I)*NFHY4(I)
-!        F26(I) =F26(I)-G61(I)*NFHY1(I)-G62(I)*NFHY2(I)-G63(I)*NFHY3(I)-G64(I)*NFHY4(I)
-!        F27(I) =F27(I)-G71(I)*NFHY1(I)-G72(I)*NFHY2(I)-G73(I)*NFHY3(I)-G74(I)*NFHY4(I)
-!     .                -G81(I)*NFHY1(I)-G82(I)*NFHY2(I)-G83(I)*NFHY3(I)-G84(I)*NFHY4(I) ! F28!
+   !        f21(i) = f21(i) - g11(i)*nfhy1(i) - g12(i)*nfhy2(i) - g13(i)*nfhy3(i) - g14(i)*nfhy4(i)
+   !        f22(i) = f22(i) - g21(i)*nfhy1(i) - g22(i)*nfhy2(i) - g23(i)*nfhy3(i) - g24(i)*nfhy4(i)
+   !        f23(i) = f23(i) - g31(i)*nfhy1(i) - g32(i)*nfhy2(i) - g33(i)*nfhy3(i) - g34(i)*nfhy4(i)
+   !     .                - g41(i)*nfhy1(i) - g42(i)*nfhy2(i) - g43(i)*nfhy3(i) - g44(i)*nfhy4(i) ! f24
+   !        f25(i) = f25(i) - g51(i)*nfhy1(i) - g52(i)*nfhy2(i) - g53(i)*nfhy3(i) - g54(i)*nfhy4(i)
+   !        f26(i) = f26(i) - g61(i)*nfhy1(i) - g62(i)*nfhy2(i) - g63(i)*nfhy3(i) - g64(i)*nfhy4(i)
+   !        f27(i) = f27(i) - g71(i)*nfhy1(i) - g72(i)*nfhy2(i) - g73(i)*nfhy3(i) - g74(i)*nfhy4(i)
+   !     .                - g81(i)*nfhy1(i) - g82(i)*nfhy2(i) - g83(i)*nfhy3(i) - g84(i)*nfhy4(i) ! f28!
 
 
 
-!        F31(I) =F31(I)-G11(I)*NFHZ1(I)-G12(I)*NFHZ2(I)-G13(I)*NFHZ3(I)-G14(I)*NFHZ4(I)
-!        F32(I) =F32(I)-G21(I)*NFHZ1(I)-G22(I)*NFHZ2(I)-G23(I)*NFHZ3(I)-G24(I)*NFHZ4(I)
-!        F33(I) =F33(I)-G31(I)*NFHZ1(I)-G32(I)*NFHZ2(I)-G33(I)*NFHZ3(I)-G34(I)*NFHZ4(I)
-!     .                -G41(I)*NFHZ1(I)-G42(I)*NFHZ2(I)-G43(I)*NFHZ3(I)-G44(I)*NFHZ4(I) ! F34
-!        F35(I) =F35(I)-G51(I)*NFHZ1(I)-G52(I)*NFHZ2(I)-G53(I)*NFHZ3(I)-G54(I)*NFHZ4(I)
-!        F36(I) =F36(I)-G61(I)*NFHZ1(I)-G62(I)*NFHZ2(I)-G63(I)*NFHZ3(I)-G64(I)*NFHZ4(I)
-!        F37(I) =F37(I)-G71(I)*NFHZ1(I)-G72(I)*NFHZ2(I)-G73(I)*NFHZ3(I)-G74(I)*NFHZ4(I)
-!     .                -G81(I)*NFHZ1(I)-G82(I)*NFHZ2(I)-G83(I)*NFHZ3(I)-G84(I)*NFHZ4(I) ! F38
- 
-!      ENDDO
-      DO I=1,NEL
-        EINT(I)= EINT(I)+DT1*(
-     .     NFHZ1(I)*HGZ1(I) + NFHZ2(I)*HGZ2(I) ) 
-     .   /MAX(EM20,VOL0(I)) 
-      ENDDO
-C-----------
-      RETURN
-C-----------
-      END SUBROUTINE S6CHOUR3_1
+   !        f31(i) = f31(i) - g11(i)*nfhz1(i) - g12(i)*nfhz2(i) - g13(i)*nfhz3(i) - g14(i)*nfhz4(i)
+   !        f32(i) = f32(i) - g21(i)*nfhz1(i) - g22(i)*nfhz2(i) - g23(i)*nfhz3(i) - g24(i)*nfhz4(i)
+   !        f33(i) = f33(i) - g31(i)*nfhz1(i) - g32(i)*nfhz2(i) - g33(i)*nfhz3(i) - g34(i)*nfhz4(i)
+   !     .                - g41(i)*nfhz1(i) - g42(i)*nfhz2(i) - g43(i)*nfhz3(i) - g44(i)*nfhz4(i) ! f34
+   !        f35(i) = f35(i) - g51(i)*nfhz1(i) - g52(i)*nfhz2(i) - g53(i)*nfhz3(i) - g54(i)*nfhz4(i)
+   !        f36(i) = f36(i) - g61(i)*nfhz1(i) - g62(i)*nfhz2(i) - g63(i)*nfhz3(i) - g64(i)*nfhz4(i)
+   !        f37(i) = f37(i) - g71(i)*nfhz1(i) - g72(i)*nfhz2(i) - g73(i)*nfhz3(i) - g74(i)*nfhz4(i)
+   !     .                - g81(i)*nfhz1(i) - g82(i)*nfhz2(i) - g83(i)*nfhz3(i) - g84(i)*nfhz4(i) ! f38
+    
+   !      end do
+      do i=1,nel
+        eint(i) = eint(i) + dt1*( &
+             nfhz1(i)*hgz1(i) + nfhz2(i)*hgz2(i) ) &
+           /max(em20,vol0(i)) 
+      end do
+   !c-----------
+      return
+   !c-----------
+      end subroutine s6hour3_2
+   end module s6hour3_2_mod

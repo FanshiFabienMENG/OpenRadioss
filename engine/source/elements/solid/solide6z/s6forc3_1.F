@@ -116,7 +116,7 @@ Copyright>        commercial version may interest you: https://www.altair.com/ra
      F                   TEMP     ,FTHE    ,FTHESKY ,CONDN  ,CONDNSKY,
      G                   IEXPAN   ,IFTHE   ,ICONDN  ,DT     ,SNPC,STF,
      H                   SBUFMAT  ,SVIS    ,NSVOIS  ,IRESP,
-     I                   IDEL7NOK,MAXFUNC, IMON_MAT, USERL_AVAIL, 
+     I                   MAXFUNC, IMON_MAT, USERL_AVAIL, 
      J                   GLOB_THERM,XDP,SENSORS    )
 C-----------------------------------------------
 C   M o d u l e s
@@ -140,7 +140,9 @@ C-----------------------------------------------
       USE s6fint3_2_mod
       USE s6def03_2_mod
       USE s6cdefc3_2_mod
-
+      USE s6deri3_2_mod
+      USE s6rcoor3_2_mod
+      USE s6hour3_2_mod
 C-----------------------------------------------
 C   I m p l i c i t   T y p e s
 C-----------------------------------------------
@@ -161,6 +163,9 @@ C-----------------------------------------------
 #include      "com06_c.inc"
 #include      "scr18_c.inc"
 #include      "impl1_c.inc"
+#include      "scr17_c.inc"
+#include      "scr07_c.inc"
+
 C-----------------------------------------------
 C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
@@ -171,7 +176,6 @@ C-----------------------------------------------
       INTEGER, INTENT(IN) :: SBUFMAT
       INTEGER, INTENT(IN) :: NSVOIS
       INTEGER ,INTENT(IN) :: IRESP
-      INTEGER ,INTENT(INOUT) :: IDEL7NOK
       INTEGER ,INTENT(IN) :: MAXFUNC
       INTEGER, INTENT(IN) :: USERL_AVAIL
       INTEGER, INTENT(IN) :: IMON_MAT
@@ -434,7 +438,7 @@ C-----------------------------------------------------------
 !     .   NEL, XGXA, XGYA, XGZA,XGXA2,XGYA2,XGZA2,
 !     .   XGXYA,XGYZA,XGZXA,IPARG(1,NG),GBUF%GAMA_R) 
 
-        CALL S6RCOOR3_1(X,IXS(1,NF1),V,GBUF%GAMA,GAMA,
+        CALL S6RCOOR3_2(X,IXS(1,NF1),V,GBUF%GAMA,GAMA,
      .   X1, X2, X3, X4, X5, X6,
      .   Y1, Y2, Y3, Y4, Y5, Y6, 
      .   Z1, Z2, Z3, Z4, Z5, Z6, 
@@ -446,7 +450,8 @@ C-----------------------------------------------------------
      .   NC1,NC2,NC3,NC4,NC5,NC6,NGL,MXT,NGEO,
      .   IOUTPRT, VGXA, VGYA, VGZA, VGA2,DD,
      .   NEL, XGXA, XGYA, XGZA,XGXA2,XGYA2,XGZA2,
-     .   XGXYA,XGYZA,XGZXA,IPARG(1,NG),GBUF%GAMA_R) 
+     .   XGXYA,XGYZA,XGZXA,IPARG(1,NG),GBUF%GAMA_R,
+     .   NIXS,irep,ismstr,isorth,jlag) 
 
       if (Flag_write == 1) then
       DO I=LFT,LLT
@@ -542,7 +547,7 @@ C
          ENDDO                                           
       ENDIF                                             
 C
-      CALL S6CDERI3_1(
+      CALL s6deri3_2(
      1   OFFG,      VOLN,      NGL,       X1,
      2   X2,        X3,        X4,        X5,
      3   X6,        Y1,        Y2,        Y3,
@@ -562,7 +567,9 @@ C
      H   B1121H,    VZL,       VOLG,      GBUF%SMSTR,
      I   GBUF%OFF,  NEL,       ISMSTR,
      J   PX5,     PY5,     PZ5,
-     K   PX6,     PY6,     PZ6 )
+     K   PX6,     PY6,     PZ6,
+     L   idel7nok,  ineg_v,    mstop,    volmin,    
+     M   idtmin  )      
       CALL SDLEN3(
      1   VOLG,    DELTAX,  X1,      X2,
      2   X5,      X4,      X3,      X3,
@@ -1141,7 +1148,7 @@ C-----------------------------
         !F36(I) = 0. 
 !ENDDO
 
-          CALL S6CHOUR3_1(
+          CALL s6hour3_2(
      .   PM, NPROPM, GBUF%RHO,VOLG,CXX,!A VERIFIER CHAQUE PARAMETER
      .   X1, X2, X3, X3, X4, X5, X6, X6,
      .   Y1, Y2, Y3, Y3, Y4, Y5, Y6, Y6,
@@ -1153,7 +1160,8 @@ C-----------------------------
      .   F21,F22,F23,F24,F25,F26,     
      .   F31,F32,F33,F34,F35,F36,
      .   NU,GBUF%HOURG,OFF,GBUF%VOL,GBUF%EINT,NEL,
-     .   MXT,NPROPG,GEO,NGEO) 
+     .   MXT,NPROPG,GEO,NGEO,
+     .   dt1  ) 
   !        CALL S6CHOUR3(GBUF%RHO,VOLG,CXX,
   !   .     X1, X2, X3, X3, X4, X5, X6, X6,
   !   .     Y1, Y2, Y3, Y3, Y4, Y5, Y6, Y6,

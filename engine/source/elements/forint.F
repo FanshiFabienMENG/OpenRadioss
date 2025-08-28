@@ -1065,7 +1065,7 @@ C
      F         FTHE  ,FTHESKY   ,CONDN    ,CONDNSKY ,
      G         IEXPAN,IFTHE ,ICONDN    ,DT      ,SNPC,STF,
      H         SBUFMAT,SVIS,NSVOIS, IRESP, 
-     I         IDEL7NOK,MAXFUNC, IMON_MAT, USERL_AVAIL, 
+     I         MAXFUNC, IMON_MAT, USERL_AVAIL, 
      J         GLOB_THERM,XDP,SENSORS )
                ENDIF
             ELSE

@@ -1,25 +1,25 @@
-copyright>        openradioss
-copyright>        copyright (c) 1986-2025 altair engineering inc.
-copyright>
-copyright>        this program is free software: you can redistribute it and/or modify
-copyright>        it under the terms of the gnu affero general public license as published by
-copyright>        the free software foundation, either version 3 of the license, or
-copyright>        (at your option) any later version.
-copyright>
-copyright>        this program is distributed in the hope that it will be useful,
-copyright>        but without any warranty; without even the implied warranty of
-copyright>        merchantability or fitness for a particular purpose.  see the
-copyright>        gnu affero general public license for more details.
-copyright>
-copyright>        you should have received a copy of the gnu affero general public license
-copyright>        along with this program.  if not, see <https://www.gnu.org/licenses/>.
-copyright>
-copyright>
-copyright>        commercial alternative: altair radioss software
-copyright>
-copyright>        as an alternative to this open-source version, altair also offers altair radioss
-copyright>        software under a commercial license.  contact altair to discuss further if the
-copyright>        commercial version may interest you: https://www.altair.com/radioss/.
+!copyright>        openradioss
+!copyright>        copyright (c) 1986-2025 altair engineering inc.
+!copyright>
+!copyright>        this program is free software: you can redistribute it and/or modify
+!copyright>        it under the terms of the gnu affero general public license as published by
+!copyright>        the free software foundation, either version 3 of the license, or
+!copyright>        (at your option) any later version.
+!copyright>
+!copyright>        this program is distributed in the hope that it will be useful,
+!copyright>        but without any warranty; without even the implied warranty of
+!copyright>        merchantability or fitness for a particular purpose.  see the
+!copyright>        gnu affero general public license for more details.
+!copyright>
+!copyright>        you should have received a copy of the gnu affero general public license
+!copyright>        along with this program.  if not, see <https://www.gnu.org/licenses/>.
+!copyright>
+!copyright>
+!copyright>        commercial alternative: altair radioss software
+!copyright>
+!copyright>        as an alternative to this open-source version, altair also offers altair radioss
+!copyright>        software under a commercial license.  contact altair to discuss further if the
+!copyright>        commercial version may interest you: https://www.altair.com/radioss/.
       !||====================================================================
       !||    s6cforc3               ../engine/source/elements/thickshell/solide6c/s6cforc3.f
       !||--- called by ------------------------------------------------------
@@ -76,55 +76,71 @@ copyright>        commercial version may interest you: https://www.altair.com/ra
       !||    table_mod              ../engine/share/modules/table_mod.f
       !||    timer_mod              ../engine/source/system/timer_mod.f90
       !||====================================================================
-
-  !     call s6forc3_1(timers, elbuf_tab,ng         ,
-  !   1         pm       ,geo   ,ixs    ,x            ,
-  !   2         a        ,v    ,w      ,wa          ,
-  !   3         val2     ,ale_connect        ,iparg       ,
-  !   4         tf       ,npc    ,bufmat       ,partsav     ,
-  !   5         dt2t     ,neltst,ityptst,stifn        ,fsky        ,
-  !   6         iads     ,offset  ,iparts(nf1) ,
-  !   7         fx(1,1)  ,fy(1,1) ,fz(1,1) ,fx(1,2) ,fy(1,2) ,
-  !   8         fz(1,2)  ,fx(1,3) ,fy(1,3) ,fz(1,3) ,fx(1,4) ,
-  !   9         fy(1,4)  ,fz(1,4) ,fx(1,5) ,fy(1,5) ,fz(1,5) ,
-  !   a         fx(1,6)  ,fy(1,6) ,fz(1,6) ,nel     ,
-  !   b         icp      ,nloc_dmg,
-  !   c         ipm      ,istra   ,igeo    ,gresav  ,grth       ,
-  !   d         igrth(nf1),table ,mssa(nf1),dmels(nf1)  ,voln  ,
-  !   e         itask ,ipri      ,mat_elem ,ibid,temp       ,
-  !   f         fthe  ,fthesky   ,condn    ,condnsky ,
-  !   g         iexpan,ifthe ,icondn    ,dt      ,snpc,stf,
-  !   h         sbufmat,svis,nsvois, iresp, 
-  !   i         idel7nok,maxfunc, imon_mat, userl_avail, 
-  !   j         glob_therm,xdp,sensors )
+!               CALL S6FORC3_2(TIMERS,  OUTPUT, ELBUF_TAB,NG         ,
+!               1         PM   ,GEO   ,IXS    ,X            ,
+!               2         A           ,V    ,W      ,WA          ,
+!               3         VAL2  ,ALE_CONNECT        ,IPARG       ,
+!               4         TF    ,NPC    ,BUFMAT       ,PARTSAV     ,
+!               5         DT2T ,NELTST,ITYPTST,STIFN        ,FSKY        ,
+!               6         IADS    ,OFFSET  ,IPARTS(NF1) ,
+!               7         FX(1,1) ,FY(1,1) ,FZ(1,1) ,FX(1,2) ,FY(1,2) ,
+!               8         FZ(1,2) ,FX(1,3) ,FY(1,3) ,FZ(1,3) ,FX(1,4) ,
+!               9         FY(1,4) ,FZ(1,4) ,FX(1,5) ,FY(1,5) ,FZ(1,5) ,
+!               A         FX(1,6) ,FY(1,6) ,FZ(1,6) ,NEL     ,
+!               B         ICP     ,NLOC_DMG,
+!               C         IPM     ,ISTRA   ,IGEO    ,GRESAV  ,GRTH       ,
+!               D         IGRTH(NF1),TABLE ,MSSA(NF1),DMELS(NF1)  ,VOLN  ,
+!               E         ITASK ,IPRI      ,MAT_ELEM ,IBID,TEMP       ,
+!               F         FTHE  ,FTHESKY   ,CONDN    ,CONDNSKY ,
+!               G         IEXPAN,IFTHE ,ICONDN    ,DT      ,SNPC,STF,
+!               H         SBUFMAT,SVIS,NSVOIS, IRESP, 
+!               I         idel7nok, MAXFUNC, IMON_MAT, USERL_AVAIL, 
+!               J         GLOB_THERM,XDP,SENSORS,
+!               K         NGROUP,NPROPM,NPROPG,NIXS,NPARG, 
+!               L         NPROPMI,NPROPGI,NUMNOD,LSKY,
+!               M         DT1,VOLMIN,TH_STRAIN, IDTMIN,
+!               N         TT)
       module s6forc3_2_mod
+        implicit none
       contains
 
-      subroutine s6forc3_2(timers, output, elbuf_tab,ng     , 
-     1                   pm       ,geo     ,ixs     ,x      ,
-     2                   a        ,v       ,w      ,flux   ,
-     3                   flu1     ,ale_connect  ,iparg  ,
-     4                   tf       ,npf     ,bufmat  ,partsav,
-     5                   dt2t     ,neltst  ,ityptst ,stifn  ,fsky   ,
-     6                   iads     ,offset  ,iparts ,
-     7                   f11      ,f21     ,f31     ,f12    ,f22    ,
-     8                   f32      ,f13     ,f23     ,f33    ,f14    ,
-     9                   f24      ,f34     ,f15     ,f25    ,f35    ,
-     a                   f16      ,f26     ,f36     ,nel    ,
-     b                   icp      ,nloc_dmg,
-     c                   ipm      ,istrain ,igeo    ,gresav ,grth   ,
-     d                   igrth    ,table   ,mssa    ,dmels  ,voln   ,
-     e                   itask    ,ioutprt ,mat_elem,h3d_strain ,
-     f                   temp     ,fthe    ,fthesky ,condn  ,condnsky,
-     g                   iexpan   ,ifthe   ,icondn  ,dt     ,snpc,stf,
-     h                   sbufmat  ,svis    ,nsvois  ,iresp,
-     i                   maxfunc, imon_mat, userl_avail, 
-     j                   glob_therm,xdp,sensors    )
-c-----------------------------------------------
-c   m o d u l e s
-c-----------------------------------------------
-      use timer_mod
+      subroutine s6forc3_2(timers, output, elbuf_tab,ng     , &
+                           pm       ,geo     ,ixs     ,x      ,&
+                           a        ,v       ,w      ,flux   ,&
+                           flu1     ,ale_connect  ,iparg  ,&
+                           tf       ,npf     ,bufmat  ,partsav,&
+                           dt2t     ,neltst  ,ityptst ,stifn  ,fsky   ,&
+                           iads     ,offset  ,iparts ,&
+                           f11      ,f21     ,f31     ,f12    ,f22    ,&
+                           f32      ,f13     ,f23     ,f33    ,f14    ,&
+                           f24      ,f34     ,f15     ,f25    ,f35    ,&
+                           f16      ,f26     ,f36     ,nel    ,&
+                           icp      ,nloc_dmg,&
+                           ipm      ,istrain ,igeo    ,gresav ,grth   ,&
+                           igrth    ,table   ,mssa    ,dmels  ,voln   ,&
+                           itask    ,ioutprt ,mat_elem,h3d_strain ,&
+                           temp     ,fthe    ,fthesky ,condn  ,condnsky,&
+                           iexpan   ,ifthe   ,icondn  ,dt     ,snpc,stf,&
+                           sbufmat  ,svis    ,nsvois  ,iresp,&
+                           idel7nok ,maxfunc, imon_mat, userl_avail, &
+                           glob_therm,xdp,sensors, &
+                           ngroup,npropm,npropg,nixs,nparg, &
+                           npropmi,npropgi,numnod,lsky,&
+                           dt1,volmin,th_strain, idtmin,&
+                           tt, &
+                           idyna,igtyp,impl_s, ineg_v,  &
+                           iparit,irep,iscau,ismdisp, &
+                           ismstr, isorth, isorthg, jale, & 
+                           jcvt, jeul, jlag, jsph, jplasol, &
+                           jthe, &
+                           mstop,mtn, n2d,ncpri,ncycle,&
+                           nfilsol,nft,ntable,ntsheg,&
+                           numels,numgeo,nummat,numelq)
+!c-----------------------------------------------
+!c   m o d u l e s
+!c-----------------------------------------------
       use output_mod, only : output_
+      use timer_mod
       use mmain_mod
       use table_mod
       use mat_elem_mod            
@@ -145,33 +161,41 @@ c-----------------------------------------------
       use s6deri3_2_mod
       use s6rcoor3_2_mod
       use s6hour3_2_mod
-      use precision_mod, only : wp
-c-----------------------------------------------
-c   i m p l i c i t   t y p e s
-c-----------------------------------------------
-#include      "implicit_f.inc"
-c-----------------------------------------------
-c   g l o b a l   p a r a m e t e r s
-c-----------------------------------------------
-#include      "mvsiz_p.inc"
-c-----------------------------------------------
-c   c o m m o n   b l o c k s
-c-----------------------------------------------
-#include      "com01_c.inc"
-#include      "com08_c.inc"
-#include      "vect01_c.inc"
-#include      "parit_c.inc"
-#include      "param_c.inc"
-#include      "com04_c.inc"
-#include      "com06_c.inc"
-#include      "scr18_c.inc"
-#include      "impl1_c.inc"
-#include      "scr17_c.inc"
-#include      "scr07_c.inc"
 
-c-----------------------------------------------
-c   d u m m y   a r g u m e n t s
-c-----------------------------------------------
+
+      use precision_mod, only : wp       
+      use matparam_def_mod
+      use names_and_titles_mod
+      use constant_mod
+      use eos_param_mod 
+      use table_mat_vinterp_mod 
+      use mvsiz_mod, only : mvsiz
+!c-----------------------------------------------
+!c   i m p l i c i t   t y p e s
+!c-----------------------------------------------
+!#include      "implicit_f.inc"
+!c-----------------------------------------------
+!c   g l o b a l   p a r a m e t e r s
+!c-----------------------------------------------
+!#include      "nel_p.inc"
+!c-----------------------------------------------
+!c   c o m m o n   b l o c k s
+!c-----------------------------------------------
+!#include      "com01_c.inc"
+!#include      "com08_c.inc"
+!#include      "vect01_c.inc"
+!#include      "parit_c.inc"
+!#include      "param_c.inc"
+!#include      "com04_c.inc"
+!#include      "com06_c.inc"
+!#include      "scr18_c.inc"
+!#include      "impl1_c.inc"
+!#include      "scr17_c.inc"
+!#include      "scr07_c.inc"
+
+!c-----------------------------------------------
+!c   d u m m y   a r g u m e n t s
+!c-----------------------------------------------
       type(timer_), intent(inout) :: timers
       type(output_), intent(inout) :: output
       integer, intent(in) :: snpc                                          !< stiffness parameter
@@ -181,7 +205,60 @@ c-----------------------------------------------
       integer, intent(in) :: iresp                                         !< response parameter
       integer, intent(in) :: maxfunc                                       !< maximum function parameter
       integer, intent(in) :: userl_avail                                   !< user availability flag
-      integer, intent(in) :: imon_mat                                      !< material monitoring parameter
+      integer, intent(in) :: imon_mat               
+                             !< material monitoring parameter
+      integer, intent(inout) :: idel7nok  
+      integer, intent(in) :: ngroup                                    
+      integer, intent(in) ::  npropm
+      integer, intent(in) ::  npropg
+      integer, intent(in) :: nixs
+      integer, intent(in) ::  nparg
+      integer, intent(in) :: npropmi
+      integer, intent(in) :: npropgi
+      integer, intent(in) :: numnod
+      integer, intent(in) ::  lsky
+      integer, intent(in) :: th_strain
+      real(kind=WP),              intent(in) :: dt1
+      real(kind=wp), intent(in) :: volmin
+      integer,dimension(102) :: idtmin
+      real(kind=WP), intent(in) :: tt
+      
+
+      integer, intent(in) :: idyna                                         !< dynamic condensation flag
+      integer, intent(in) :: igtyp                                         !< property type
+      integer, intent(in) :: impl_s                                        !< implicit solver flag
+      integer, intent(inout) :: ineg_v                                     !< negative volume flag
+      integer, intent(in) :: iparit                                        !< parallel iteration flag
+      integer, intent(in) :: irep                                          !< reference frame flag
+      integer, intent(in) :: iscau                                         !< cauchy stress flag
+      integer, intent(in) :: ismdisp                                       !< displacement flag
+      integer, intent(in) :: ismstr                                        !< small strain flag
+      integer, intent(inout) :: isorth                                        !< orthotropic material flag
+      integer, intent(inout) :: isorthg                                       !< global orthotropic flag
+      integer, intent(in) :: jale                                          !< ale formulation flag
+      integer, intent(in) :: jcvt                                          !< coordinate transformation flag
+      integer, intent(in) :: jeul                                          !< eulerian formulation flag
+      integer, intent(in) :: jlag                                          !< lagrangian formulation flag
+      integer, intent(inout) :: jsph                                          !< smoothed particle hydrodynamics flag
+      integer, intent(inout) :: jplasol                                       !< plastic solution flag
+      integer, intent(inout) :: jthe                                          !< thermal analysis flag
+
+
+
+       integer, intent(inout) :: mstop                                         !< stop flag
+       integer, intent(inout) :: mtn                                           !< material type number
+       integer, intent(in) :: n2d                                           !< 2d analysis flag
+       integer, intent(in) :: ncpri                                         !< print cycle interval
+       integer, intent(in) :: ncycle                                        !< current cycle number
+       integer, intent(in) :: nfilsol                                       !< fill solution flag
+       integer, intent(in) :: nft                                           !< number of first elements
+       integer, intent(in) :: ntable                                        !< number of tables
+       integer, intent(in) :: ntsheg                                        !< number of thick shell elements
+       integer, intent(in) :: numels                                        !< number of elements
+       integer, intent(in) :: numgeo                                        !< number of geometric properties
+       integer, intent(in) :: nummat                                        !< number of materials
+       integer, intent(in) :: numelq
+
       integer, dimension(nixs,nel), intent(inout) :: ixs                   !< element connectivity array
       integer, dimension(nparg,ngroup), intent(inout) :: iparg             !< element group parameters
       integer, dimension(nel), intent(inout) :: npf                        !< function pointer array
@@ -258,9 +335,9 @@ c-----------------------------------------------
       type (glob_therm_) ,intent(inout)   :: glob_therm
       type (sensors_),intent(inout) :: sensors
 
-c-----------------------------------------------
-c   l o c a l   v a r i a b l e s
-c-----------------------------------------------
+!c-----------------------------------------------
+!c   l o c a l   v a r i a b l e s
+!c-----------------------------------------------
       ! loop counters and flags
       integer :: i, j, lco, nf1, iflag, nuvar, current_layer, imat
       integer :: ilay, nlay, ir, is, it, ip, ibid, mx, l_pla, l_epsd
@@ -344,22 +421,22 @@ c-----------------------------------------------
       real(kind=wp) :: sigzm(mvsiz), volm(mvsiz), usb(mvsiz), et(mvsiz)
       real(kind=wp) :: r1_free(mvsiz), r3_free(mvsiz), r4_free(mvsiz)
       real(kind=wp) :: stin(mvsiz), bid(mvsiz), dsv(mvsiz), alpha_e(mvsiz), llsh(mvsiz)
-c     
+!c     
       integer :: pid, mtn0, ipthk, ippos, ipmat, nlymax, mid, ipang, ioffs
       integer :: nn_del, ipres, isctl
       integer :: mxt0(mvsiz), istab(mvsiz)
 
-      my_real
-     .   dir(mvsiz,2),sign(nel,6),shf(mvsiz),zt,wt,offs(mvsiz),
-     .   rx(mvsiz), ry(mvsiz), rz(mvsiz),nu1(mvsiz),fac(mvsiz),
-     .   sx(mvsiz), sy(mvsiz), sz(mvsiz),
-     .   tx(mvsiz), ty(mvsiz), tz(mvsiz),e0(mvsiz),
-     .   n1x(mvsiz), n2x(mvsiz), n3x(mvsiz),
-     .   n1y(mvsiz), n2y(mvsiz), n3y(mvsiz),
-     .   n1z(mvsiz), n2z(mvsiz), n3z(mvsiz),
-     .   n4x(mvsiz), n5x(mvsiz), n6x(mvsiz),
-     .   n4y(mvsiz), n5y(mvsiz), n6y(mvsiz),
-     .   n4z(mvsiz), n5z(mvsiz), n6z(mvsiz),amu(mvsiz),area(mvsiz)
+     
+      real(kind=wp) ::  dir(mvsiz,2),sign(mvsiz,6),shf(mvsiz),zt,wt,offs(mvsiz),&
+                         rx(mvsiz), ry(mvsiz), rz(mvsiz),nu1(mvsiz),fac(mvsiz),&
+                         sx(mvsiz), sy(mvsiz), sz(mvsiz),&
+                         tx(mvsiz), ty(mvsiz), tz(mvsiz),e0(mvsiz),&
+                         n1x(mvsiz), n2x(mvsiz), n3x(mvsiz),&
+                         n1y(mvsiz), n2y(mvsiz), n3y(mvsiz),&
+                         n1z(mvsiz), n2z(mvsiz), n3z(mvsiz),&
+                         n4x(mvsiz), n5x(mvsiz), n6x(mvsiz),&
+                         n4y(mvsiz), n5y(mvsiz), n6y(mvsiz),&
+                         n4z(mvsiz), n5z(mvsiz), n6z(mvsiz),amu(mvsiz),area(mvsiz)
 
       real(kind=wp) ::  them(mvsiz,6),tempel(mvsiz),die(mvsiz),conden(mvsiz),voldp(mvsiz)
 
@@ -373,74 +450,81 @@ c
       real(kind=wp), dimension(:,:) ,allocatable :: var_reg
       real(kind=wp), dimension(:), pointer :: dnl
 
-      real(kind=wp) :: sti_c(mvsiz),ll(mvsiz),fld(mvsiz),
-     .           cns2,fqmax,dn,facdp
-c-----
+      real(kind=wp) :: sti_c(mvsiz),ll(mvsiz),fld(mvsiz),&
+                cns2,fqmax,dn,facdp
+!c-----
       type(g_bufel_) ,pointer :: gbuf
       type(l_bufel_) ,pointer :: lbuf     
-c-----------------------------------------------s
-      my_real
-     .  w_gauss(9,9),a_gauss(9,9)
-      data w_gauss / 
-     1 2.               ,0.               ,0.               ,
-     1 0.               ,0.               ,0.               ,
-     1 0.               ,0.               ,0.               ,
-     2 1.               ,1.               ,0.               ,
-     2 0.               ,0.               ,0.               ,
-     2 0.               ,0.               ,0.               ,
-     3 0.555555555555556,0.888888888888889,0.555555555555556,
-     3 0.               ,0.               ,0.               ,
-     3 0.               ,0.               ,0.               ,
-     4 0.347854845137454,0.652145154862546,0.652145154862546,
-     4 0.347854845137454,0.               ,0.               ,
-     4 0.               ,0.               ,0.               ,
-     5 0.236926885056189,0.478628670499366,0.568888888888889,
-     5 0.478628670499366,0.236926885056189,0.               ,
-     5 0.               ,0.               ,0.               ,
-     6 0.171324492379170,0.360761573048139,0.467913934572691,
-     6 0.467913934572691,0.360761573048139,0.171324492379170,
-     6 0.               ,0.               ,0.               ,
-     7 0.129484966168870,0.279705391489277,0.381830050505119,
-     7 0.417959183673469,0.381830050505119,0.279705391489277,
-     7 0.129484966168870,0.               ,0.               ,
-     8 0.101228536290376,0.222381034453374,0.313706645877887,
-     8 0.362683783378362,0.362683783378362,0.313706645877887,
-     8 0.222381034453374,0.101228536290376,0.               ,
-     9 0.081274388361574,0.180648160694857,0.260610696402935,
-     9 0.312347077040003,0.330239355001260,0.312347077040003,
-     9 0.260610696402935,0.180648160694857,0.081274388361574/
-      data a_gauss / 
-     1 0.               ,0.               ,0.               ,
-     1 0.               ,0.               ,0.               ,
-     1 0.               ,0.               ,0.               ,
-     2 -.577350269189626,0.577350269189626,0.               ,
-     2 0.               ,0.               ,0.               ,
-     2 0.               ,0.               ,0.               ,
-     3 -.774596669241483,0.               ,0.774596669241483,
-     3 0.               ,0.               ,0.               ,
-     3 0.               ,0.               ,0.               ,
-     4 -.861136311594053,-.339981043584856,0.339981043584856,
-     4 0.861136311594053,0.               ,0.               ,
-     4 0.               ,0.               ,0.               ,
-     5 -.906179845938664,-.538469310105683,0.               ,
-     5 0.538469310105683,0.906179845938664,0.               ,
-     5 0.               ,0.               ,0.               ,
-     6 -.932469514203152,-.661209386466265,-.238619186083197,
-     6 0.238619186083197,0.661209386466265,0.932469514203152,
-     6 0.               ,0.               ,0.               ,
-     7 -.949107912342759,-.741531185599394,-.405845151377397,
-     7 0.               ,0.405845151377397,0.741531185599394,
-     7 0.949107912342759,0.               ,0.               ,
-     8 -.960289856497536,-.796666477413627,-.525532409916329,
-     8 -.183434642495650,0.183434642495650,0.525532409916329,
-     8 0.796666477413627,0.960289856497536,0.               ,
-     9 -.968160239507626,-.836031107326636,-.613371432700590,
-     9 -.324253423403809,0.               ,0.324253423403809,
-     9 0.613371432700590,0.836031107326636,0.968160239507626/
-c-----------------------------------------------
-c   s o u r c e  l i n e s
-c=======================================================================
+!c-----------------------------------------------s
+      real(kind=wp), dimension(9, 9) :: w_gauss, a_gauss
+
+      
+!C-----------------------------------------------
+        w_gauss = reshape( [ &
+        2.0_wp, 0.0_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        1.0_wp, 1.0_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        0.555555555555556_wp, 0.888888888888889_wp, 0.555555555555556_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        0.347854845137454_wp, 0.652145154862546_wp, 0.652145154862546_wp,&
+        0.347854845137454_wp, 0.0_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        0.236926885056189_wp, 0.478628670499366_wp, 0.568888888888889_wp, &
+        0.478628670499366_wp, 0.236926885056189_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        0.171324492379170_wp, 0.360761573048139_wp, 0.467913934572691_wp, &
+        0.467913934572691_wp, 0.360761573048139_wp, 0.171324492379170_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        0.129484966168870_wp, 0.279705391489277_wp, 0.381830050505119_wp, &
+        0.417959183673469_wp, 0.381830050505119_wp, 0.279705391489277_wp, &
+        0.129484966168870_wp, 0.0_wp, 0.0_wp, &
+        0.101228536290376_wp, 0.222381034453374_wp, 0.313706645877887_wp, &
+        0.362683783378362_wp, 0.362683783378362_wp, 0.313706645877887_wp, &
+        0.222381034453374_wp, 0.101228536290376_wp, 0.0_wp, &
+        0.081274388361574_wp, 0.180648160694857_wp, 0.260610696402935_wp, &
+        0.312347077040003_wp, 0.330239355001260_wp, 0.312347077040003_wp, & 
+        0.260610696402935_wp, 0.180648160694857_wp, 0.081274388361574_wp ], &
+        shape(w_gauss) )
+      
+        a_gauss = reshape( [ &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        -0.577350269189626_wp, 0.577350269189626_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        -0.774596669241483_wp, 0.0_wp, 0.774596669241483_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        -0.861136311594053_wp, -0.339981043584856_wp, 0.339981043584856_wp, &
+        0.861136311594053_wp, 0.0_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        -0.906179845938664_wp, -0.538469310105683_wp, 0.0_wp, &
+        0.538469310105683_wp, 0.906179845938664_wp, 0.0_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        -0.932469514203152_wp, -0.661209386466265_wp, -0.238619186083197_wp, &
+        0.238619186083197_wp, 0.661209386466265_wp, 0.932469514203152_wp, &
+        0.0_wp, 0.0_wp, 0.0_wp, &
+        -0.949107912342759_wp, -0.741531185599394_wp, -0.405845151377397_wp, &
+        0.0_wp, 0.405845151377397_wp, 0.741531185599394_wp, &
+        0.949107912342759_wp, 0.0_wp, 0.0_wp, &
+        -0.960289856497536_wp, -0.796666477413627_wp, -0.525532409916329_wp, &
+        -0.183434642495650_wp, 0.183434642495650_wp, 0.525532409916329_wp, &
+        0.796666477413627_wp, 0.960289856497536_wp, 0.0_wp, &
+        -0.968160239507626_wp, -0.836031107326636_wp, -0.613371432700590_wp, &
+        -0.324253423403809_wp, 0.0_wp, 0.324253423403809_wp, &
+        0.613371432700590_wp, 0.836031107326636_wp, 0.968160239507626_wp ], &
+        shape(A_GAUSS) )
+!c=======================================================================
+!c   s o u r c e  l i n e s
+!c=======================================================================
 !      write(*,*) 'in subroutine s6cforc3_1'
+      
+    
       mtn0 = 0
       nlymax= 0
       ipang = 0
@@ -465,28 +549,28 @@ c=======================================================================
       it = 1
       inloc = iparg(78,ng)
       allocate(var_reg(nel,nlay))
-      sz_r1_free=mvsiz
+      sz_r1_free=nel
       sz_ix=numelq+numels+nsvois
-c-----------
+!c-----------
       ibid = 0
       ibidon(1) = 0
       if (igtyp /= 22) then
         isorthg = 0
       end if 
-c-----------
+!c-----------
       nf1=nft+1
-c--------------------------
-c-----------
+!c--------------------------
+!c-----------
        if (isorth > 0) then
-         call sgparav3(
-     1   6,         x,         ixs(1,nf1),rx,
-     2   ry,        rz,        sx,        sy,
-     3   sz,        tx,        ty,        tz,
-     4   nel)
+         call sgparav3(&
+        6,         x,         ixs(1,nf1),rx,&
+        ry,        rz,        sx,        sy,&
+        sz,        tx,        ty,        tz,&
+        nel)
        endif
-c-----------------------------------------------------------
-c gather nodal variables and compute intinsic rotations
-c-----------------------------------------------------------
+!c-----------------------------------------------------------
+!c gather nodal variables and compute intinsic rotations
+!c-----------------------------------------------------------
 !       call s6rcoor3(x,ixs(1,nf1),v,w,gbuf%gama,gama,
 !     .   x1, x2, x3, x4, x5, x6,
 !     .   y1, y2, y3, y4, y5, y6, 
@@ -501,23 +585,23 @@ c-----------------------------------------------------------
 !     .   nel, xgxa, xgya, xgza,xgxa2,xgya2,xgza2,
 !     .   xgxya,xgyza,xgzxa,iparg(1,ng),gbuf%gama_r) 
 
-        call s6rcoor3_2(x,ixs(1,nf1),v,gbuf%gama,gama,
-     .   x1, x2, x3, x4, x5, x6,
-     .   y1, y2, y3, y4, y5, y6, 
-     .   z1, z2, z3, z4, z5, z6, 
-     .   vx1, vx2, vx3, vx4, vx5, vx6, 
-     .   vy1, vy2, vy3, vy4, vy5, vy6, 
-     .   vz1, vz2, vz3, vz4, vz5, vz6, 
-     .   vd2,vis,gbuf%off,offg,gbuf%smstr,gbuf%rho,rhoo,
-     .   r11, r12, r13, r21, r22, r23, r31, r32, r33, 
-     .   nc1,nc2,nc3,nc4,nc5,nc6,ngl,mxt,ngeo,
-     .   ioutprt, vgxa, vgya, vgza, vga2,dd,
-     .   nel, xgxa, xgya, xgza,xgxa2,xgya2,xgza2,
-     .   xgxya,xgyza,xgzxa,iparg(1,ng),gbuf%gama_r,
-     .   nixs,irep,ismstr,isorth,jlag) 
+        call s6rcoor3_2(x,ixs(1,nf1),v,gbuf%gama,gama,&
+        x1, x2, x3, x4, x5, x6,&
+        y1, y2, y3, y4, y5, y6, &
+        z1, z2, z3, z4, z5, z6, &
+        vx1, vx2, vx3, vx4, vx5, vx6, &
+        vy1, vy2, vy3, vy4, vy5, vy6, &
+        vz1, vz2, vz3, vz4, vz5, vz6, &
+        vd2,vis,gbuf%off,offg,gbuf%smstr,gbuf%rho,rhoo,&
+        r11, r12, r13, r21, r22, r23, r31, r32, r33, &
+        nc1,nc2,nc3,nc4,nc5,nc6,ngl,mxt,ngeo,&
+        ioutprt, vgxa, vgya, vgza, vga2,dd,&
+        nel, xgxa, xgya, xgza,xgxa2,xgya2,xgza2,&
+        xgxya,xgyza,xgzxa,iparg(1,ng),gbuf%gama_r,&
+        nixs,irep,ismstr,isorth,jlag) 
 
       if (flag_write == 1) then
-      do i=lft,llt
+      do i=1,nel
       write(*,*) 's6forc3_1 after rotation'
       write(*,*) 'i = ', i
       write(*,*) 'x1(i) = ', x1(i)
@@ -572,12 +656,13 @@ c-----------------------------------------------------------
       endif
 
       
-c
-c
+!c
+!c
       nn_del = 0
       pid = ngeo(1)
-      if (geo(190,pid)+geo(191,pid)+geo(192,pid)+geo(192,pid)>zero)
-     .        nn_del=6
+      if (geo(190,pid)+geo(191,pid)+geo(192,pid)+geo(192,pid)>zero) then 
+              nn_del=6
+      endif
       if (nn_del ==0 .and. dt%idel_brick>0) nn_del=6
       mx = mxt(1)
       c1 =pm(32,mx)
@@ -594,7 +679,7 @@ c
         stin(i)=zero
         conden(i)= zero
       enddo
-c
+!c
       if (icp==1) then                                
         do i=1,nel                                    
          nu1(i)=half                                  
@@ -609,48 +694,48 @@ c
           nu1(i) =nu(i)                                  
          enddo                                           
       endif                                             
-c
-      call s6deri3_2(
-     1   offg,      voln,      ngl,       x1,
-     2   x2,        x3,        x4,        x5,
-     3   x6,        y1,        y2,        y3,
-     4   y4,        y5,        y6,        z1,
-     5   z2,        z3,        z4,        z5,
-     6   z6,        px1,       px2,       px3,
-     7   px4,       py1,       py2,       py3,
-     8   py4,       pz1,       pz2,       pz3,
-     9   pz4,       px1h,      px2h,      px3h,
-     a   py1h,      py2h,      py3h,      pz1h,
-     b   pz2h,      pz3h,      jac1,      jac2,
-     c   jac3,      jac4,      jac5,      jac6,
-     d   jaci33,    b1x,       b1y,       b2y,
-     e   b2x,       b1122,     b1221,     b2212,
-     f   b1121,     b1xh,      b1yh,      b2xh,
-     g   b2yh,      b1122h,    b1221h,    b2212h,
-     h   b1121h,    vzl,       volg,      gbuf%smstr,
-     i   gbuf%off,  nel,       ismstr,
-     j   px5,     py5,     pz5,
-     k   px6,     py6,     pz6,
-     l   idel7nok,  ineg_v,    mstop,    volmin,    
-     m   idtmin  )      
-      call sdlen3(
-     1   volg,    deltax,  x1,      x2,
-     2   x5,      x4,      x3,      x3,
-     3   x6,      x6,      y1,      y2,
-     4   y5,      y4,      y3,      y3,
-     5   y6,      y6,      z1,      z2,
-     6   z5,      z4,      z3,      z3,
-     7   z6,      z6,      n1x,     n2x,
-     8   n3x,     n4x,     n5x,     n6x,
-     9   n1y,     n2y,     n3y,     n4y,
-     a   n5y,     n6y,     n1z,     n2z,
-     b   n3z,     n4z,     n5z,     n6z,
-     c   nel,     mtn,     jale,    jeul)
+!c
+      call s6deri3_2(&
+        offg,      voln,      ngl,       x1,&
+        x2,        x3,        x4,        x5,&
+        x6,        y1,        y2,        y3,&
+        y4,        y5,        y6,        z1,&
+        z2,        z3,        z4,        z5,&
+        z6,        px1,       px2,       px3,&
+        px4,       py1,       py2,       py3,&
+        py4,       pz1,       pz2,       pz3,&
+        pz4,       px1h,      px2h,      px3h,&
+        py1h,      py2h,      py3h,      pz1h,&
+        pz2h,      pz3h,      jac1,      jac2,&
+        jac3,      jac4,      jac5,      jac6,&
+        jaci33,    b1x,       b1y,       b2y,&
+        b2x,       b1122,     b1221,     b2212,&
+        b1121,     b1xh,      b1yh,      b2xh,&
+        b2yh,      b1122h,    b1221h,    b2212h,&
+        b1121h,    vzl,       volg,      gbuf%smstr,&
+        gbuf%off,  nel,       ismstr,&
+        px5,     py5,     pz5,&
+        px6,     py6,     pz6,&
+        idel7nok,  ineg_v,    mstop,    volmin,    &
+        idtmin  )      
+      call sdlen3(&
+         volg,    deltax,  x1,      x2,&
+        x5,      x4,      x3,      x3,&
+        x6,      x6,      y1,      y2,&
+        y5,      y4,      y3,      y3,&
+        y6,      y6,      z1,      z2,&
+        z5,      z4,      z3,      z3,&
+        z6,      z6,      n1x,     n2x,&
+        n3x,     n4x,     n5x,     n6x,&
+        n1y,     n2y,     n3y,     n4y,&
+        n5y,     n6y,     n1z,     n2z,&
+        n3z,     n4z,     n5z,     n6z,&
+        nel,     mtn,     jale,    jeul)
       if (ntsheg > 0.and.isctl == 0) then
-         call sdlensh3n(volg,llsh,area , 
-     .                  x1, x2, x3, x4, x5, x6,
-     .                  y1, y2, y3, y4, y5, y6,
-     .                  z1, z2, z3, z4, z5, z6,nel)
+         call sdlensh3n(volg,llsh,area , &
+                       x1, x2, x3, x4, x5, x6,&
+                       y1, y2, y3, y4, y5, y6,&
+                       z1, z2, z3, z4, z5, z6,nel)
         alpha_e(1:nel) = one  
         do i=1,nel
           if (gbuf%idt_tsh(i)<=0) cycle
@@ -660,31 +745,31 @@ c
         enddo
       end if        
       
-      call s6cdefc3_2(
-     1   px1,     px2,     px3,     px4,
-     2   py1,     py2,     py3,     py4,
-     3   pz1,     pz2,     pz3,     pz4,
-     4   vx1,     vx2,     vx3,     vx4,
-     5   vx5,     vx6,     vy1,     vy2,
-     6   vy3,     vy4,     vy5,     vy6,
-     7   vz1,     vz2,     vz3,     vz4,
-     8   vz5,     vz6,     dcxx,    dcxy,
-     9   dcxz,    dcyx,    dcyy,    dcyz,
-     a   dczx,    dczy,    dczz,    
-     b   wxx,     wyy,
-     c   wzz,     dhxx,    dhxy,    dhxz,
-     d   dhyx,    dhyy,    dhyz,    dhzx,
-     e   dhzy,    dhzz,    
-     f   px1h,    px2h,    px3h,
-     g   py1h,    py2h,    py3h,    pz1h,
-     h   pz2h,    pz3h,    jaci33,  b1x,
-     i   b1y,     b2y,     b2x,     b1122,
-     j   b1221,   b2212,   b1121,   b1xh,
-     k   b1yh,    b2xh,    b2yh,    b1122h,
-     l   b1221h,  b2212h,  b1121h,  ddhv,
-     m   nu1,     nel,
-     n   px5,     py5,     pz5,
-     o   px6,     py6,     pz6 )
+      call s6cdefc3_2(&
+        px1,     px2,     px3,     px4,&
+        py1,     py2,     py3,     py4,&
+        pz1,     pz2,     pz3,     pz4,&
+        vx1,     vx2,     vx3,     vx4,&
+        vx5,     vx6,     vy1,     vy2,&
+        vy3,     vy4,     vy5,     vy6,&
+        vz1,     vz2,     vz3,     vz4,&
+        vz5,     vz6,     dcxx,    dcxy,&
+        dcxz,    dcyx,    dcyy,    dcyz,&
+        dczx,    dczy,    dczz,    &
+        wxx,     wyy,&
+        wzz,     dhxx,    dhxy,    dhxz,&
+        dhyx,    dhyy,    dhyz,    dhzx,&
+        dhzy,    dhzz,    &
+        px1h,    px2h,    px3h,&
+        py1h,    py2h,    py3h,    pz1h,&
+        pz2h,    pz3h,    jaci33,  b1x,&
+        b1y,     b2y,     b2x,     b1122,&
+        b1221,   b2212,   b1121,   b1xh,&
+        b1yh,    b2xh,    b2yh,    b1122h,&
+        b1221h,  b2212h,  b1121h,  ddhv,&
+        nu1,     nel,&
+        px5,     py5,     pz5,&
+        px6,     py6,     pz6 )
 
 
 !      if (flag_write) then
@@ -694,33 +779,33 @@ c
 !        write(*,*) 'dcyz(i)', dcyz(i), 'dczx(i)', dczx(i), 'dczy(i)', dczy(i)
 !      enddo
 !      endif
-      call s6czero3(
-     1   f11,        f21,        f31,        f12,
-     2   f22,        f32,        f13,        f23,
-     3   f33,        f14,        f24,        f34,
-     4   f15,        f25,        f35,        f16,
-     5   f26,        f36,        gbuf%sig,   gbuf%eint,
-     6   gbuf%rho,   gbuf%qvis,  gbuf%pla,   gbuf%epsd,
-     7   gbuf%g_pla, gbuf%g_epsd,nel,nlay)
-c ------------------------------------------------------------------------------
-c  update reference configuration (possible future change to small strain option)
-c -------------------------------------------------------------------------------
+      call s6czero3(&
+        f11,        f21,        f31,        f12,&
+        f22,        f32,        f13,        f23,&
+        f33,        f14,        f24,        f34,&
+        f15,        f25,        f35,        f16,&
+        f26,        f36,        gbuf%sig,   gbuf%eint,&
+        gbuf%rho,   gbuf%qvis,  gbuf%pla,   gbuf%epsd,&
+        gbuf%g_pla, gbuf%g_epsd,nel,nlay)
+!c ------------------------------------------------------------------------------
+!c  update reference configuration (possible future change to small strain option)
+!c -------------------------------------------------------------------------------
       if (ismstr <= 3.or.(ismstr==4.and.jlag>0)) then
-       call s6sav3(
-     1   gbuf%off,  gbuf%smstr,x1,        x2,
-     2   x3,        x4,        x5,        x6,
-     3   y1,        y2,        y3,        y4,
-     4   y5,        y6,        z1,        z2,
-     5   z3,        z4,        z5,        z6,
-     6   nel)
+       call s6sav3(&
+       gbuf%off,  gbuf%smstr,x1,        x2,&
+       x3,        x4,        x5,        x6,&
+       y1,        y2,        y3,        y4,&
+       y5,        y6,        z1,        z2,&
+       z3,        z4,        z5,        z6,&
+       nel)
       end if !(ismstr <= 3) then
-c
+!c
       if (isorth > 0) then                         
         pid = ngeo(1)                              
         if (igtyp == 21) then                      
-         call sgetdir3(nel,rx,ry,rz,tx,ty,tz, 
-     .                 r11,r21,r31,r12,r22,r32,    
-     .                 gbuf%gama,dir,irep)         
+         call sgetdir3(nel,rx,ry,rz,tx,ty,tz, &
+                     r11,r21,r31,r12,r22,r32,    &
+                     gbuf%gama,dir,irep)         
         endif                                      
         if (igtyp == 22) then                      
           nlymax= 200                              
@@ -735,10 +820,10 @@ c
           enddo                                    
         endif                                      
       endif 
-c
-c---------------------------------------------------------
-c compute non-local variable increment at each gauss point 
-c---------------------------------------------------------
+!c!
+!c---------------------------------------------------------
+!c compute non-local variable increment at each gauss point 
+!c---------------------------------------------------------
       if (inloc > 0) then  
         l_nloc = nloc_dmg%l_nloc
         dnl => nloc_dmg%dnl(1:l_nloc) ! dnl = non local variable increment
@@ -753,17 +838,17 @@ c---------------------------------------------------------
             do j = 1,6
               ipos(j) = nloc_dmg%posi(inod(j))+ilay-1
             enddo
-            var_reg(i,ilay) = dnl(ipos(1)) + dnl(ipos(2)) + dnl(ipos(3)) + 
-     .                        dnl(ipos(4)) + dnl(ipos(5)) + dnl(ipos(6))
+            var_reg(i,ilay) = dnl(ipos(1)) + dnl(ipos(2)) + dnl(ipos(3)) + &
+                            dnl(ipos(4)) + dnl(ipos(5)) + dnl(ipos(6))
             var_reg(i,ilay) = var_reg(i,ilay)*one_over_6
           enddo
         enddo     
       endif 
-c---------------------------------------------------------
-c                                       
-c--------------------------------------
-c constant stress through the thickness
-c--------------------------------------
+!c---------------------------------------------------------
+!c                                       
+!c--------------------------------------
+!c constant stress through the thickness
+!c--------------------------------------
       do ilay=1,nlay
         lbuf => elbuf_tab(ng)%bufly(ilay)%lbuf(ir,is,it)
         if (igtyp == 22) then
@@ -780,16 +865,16 @@ c--------------------------------------
       else
         dti = one/dt1
       endif 
-c-------------------------------------------
-c element temperature
-c-------------------------------------------
+!c-------------------------------------------
+!c element temperature
+!c-------------------------------------------
       tempel(:) = zero
       fheat(:)  = zero
       if (jthe < 0) then       
         do i=1,nel
-          tempel(i) = one_over_6 *(temp(nc1(i)) + temp(nc2(i))  
-     .                           + temp(nc3(i)) + temp(nc4(i)) 
-     .                           + temp(nc5(i)) + temp(nc6(i)))
+          tempel(i) = one_over_6 *(temp(nc1(i)) + temp(nc2(i))  &
+                                + temp(nc3(i)) + temp(nc4(i)) &
+                                + temp(nc5(i)) + temp(nc6(i)))
           gbuf%temp(i) = tempel(i)
         enddo
       endif
@@ -798,9 +883,9 @@ c-------------------------------------------
         offs(i)  = ep20
       enddo
       if (jthe < 0) them(1:nel,1:6) = zero
-c---------------------------------------------
-c loop on integration points through thickness
-c---------------------------------------------
+!c---------------------------------------------
+!c loop on integration points through thickness
+!c---------------------------------------------
       do ilay=1,nlay
         lbuf => elbuf_tab(ng)%bufly(ilay)%lbuf(ir,is,it)
         if (igtyp == 22) then
@@ -815,31 +900,32 @@ c---------------------------------------------
           zt = a_gauss(ilay,nlay)
           wt = w_gauss(ilay,nlay)
         endif
-c
-        call scdefo3_2(
-     1   dxx,        dxy,        dxz,        dyx,
-     2   dyy,        dyz,        dzx,        dzy,
-     3   dzz,        d4,         d5,         d6,
-     4   dcxx,       dcxy,       dcxz,       dcyx,
-     5   dcyy,       dcyz,       dczx,       dczy,
-     6   dczz,       
-     7   dhxx,       dhxy,       dhxz,       dhyx,
-     8   dhyy,       dhyz,       dhzx,       dhzy,
-     9   dhzz,      
-     a   zt,         wt,         vzl,        voln,
-     b   volg,       lbuf%vol,   ddhv,       lbuf%sig,
-     c   sigzm,      volm,       usb,        lbuf%eint,
-     d   off,        offg,       gbuf%off,
-     e   dsv,        lbuf%vol0dp,voldp,      ipres,
-     f   nel,         dt1,     iresp, ismdisp, iscau )
+!c
+        call scdefo3_2(&
+        dxx,        dxy,        dxz,        dyx,&
+        dyy,        dyz,        dzx,        dzy,&
+        dzz,        d4,         d5,         d6,&
+        dcxx,       dcxy,       dcxz,       dcyx,&
+        dcyy,       dcyz,       dczx,       dczy,&
+        dczz,       &
+        dhxx,       dhxy,       dhxz,       dhyx,&
+        dhyy,       dhyz,       dhzx,       dhzy,&
+        dhzz,      &
+        zt,         wt,         vzl,        voln,&
+        volg,       lbuf%vol,   ddhv,       lbuf%sig,&
+        sigzm,      volm,       usb,        lbuf%eint,&
+        off,        offg,       gbuf%off,&
+        dsv,        lbuf%vol0dp,voldp,      ipres,&
+        nel,         dt1,     iresp, ismdisp, iscau )
         do i=1,nel
           rhoo(i)= lbuf%rho(i)
         enddo
         if (isorth > 0) then
-          if (igtyp == 22)  
-     .      call sgetdir3(nel,rx,ry,rz,tx,ty,tz,
-     .                   r11,r21,r31,r12,r22,r32,
-     .                   lbuf%gama,dir,irep)
+          if (igtyp == 22)  then 
+          call sgetdir3(nel,rx,ry,rz,tx,ty,tz,&
+                        r11,r21,r31,r12,r22,r32,&
+                        lbuf%gama,dir,irep)
+          endif
           call scordef3(nel,dxx,dyy,dzz,d4,d5,d6,dir)
           if (igtyp == 22) then
             do i=1,nel
@@ -848,24 +934,24 @@ c
             enddo
           endif
         endif
-c 
+!c 
         divde(1:nel) = dt1*(dxx(1:nel)+ dyy(1:nel)+ dzz(1:nel))+dsv(1:nel)  
-        call srho3(
-     1   pm,         lbuf%vol,   lbuf%rho,   lbuf%eint,
-     2   divde,      flux(1,nf1),flu1(nf1),  voln,
-     3   dvol,       ngl,        mxt,        off,
-     4   0,          gbuf%tag22, voldp,      lbuf%vol0dp,
-     5   amu,        gbuf%off,   nel,        mtn,
-     6   jale,       ismstr,     jeul,       jlag)
-c
-c-----------------------------
-c gather stresses
-c-----------------------------
-        call csmall3(lbuf%sig,s1,s2,s3,s4,s5,s6,
-     .              gbuf%off,off,nel)
-c------------------------------------------------------
-c compute new stresses according to constitutive laws
-c------------------------------------------------------
+        call srho3(&
+        pm,         lbuf%vol,   lbuf%rho,   lbuf%eint,&
+        divde,      flux(1,nf1),flu1(nf1),  voln,&
+        dvol,       ngl,        mxt,        off,&
+        0,          gbuf%tag22, voldp,      lbuf%vol0dp,&
+        amu,        gbuf%off,   nel,        mtn,&
+        jale,       ismstr,     jeul,       jlag)
+!c
+!c-----------------------------
+!c gather stresses
+!c-----------------------------
+        call csmall3(lbuf%sig,s1,s2,s3,s4,s5,s6,&
+                   gbuf%off,off,nel)
+!c------------------------------------------------------
+!c compute new stresses according to constitutive laws
+!c------------------------------------------------------
         current_layer=ilay         ! one treatment pass lay to negative
          
        ! if (flag_write==1) then
@@ -881,117 +967,117 @@ c------------------------------------------------------
        !  endif 
 
 
-        call mmain(timers, output,
-     1   elbuf_tab,   ng,          pm,          geo,
-     2                ale_connect, ixs,         iparg,
-     3   v,           tf,          npf,         bufmat,
-     4   sti,         x,           dt2t,        neltst,
-     5   ityptst,     offset,      nel,         w,
-     6   off,         ngeo,        mxt,         ngl,
-     7   voln,        vd2,         dvol,        deltax,
-     8   vis,         qvis,        cxx,         s1,
-     9   s2,          s3,          s4,          s5,
-     a   s6,          dxx,         dyy,         dzz,
-     b   d4,          d5,          d6,          wxx,
-     c   wyy,         wzz,         jac1,        jac2,
-     d   jac3,        jac4,        jac5,        jac6,
-     e   vdx,         vdy,         vdz,         muvoid,
-     f   ssp_eq,      aire,        sigy,        et,
-     g   r1_free,     lbuf%pla,    r3_free,     amu,
-     h   dxx,         dxy,         dxz,         dyx,
-     i   dyy,         dyz,         dzx,         dzy,
-     j   dzz,         ipm,         gama,        bid,
-     k   bid,         bid,         bid,         bid,
-     l   bid,         bid,         istrain,     tempel,
-     m   die,         iexpan,      current_layer,mssa,
-     n   dmels,       ir,          is,          it,
-     o   table,       bid,         bid,         bid,
-     p   bid,         iparg(1,ng), igeo,        conde,
-     q   itask,       nloc_dmg,    var_reg(1,ilay),mat_elem,
-     r   h3d_strain,  jplasol,     jsph,        sz_r1_free,
-     *   snpc,        stf,         sbufmat      ,glob_therm, 
-     *   svis,        sz_ix,       iresp,       
-     *   n2d,         th_strain,   ngroup,      tt, 
-     .   dt1,         ntable,      numelq,      nummat,
-     .   numgeo,      numnod,      numels,
-     .   idel7nok,    idtmin,      maxfunc,
-     .   imon_mat,    userl_avail, impl_s,
-     .   idyna,       dt,         fheat  ,sensors, opt_mtn=mtn,opt_jcvt=jcvt, 
-     .   opt_isorth=isorth,opt_isorthg=isorthg)
-c
+        call mmain(timers, output,&
+        elbuf_tab,   ng,          pm,          geo,&
+                     ale_connect, ixs,         iparg,&
+        v,           tf,          npf,         bufmat,&
+        sti,         x,           dt2t,        neltst,&
+        ityptst,     offset,      nel,         w,&
+        off,         ngeo,        mxt,         ngl,&
+        voln,        vd2,         dvol,        deltax,&
+        vis,         qvis,        cxx,         s1,&
+        s2,          s3,          s4,          s5,&
+        s6,          dxx,         dyy,         dzz,&
+        d4,          d5,          d6,          wxx,&
+        wyy,         wzz,         jac1,        jac2,&
+        jac3,        jac4,        jac5,        jac6,&
+        vdx,         vdy,         vdz,         muvoid,&
+        ssp_eq,      aire,        sigy,        et,&
+        r1_free,     lbuf%pla,    r3_free,     amu,&
+        dxx,         dxy,         dxz,         dyx,&
+        dyy,         dyz,         dzx,         dzy,&
+        dzz,         ipm,         gama,        bid,&
+        bid,         bid,         bid,         bid,&
+        bid,         bid,         istrain,     tempel,&
+        die,         iexpan,      current_layer,mssa,&
+        dmels,       ir,          is,          it,&
+        table,       bid,         bid,         bid,&
+        bid,         iparg(1,ng), igeo,        conde,&
+        itask,       nloc_dmg,    var_reg(1,ilay),mat_elem,&
+        h3d_strain,  jplasol,     jsph,        sz_r1_free,&
+        snpc,        stf,         sbufmat      ,glob_therm, &
+        svis,        sz_ix,       iresp,       &
+        n2d,         th_strain,   ngroup,      tt, &
+        dt1,         ntable,      numelq,      nummat,&
+        numgeo,      numnod,      numels,&
+        idel7nok,    idtmin,      maxfunc,&
+        imon_mat,    userl_avail, impl_s,&
+        idyna,       dt,         fheat  ,sensors, opt_mtn=mtn,opt_jcvt=jcvt, &
+        opt_isorth=isorth,opt_isorthg=isorthg)
+!c
         do i=1,nel
           stin(i) = stin(i)+sti(i)
         enddo
-c
+!c
         if(glob_therm%nodadt_therm == 1) then
           do i=1,nel
             conden(i)= conden(i)+ conde(i)
           enddo
         endif
         if (istrain == 1) then 
-          call sstra3(
-     1   dxx,      dyy,      dzz,      d4,
-     2   d5,       d6,       lbuf%stra,wxx,
-     3   wyy,      wzz,      off,      nel,
-     4   jcvt)
+          call sstra3(&
+        dxx,      dyy,      dzz,      d4,&
+        d5,       d6,       lbuf%stra,wxx,&
+        wyy,      wzz,      off,      nel,&
+        jcvt)
         endif
-c----------------------------
-c internal forces
-c----------------------------
+!c----------------------------
+!c internal forces
+!c----------------------------
         l_pla  = elbuf_tab(ng)%bufly(ilay)%l_pla
         l_epsd = elbuf_tab(ng)%bufly(ilay)%l_epsd
         if (isorth > 0) then
          call scroto_sig(nel,lbuf%sig,sign,dir)
 !! scroto() temporary replaced by (the same) scroto_sig() in order to do not affect
 !! the other multidimensional buffer arrays which are still not modified
-         call s6cfint3(
-     1   sign,       px1,        px2,        px3,
-     2   px4,        py1,        py2,        py3,
-     3   py4,        pz1,        pz2,        pz3,
-     4   pz4,        px1h,       px2h,       px3h,
-     5   py1h,       py2h,       py3h,       pz1h,
-     6   pz2h,       pz3h,       jaci33,     b1x,
-     7   b1y,        b2y,        b2x,        b1122,
-     8   b1221,      b2212,      b1121,      b1xh,
-     9   b1yh,       b2xh,       b2yh,       b1122h,
-     a   b1221h,     b2212h,     b1121h,     f11,
-     b   f21,        f31,        f12,        f22,
-     c   f32,        f13,        f23,        f33,
-     d   f14,        f24,        f34,        f15,
-     e   f25,        f35,        f16,        f26,
-     f   f36,        voln,       qvis,       lbuf%eint,
-     g   lbuf%rho,   lbuf%qvis,  lbuf%pla,   lbuf%epsd,
-     h   gbuf%epsd,  gbuf%sig,   gbuf%eint,  gbuf%rho,
-     i   gbuf%qvis,  gbuf%pla,   zt,         wt,
-     j   volg,       off,        nu1,        lbuf%vol,
-     k   gbuf%vol,   l_pla,      l_epsd,     nel,
-     l   svis,       gbuf%wpla,  lbuf%wpla,   gbuf%g_wpla,
-     m   nlay    )
+         call s6cfint3(&
+        sign,       px1,        px2,        px3,&
+        px4,        py1,        py2,        py3,&
+        py4,        pz1,        pz2,        pz3,&
+        pz4,        px1h,       px2h,       px3h,&
+        py1h,       py2h,       py3h,       pz1h,&
+        pz2h,       pz3h,       jaci33,     b1x,&
+        b1y,        b2y,        b2x,        b1122,&
+        b1221,      b2212,      b1121,      b1xh,&
+        b1yh,       b2xh,       b2yh,       b1122h,&
+        b1221h,     b2212h,     b1121h,     f11,&
+        f21,        f31,        f12,        f22,&
+        f32,        f13,        f23,        f33,&
+        f14,        f24,        f34,        f15,&
+        f25,        f35,        f16,        f26,&
+        f36,        voln,       qvis,       lbuf%eint,&
+        lbuf%rho,   lbuf%qvis,  lbuf%pla,   lbuf%epsd,&
+        gbuf%epsd,  gbuf%sig,   gbuf%eint,  gbuf%rho,&
+        gbuf%qvis,  gbuf%pla,   zt,         wt,&
+        volg,       off,        nu1,        lbuf%vol,&
+        gbuf%vol,   l_pla,      l_epsd,     nel,&
+        svis,       gbuf%wpla,  lbuf%wpla,   gbuf%g_wpla,&
+        nlay    )
         else
-         call s6fint3_2(
-     1   lbuf%sig,          px1,               px2,               px3,
-     2   px4,               py1,               py2,               py3,
-     3   py4,               pz1,               pz2,               pz3,
-     4   pz4,               px1h,              px2h,              px3h,
-     5   py1h,              py2h,              py3h,              pz1h,
-     6   pz2h,              pz3h,              jaci33,            b1x,
-     7   b1y,               b2y,               b2x,               b1122,
-     8   b1221,             b2212,             b1121,             b1xh,
-     9   b1yh,              b2xh,              b2yh,              b1122h,
-     a   b1221h,            b2212h,            b1121h,            f11,
-     b   f21,               f31,               f12,               f22,
-     c   f32,               f13,               f23,               f33,
-     d   f14,               f24,               f34,               f15,
-     e   f25,               f35,               f16,               f26,
-     f   f36,               voln,              qvis,              lbuf%eint,
-     g   lbuf%rho,          lbuf%qvis,         lbuf%pla,          lbuf%epsd,
-     h   gbuf%epsd,         gbuf%sig,          gbuf%eint,         gbuf%rho,
-     i   gbuf%qvis,         gbuf%pla,          a_gauss(ilay,nlay),
-     j   volg,              off,               nu1,               lbuf%vol,
-     k   gbuf%vol,          l_pla,             l_epsd,            nel,
-     l   svis , nlay,
-     m   px5, py5, pz5,              
-     n   px6, py6, pz6)
+         call s6fint3_2(&
+        lbuf%sig,          px1,               px2,               px3,&
+        px4,               py1,               py2,               py3,&
+        py4,               pz1,               pz2,               pz3,&
+        pz4,               px1h,              px2h,              px3h,&
+        py1h,              py2h,              py3h,              pz1h,&
+        pz2h,              pz3h,              jaci33,            b1x,&
+        b1y,               b2y,               b2x,               b1122,&
+        b1221,             b2212,             b1121,             b1xh,&
+        b1yh,              b2xh,              b2yh,              b1122h,&
+        b1221h,            b2212h,            b1121h,            f11,&
+        f21,               f31,               f12,               f22,&
+        f32,               f13,               f23,               f33,&
+        f14,               f24,               f34,               f15,&
+        f25,               f35,               f16,               f26,&
+        f36,               voln,              qvis,              lbuf%eint,&
+        lbuf%rho,          lbuf%qvis,         lbuf%pla,          lbuf%epsd,&
+        gbuf%epsd,         gbuf%sig,          gbuf%eint,         gbuf%rho,&
+        gbuf%qvis,         gbuf%pla,          a_gauss(ilay,nlay),&
+        volg,              off,               nu1,               lbuf%vol,&
+        gbuf%vol,          l_pla,             l_epsd,            nel,&
+        svis , nlay,&
+        px5, py5, pz5,              &
+        px6, py6, pz6)
 
 !      do i = 1,nel
 !      write(*,*) 'before fint'
@@ -1073,32 +1159,32 @@ c----------------------------
       enddo
       endif
         endif ! if (isorth > 0)
-c-------------------------
-c finite element heat transfert  
-c--------------------------
+!c-------------------------
+!c finite element heat transfert  
+!c--------------------------
         if (jthe < 0) then
           imat = mxt(1)
           if (mat_elem%mat_param(imat)%heat_flag == 1) then
-            call s6ctherm(
-     1           pm       ,imat    ,voln     ,nc1      ,
-     2           nc2      ,nc3     ,nc4      ,nc5      ,
-     3           nc6      ,px1     ,px2      ,px3      ,
-     4           px4      ,py1     ,py2      ,py3      ,
-     5           py4      ,pz1     ,pz2      ,pz3      ,
-     6           pz4      ,dt1     ,temp     ,tempel   ,
-     7           fheat    ,them    ,gbuf%off ,lbuf%off ,
-     8           nel      ,glob_therm%theaccfact)
+            call s6ctherm(&
+                pm       ,imat    ,voln     ,nc1      ,&
+                nc2      ,nc3     ,nc4      ,nc5      ,&
+                nc6      ,px1     ,px2      ,px3      ,&
+                px4      ,py1     ,py2      ,py3      ,&
+                py4      ,pz1     ,pz2      ,pz3      ,&
+                pz4      ,dt1     ,temp     ,tempel   ,&
+                fheat    ,them    ,gbuf%off ,lbuf%off ,&
+                nel      ,glob_therm%theaccfact)
           else
           end if
-            call s6ctherm(
-     1           pm       ,imat    ,voln     ,nc1      ,
-     2           nc2      ,nc3     ,nc4      ,nc5      ,
-     3           nc6      ,px1     ,px2      ,px3      ,
-     4           px4      ,py1     ,py2      ,py3      ,
-     5           py4      ,pz1     ,pz2      ,pz3      ,
-     6           pz4      ,dt1     ,temp     ,tempel   ,
-     7           die      ,them    ,gbuf%off ,lbuf%off ,
-     8           nel      ,glob_therm%theaccfact)
+            call s6ctherm(&
+                pm       ,imat    ,voln     ,nc1      ,&
+                nc2      ,nc3     ,nc4      ,nc5      ,&
+                nc6      ,px1     ,px2      ,px3      ,&
+                px4      ,py1     ,py2      ,py3      ,&
+                py4      ,pz1     ,pz2      ,pz3      ,&
+                pz4      ,dt1     ,temp     ,tempel   ,&
+                die      ,them    ,gbuf%off ,lbuf%off ,&
+                nel      ,glob_therm%theaccfact)
         endif 
         do i=1,nel                                        
           offg(i)=min(offg(i),off(i))                        
@@ -1107,33 +1193,33 @@ c--------------------------
             ioffs   = 1                                         
           end if                                             
         enddo                                               
-c-----------------------------
+!c-----------------------------
       enddo  !  ilay=1,nlay
-c-----------------------------
-c
-c-------------------------------
-c non-local specific computation
-c-------------------------------
+!c-----------------------------
+!c
+!c-------------------------------
+!c non-local specific computation
+!c-------------------------------
       if (inloc > 0) then 
        ! computation of thickshell area
-       call sdlensh3n(volg,llsh,area , 
-     .                  x1, x2, x3, x4, x5, x6,
-     .                  y1, y2, y3, y4, y5, y6,
-     .                  z1, z2, z3, z4, z5, z6,nel)
+       call sdlensh3n(volg,llsh,area , &
+                       x1, x2, x3, x4, x5, x6,&
+                       y1, y2, y3, y4, y5, y6,&
+                       z1, z2, z3, z4, z5, z6,nel)
        ! non-local internal forces 
-       call s6cfint_reg(
-     1      nloc_dmg ,var_reg  ,nel     ,off     ,
-     2      volg     ,nc1      ,nc2     ,nc3     ,
-     3      nc4      ,nc5      ,nc6     ,px1     ,
-     4      px2      ,px3      ,px4     ,py1     ,
-     5      py2      ,py3      ,py4     ,pz1     ,
-     6      pz2      ,pz3      ,pz4     ,mxt(lft),
-     7      itask    ,dt2t     ,gbuf%vol,nft     ,
-     8      nlay     ,w_gauss  ,a_gauss ,area    ,
-     9      elbuf_tab(ng)%nlocts(1,1))
+       call s6cfint_reg(&
+           nloc_dmg ,var_reg  ,nel     ,off     ,&
+           volg     ,nc1      ,nc2     ,nc3     ,&
+           nc4      ,nc5      ,nc6     ,px1     ,&
+           px2      ,px3      ,px4     ,py1     ,&
+           py2      ,py3      ,py4     ,pz1     ,&
+           pz2      ,pz3      ,pz4     ,mxt(1),&
+           itask    ,dt2t     ,gbuf%vol,nft     ,&
+           nlay     ,w_gauss  ,a_gauss ,area    ,&
+           elbuf_tab(ng)%nlocts(1,1))
       endif
-c--------------------------
-c
+!c--------------------------
+!c
       if (ioffs == 1) then
        do i=1,nel
          if (offs(i)<=two)gbuf%off(i) = offs(i)
@@ -1156,33 +1242,33 @@ c
         enddo
       endif
       if ( nn_del> 0) then
-        call sdlensh3n2(volg,llsh,area , 
-     .                  x1, x2, x3, x4, x5, x6,
-     .                  y1, y2, y3, y4, y5, y6,
-     .                  z1, z2, z3, z4, z5, z6, nel)
-        call tshgeodel3(ngl,gbuf%off,volg,area,gbuf%vol,
-     .                  llsh,geo(1,pid),nn_del,dt,nel )
+        call sdlensh3n2(volg,llsh,area , &
+                       x1, x2, x3, x4, x5, x6,&
+                       y1, y2, y3, y4, y5, y6,&
+                       z1, z2, z3, z4, z5, z6, nel)
+        call tshgeodel3(ngl,gbuf%off,volg,area,gbuf%vol,&
+                       llsh,geo(1,pid),nn_del,dt,nel )
       endif
-c-----------------------------
-c hourglass
-c-----------------------------
+!c-----------------------------
+!c hourglass
+!c-----------------------------
       if ( impl_s == 0) then
         if (isctl > 0) then
 !          write(*,*) 's6chour_ctl part of s6cforcd3'
           dn = geo(13,pid)
-          call s6chour_ctl(
-     .      x1,  x2,  x3,  x4,  x5,  x6, 
-     .      y1,  y2,  y3,  y4,  y5,  y6, 
-     .      z1,  z2,  z3,  z4,  z5,  z6, 
-     .     vx1, vx2, vx3, vx4, vx5, vx6,
-     .     vy1, vy2, vy3, vy4, vy5, vy6,
-     .     vz1, vz2, vz3, vz4, vz5, vz6,
-     .     f11, f12, f13, f14, f15, f16,
-     .     f21, f22, f23, f24, f25, f26,
-     .     f31, f32, f33, f34, f35, f36,
-     .     pm,npropm, nummat,mtn,mxt,dn,
-     .     gbuf%rho,volg,cxx,gbuf%hourg,
-     .     off,gbuf%vol,gbuf%eint,dt1,stin,nel)
+          call s6chour_ctl(&
+           x1,  x2,  x3,  x4,  x5,  x6, &
+           y1,  y2,  y3,  y4,  y5,  y6, &
+           z1,  z2,  z3,  z4,  z5,  z6, &
+          vx1, vx2, vx3, vx4, vx5, vx6,&
+          vy1, vy2, vy3, vy4, vy5, vy6,&
+          vz1, vz2, vz3, vz4, vz5, vz6,&
+          f11, f12, f13, f14, f15, f16,&
+          f21, f22, f23, f24, f25, f26,&
+          f31, f32, f33, f34, f35, f36,&
+          pm,npropm, nummat,mtn,mxt,dn,&
+          gbuf%rho,volg,cxx,gbuf%hourg,&
+          off,gbuf%vol,gbuf%eint,dt1,stin,nel)
         else
       if (hourglass == 1) then
 !do i = 1,nel
@@ -1211,20 +1297,20 @@ c-----------------------------
         !f36(i) = 0. 
 !enddo
 
-          call s6hour3_2(
-     .   pm, npropm, gbuf%rho,volg,cxx,!a verifier chaque parameter
-     .   x1, x2, x3, x3, x4, x5, x6, x6,
-     .   y1, y2, y3, y3, y4, y5, y6, y6,
-     .   z1, z2, z3, z3, z4, z5, z6, z6,
-     .   vx1, vx2, vx3, vx3, vx4, vx5, vx6, vx6,
-     .   vy1, vy2, vy3, vy3, vy4, vy5, vy6, vy6,    
-     .   vz1, vz2, vz3, vz3, vz4, vz5, vz6, vz6,
-     .   f11,f12,f13,f14,f15,f16,
-     .   f21,f22,f23,f24,f25,f26,     
-     .   f31,f32,f33,f34,f35,f36,
-     .   nu,gbuf%hourg,off,gbuf%vol,gbuf%eint,nel,
-     .   mxt,npropg,geo,ngeo,
-     .   dt1  ) 
+          call s6hour3_2(&
+        pm, npropm, gbuf%rho,volg,cxx,&
+        x1, x2, x3, x3, x4, x5, x6, x6,&
+        y1, y2, y3, y3, y4, y5, y6, y6,&
+        z1, z2, z3, z3, z4, z5, z6, z6,&
+        vx1, vx2, vx3, vx3, vx4, vx5, vx6, vx6,&
+        vy1, vy2, vy3, vy3, vy4, vy5, vy6, vy6,    &
+        vz1, vz2, vz3, vz3, vz4, vz5, vz6, vz6,&
+        f11,f12,f13,f14,f15,f16,&
+        f21,f22,f23,f24,f25,f26,     &
+        f31,f32,f33,f34,f35,f36,&
+        nu,gbuf%hourg,off,gbuf%vol,gbuf%eint,nel,&
+        mxt,npropg,geo,ngeo,&
+        dt1  ) 
   !        call s6chour3(gbuf%rho,volg,cxx,
   !   .     x1, x2, x3, x3, x4, x5, x6, x6,
   !   .     y1, y2, y3, y3, y4, y5, y6, y6,
@@ -1235,26 +1321,25 @@ c-----------------------------
       endif
         end if !(isctl > 0) then
       endif
-c-----------------------------
-c small strain
-c-----------------------------
-      call smallb3(
-     1   gbuf%off,offg,    nel,     ismstr)
-c--------------------------------------
-c balance per part in case of print out
-c--------------------------------------
+!c-----------------------------
+!c small strain
+!c-----------------------------
+      call smallb3(   gbuf%off,offg,    nel,     ismstr)
+!c--------------------------------------
+!c balance per part in case of print out
+!c--------------------------------------
       iflag=mod(ncycle,ncpri)
       if (ioutprt>0) then         
-           call s6cbilan(partsav,gbuf%eint,gbuf%rho,gbuf%rk ,gbuf%vol,
-     .       vgxa, vgya, vgza, vga2, volg,iparts,
-     .       gresav,grth,igrth,gbuf%off,iexpan,gbuf%eintth,
-     .       gbuf%fill, xgxa, xgya, xgza,xgxa2,xgya2,xgza2,
-     .       xgxya,xgyza,xgzxa,itask,iparg(1,ng),gbuf%off,
-     .       sensors,nel,gbuf%g_wpla,gbuf%wpla)
+           call s6cbilan(partsav,gbuf%eint,gbuf%rho,gbuf%rk ,gbuf%vol,&
+            vgxa, vgya, vgza, vga2, volg,iparts,&
+            gresav,grth,igrth,gbuf%off,iexpan,gbuf%eintth,&
+            gbuf%fill, xgxa, xgya, xgza,xgxa2,xgya2,xgza2,&
+            xgxya,xgyza,xgzxa,itask,iparg(1,ng),gbuf%off,&
+            sensors,nel,gbuf%g_wpla,gbuf%wpla)
       endif
-c--------------------------------
-c convected frame to global frame
-c--------------------------------
+!c--------------------------------
+!c convected frame to global frame
+!c--------------------------------
 !      call s6proj3(
 !     1   x1,      x2,      x3,      x4,
 !     2   x5,      x6,      y1,      y2,
@@ -1332,17 +1417,17 @@ c--------------------------------
 !          write(*,*) 'r23',r23(i)
 !          write(*,*) 'r33',r33(i)
 !      enddo
-      call srrota3_2(
-     1   r11,     r21,     r31,     r12,
-     2   r22,     r32,     r13,     r23,
-     3   r33,     
-     4   f11,     f12,     f13,
-     5   f14,     f15,     f16,
-     6   f21,     f22,     f23,
-     7   f24,     f25,     f26,
-     8   f31,     f32,     f33,
-     9   f34,     f35,     f36,
-     a   nel)
+      call srrota3_2(&
+        r11,     r21,     r31,     r12,&
+        r22,     r32,     r13,     r23,&
+        r33,     &
+        f11,     f12,     f13,&
+        f14,     f15,     f16,&
+        f21,     f22,     f23,&
+        f24,     f25,     f26,&
+        f31,     f32,     f33,&
+        f34,     f35,     f36,&
+        nel)
 
 !      do i = 1,nel
 !        !f11(i) = 0.
@@ -1403,100 +1488,102 @@ c--------------------------------
 !          write(*,*) 'r23',r23(i)
 !          write(*,*) 'r33',r33(i)
 !      enddo
-c----------------------------
-c     distortion control  
-c----------------------------
+!c----------------------------
+!c     distortion control  
+!c----------------------------
       if (isctl > 0) then
          alpha_e(1:nel) = one  
-         call sdistor_ini(                                      
-     1                nel      ,sti_c    ,npropm     ,nummat  ,       
-     2                ismstr   ,mxt      ,istab      ,pm      ,       
-     3                gbuf%sig ,gbuf%rho ,cxx        ,offg    ,       
-     4                gbuf%off ,ll       ,voln       ,fld     ,       
-     5                cns2     ,fqmax    )
+         call sdistor_ini(                                      &
+                     nel      ,sti_c    ,npropm     ,nummat  ,       &
+                     ismstr   ,mxt      ,istab      ,pm      ,       &
+                     gbuf%sig ,gbuf%rho ,cxx        ,offg    ,       &
+                     gbuf%off ,ll       ,voln       ,fld     ,       &
+                     cns2     ,fqmax    )
 !      all in global system 
-        call s6get_xv(                            
-     .                 nc1,      nc2,      nc3,                                
-     .                 nc4,      nc5,      nc6,         
-     .                  x1,       x2,       x3,               
-     .                  x4,       x5,       x6,               
-     .                  y1,       y2,       y3,               
-     .                  y4,       y5,       y6,               
-     .                  z1,       z2,       z3,               
-     .                  z4,       z5,       z6,               
-     .                 vx1,      vx2,      vx3,               
-     .                 vx4,      vx5,      vx6,               
-     .                 vy1,      vy2,      vy3,               
-     .                 vy4,      vy5,      vy6,               
-     .                 vz1,      vz2,      vz3,               
-     .                 vz4,      vz5,      vz6,               
-     .                   x,      xdp,        v,         
-     .              numnod,   ismstr,     nel )
-         call s6for_distor(
-     .             x1,       x2,       x3,        
-     .             x4,       x5,       x6,        
-     .             y1,       y2,       y3,        
-     .             y4,       y5,       y6,        
-     .             z1,       z2,       z3,        
-     .             z4,       z5,       z6,        
-     .            vx1,      vx2,       x3,        
-     .            vx4,      vx5,       x6,        
-     .            vy1,      vy2,       y3,        
-     .            vy4,      vy5,       y6,        
-     .            vz1,      vz2,       z3,        
-     .            vz4,      vz5,       z6,        
-     .            f11,      f12,      f13,       
-     .            f14,      f15,      f16,       
-     .            f21,      f22,      f23,       
-     .            f24,      f25,      f26,       
-     .            f31,      f32,      f33,       
-     .            f34,      f35,      f36,       
-     .           stin,    sti_c,      fld,      
-     .           cns2,      ll ,    istab,   
-     .          fqmax,gbuf%eint_distor,dt1,   
-     .           nel )
+        call s6get_xv(                                 &
+                      nc1,      nc2,      nc3,         &
+                      nc4,      nc5,      nc6,         &
+                       x1,       x2,       x3,         &
+                       x4,       x5,       x6,         &
+                       y1,       y2,       y3,         &
+                       y4,       y5,       y6,         &
+                       z1,       z2,       z3,         &
+                       z4,       z5,       z6,         &
+                      vx1,      vx2,      vx3,         &
+                      vx4,      vx5,      vx6,         &
+                      vy1,      vy2,      vy3,         &
+                      vy4,      vy5,      vy6,         &
+                      vz1,      vz2,      vz3,         &
+                      vz4,      vz5,      vz6,         &
+                        x,      xdp,        v,         &
+                   numnod,   ismstr,     nel )
+         call s6for_distor(&
+                  x1,       x2,       x3,        &
+                  x4,       x5,       x6,        &
+                  y1,       y2,       y3,        &
+                  y4,       y5,       y6,        &
+                  z1,       z2,       z3,        &
+                  z4,       z5,       z6,        &
+                 vx1,      vx2,       x3,        &
+                 vx4,      vx5,       x6,        &
+                 vy1,      vy2,       y3,        &
+                 vy4,      vy5,       y6,        &
+                 vz1,      vz2,       z3,        &
+                 vz4,      vz5,       z6,        &
+                 f11,      f12,      f13,       &
+                 f14,      f15,      f16,       &
+                 f21,      f22,      f23,       &
+                 f24,      f25,      f26,       &
+                 f31,      f32,      f33,       &
+                 f34,      f35,      f36,       &
+                stin,    sti_c,      fld,      &
+                cns2,      ll ,    istab,   &
+               fqmax,gbuf%eint_distor,dt1,   &
+                nel )
       endif
-c----------------------------
-      if(nfilsol/=0) call s6fillopt(
-     1   gbuf%fill,sti,      f11,      f21,
-     2   f31,      f12,      f22,      f32,
-     3   f13,      f23,      f33,      f14,
-     4   f24,      f34,      f15,      f25,
-     5   f35,      f16,      f26,      f36,
-     6   nel)
-c----------------------------
-c assemble nodal forces
-c----------------------------
+!c----------------------------
+      if(nfilsol/=0) call s6fillopt(&
+        gbuf%fill,sti,      f11,      f21,&
+        f31,      f12,      f22,      f32,&
+        f13,      f23,      f33,      f14,&
+        f24,      f34,      f15,      f25,&
+        f35,      f16,      f26,      f36,&
+        nel)
+!c----------------------------
+!c assemble nodal forces
+!c----------------------------
       if (iparit == 0) then
-        call s6cumu3(
-     1   gbuf%off,a,       nc1,     nc2,
-     2   nc3,     nc4,     nc5,     nc6,
-     3   stifn,   stin,    f11,     f21,
-     4   f31,     f12,     f22,     f32,
-     5   f13,     f23,     f33,     f14,
-     6   f24,     f34,     f15,     f25,
-     7   f35,     f16,     f26,     f36,
-     8   nel,    jthe,    fthe,    them,
-     9   condn,conden,   ifthe,  icondn,
-     .   glob_therm%nodadt_therm)
+        call s6cumu3(&
+        gbuf%off,a,       nc1,     nc2,&
+        nc3,     nc4,     nc5,     nc6,&
+        stifn,   stin,    f11,     f21,&
+        f31,     f12,     f22,     f32,&
+        f13,     f23,     f33,     f14,&
+        f24,     f34,     f15,     f25,&
+        f35,     f16,     f26,     f36,&
+        nel,    jthe,    fthe,    them,&
+        condn,conden,   ifthe,  icondn,&
+        glob_therm%nodadt_therm)
       else
-        call s6cumu3p(
-     1   gbuf%off,stin,    fsky,    fsky,
-     2   iads,    f11,     f21,     f31,
-     3   f12,     f22,     f32,     f13,
-     4   f23,     f33,     f14,     f24,
-     5   f34,     f15,     f25,     f35,
-     6   f16,     f26,     f36,     nel,
-     7   nft,    jthe, fthesky,    them,
-     8   condnsky,conden,
-     .   glob_therm%nodadt_therm)
+        call s6cumu3p(&
+        gbuf%off,stin,    fsky,    fsky,&
+        iads,    f11,     f21,     f31,&
+        f12,     f22,     f32,     f13,&
+        f23,     f33,     f14,     f24,&
+        f34,     f15,     f25,     f35,&
+        f16,     f26,     f36,     nel,&
+        nft,    jthe, fthesky,    them,&
+        condnsky,conden,&
+        glob_therm%nodadt_therm)
       endif
-      if (ntsheg > 0)
-     +  call scumualpha6(
-     1   gbuf%off,alpha_e, nc1,     nc2,
-     2   nc3,     nc4,     nc5,     nc6,
-     3   nel)
-c-----------
+
+      if (ntsheg > 0) then
+       call scumualpha6(&
+        gbuf%off,alpha_e, nc1,     nc2, &
+        nc3,     nc4,     nc5,     nc6, &
+        nel)
+      endif
+!c-----------
 !      pause 
       return
 

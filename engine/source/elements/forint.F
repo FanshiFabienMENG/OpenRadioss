@@ -138,6 +138,7 @@ C-----------------------------------------------
       USE ELBUFDEF_MOD
       use glob_therm_mod
       USE PRELOAD_SOLID_INI_MOD
+      USE S6FORC3_2_MOD
 C-----------------------------------------------
 C   I m p l i c i t   T y p e s
 C-----------------------------------------------
@@ -163,6 +164,7 @@ C-----------------------------------------------
 #include      "task_c.inc"
 #include      "impl1_c.inc"
 #include      "stati_c.inc"
+#include      "parit_c.inc"
 C-----------------------------------------------------------------
 C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
@@ -255,7 +257,7 @@ C======================================================================|
        ALLOCATE(MX(MVSIZ,4),MY(MVSIZ,4),MZ(MVSIZ,4),STAT=IERROR)
        ALLOCATE(JFAC(MVSIZ,729)) ! for solid 8z
        SBID=1
-       AAA=1
+       AAA=2
 !
        IF(IERROR/=0)THEN
         CALL ANCMSG(MSGID=246,ANMODE=ANINFO)
@@ -1089,8 +1091,20 @@ C
      F         FTHE  ,FTHESKY   ,CONDN    ,CONDNSKY ,
      G         IEXPAN,IFTHE ,ICONDN    ,DT      ,SNPC,STF,
      H         SBUFMAT,SVIS,NSVOIS, IRESP, 
-     I         MAXFUNC, IMON_MAT, USERL_AVAIL, 
-     J         GLOB_THERM,XDP,SENSORS )
+     I         idel7nok, MAXFUNC, IMON_MAT, USERL_AVAIL, 
+     J         GLOB_THERM,XDP,SENSORS,
+     K         NGROUP,NPROPM,NPROPG,NIXS,NPARG, 
+     L         NPROPMI,NPROPGI,NUMNOD,LSKY,
+     M         DT1,VOLMIN,TH_STRAIN, IDTMIN,
+     N         TT,
+     1         idyna,igtyp,impl_s, ineg_v,  
+     2         iparit,irep,iscau,ismdisp, 
+     3         ismstr, isorth, isorthg, jale, 
+     4         jcvt, jeul, jlag, jsph, jplasol, 
+     5         jthe ,
+     6         mstop,mtn, n2d,ncpri,ncycle,
+     7         nfilsol,nft,ntable,ntsheg,
+     8         numels,numgeo,nummat,numelq)
                ENDIF
               ENDIF
             ELSE

@@ -98,7 +98,7 @@ Copyright>        commercial version may interest you: https://www.altair.com/ra
   !   I         IDEL7NOK,MAXFUNC, IMON_MAT, USERL_AVAIL, 
   !   J         GLOB_THERM,XDP,SENSORS )
 
-      SUBROUTINE S6FORC3_1(TIMERS, OUTPUT, ELBUF_TAB,NG     , 
+      SUBROUTINE S6FORC3_2(TIMERS, OUTPUT, ELBUF_TAB,NG     , 
      1                   PM       ,GEO     ,IXS     ,X      ,
      2                   A        ,V       ,W      ,FLUX   ,
      3                   FLU1     ,ALE_CONNECT  ,IPARG  ,
@@ -1423,4 +1423,4 @@ C----------------------------
 C-----------
 !      PAUSE 
       RETURN
-      END SUBROUTINE S6FORC3_1
+      END SUBROUTINE S6FORC3_2

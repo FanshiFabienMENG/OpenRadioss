@@ -97,6 +97,8 @@ copyright>        commercial version may interest you: https://www.altair.com/ra
   !   h         sbufmat,svis,nsvois, iresp, 
   !   i         idel7nok,maxfunc, imon_mat, userl_avail, 
   !   j         glob_therm,xdp,sensors )
+      module s6forc3_2_mod
+      contains
 
       subroutine s6forc3_2(timers, output, elbuf_tab,ng     , 
      1                   pm       ,geo     ,ixs     ,x      ,
@@ -1497,4 +1499,6 @@ c----------------------------
 c-----------
 !      pause 
       return
-      end subroutine s6forc3_2
+
+      end subroutine s6forc3_2 
+      end module s6forc3_2_mod

@@ -143,6 +143,7 @@ C-----------------------------------------------
       USE s6deri3_2_mod
       USE s6rcoor3_2_mod
       USE s6hour3_2_mod
+      USE PRECISION_MOD, only : WP
 C-----------------------------------------------
 C   I m p l i c i t   T y p e s
 C-----------------------------------------------
@@ -171,37 +172,82 @@ C   D u m m y   A r g u m e n t s
 C-----------------------------------------------
       TYPE(TIMER_), INTENT(inout) :: TIMERS
       TYPE(OUTPUT_), INTENT(inout) :: OUTPUT
-      INTEGER,INTENT(IN):: SNPC
-      INTEGER,INTENT(IN):: STF
-      INTEGER, INTENT(IN) :: SBUFMAT
-      INTEGER, INTENT(IN) :: NSVOIS
-      INTEGER ,INTENT(IN) :: IRESP
-      INTEGER ,INTENT(IN) :: MAXFUNC
-      INTEGER, INTENT(IN) :: USERL_AVAIL
-      INTEGER, INTENT(IN) :: IMON_MAT
-      INTEGER IXS(NIXS,*),IPARG(NPARG,NGROUP),NPF(*),IADS(8,*),GRTH(*),
-     .  IPARTS(*),IPM(NPROPMI,*),IGEO(NPROPGI,*),IGRTH(*), ITASK,IOUTPRT
-      INTEGER NELTST,ITYPTST,OFFSET,NG,NEL,ICP,ISTRAIN,H3D_STRAIN
-      INTEGER, INTENT(IN) :: IEXPAN,IFTHE,ICONDN
-      my_real
-     .   DT2T
-      my_real
-     .   PM(NPROPM,*),  X(*), A(*), V(*),  W(*),
-     .   FLUX(6,*),GEO(NPROPG,*),
-     .   FLU1(*), TF(*), BUFMAT(*),
-     .   PARTSAV(*),STIFN(*), FSKY(*),
-     .   F11(MVSIZ),F21(MVSIZ),F31(MVSIZ),
-     .   F12(MVSIZ),F22(MVSIZ),F32(MVSIZ),
-     .   F13(MVSIZ),F23(MVSIZ),F33(MVSIZ),
-     .   F14(MVSIZ),F24(MVSIZ),F34(MVSIZ),
-     .   F15(MVSIZ),F25(MVSIZ),F35(MVSIZ),
-     .   F16(MVSIZ),F26(MVSIZ),F36(MVSIZ),GRESAV(*),
-     .   MSSA(*), DMELS(*), VOLN(MVSIZ)
-      my_real, INTENT(INOUT) :: TEMP(NUMNOD),FTHE(IFTHE),FTHESKY(LSKY),
-     .   CONDN(ICONDN),CONDNSKY(LSKY)
-      my_real, DIMENSION(MVSIZ,6), INTENT(INOUT) :: SVIS
-      DOUBLE PRECISION, DIMENSION(3,NUMNOD), INTENT(IN   ) :: XDP
-      TYPE (TTABLE) TABLE(*)
+      integer, intent(in) :: SNPC                                          !< Stiffness parameter
+      integer, intent(in) :: STF                                           !< Stiffness flag
+      integer, intent(in) :: SBUFMAT                                       !< Buffer material parameter
+      integer, intent(in) :: NSVOIS                                        !< Number of neighbors
+      integer, intent(in) :: IRESP                                         !< Response parameter
+      integer, intent(in) :: MAXFUNC                                       !< Maximum function parameter
+      integer, intent(in) :: USERL_AVAIL                                   !< User availability flag
+      integer, intent(in) :: IMON_MAT                                      !< Material monitoring parameter
+      integer, dimension(NIXS,NEL), intent(inout) :: IXS                   !< Element connectivity array
+      integer, dimension(NPARG,NGROUP), intent(inout) :: IPARG             !< Element group parameters
+      integer, dimension(NEL), intent(inout) :: NPF                        !< Function pointer array
+      integer, dimension(8,NEL), intent(inout) :: IADS                     !< Address array
+      integer, dimension(NEL), intent(inout) :: GRTH                       !< Growth array
+      integer, dimension(NEL), intent(inout) :: IPARTS                     !< Part array
+      integer, dimension(NPROPMI,NEL), intent(inout) :: IPM                !< Material property indices
+      integer, dimension(NPROPGI,NEL), intent(inout) :: IGEO               !< Geometric property indices
+      integer, dimension(NEL), intent(inout) :: IGRTH                      !< Growth indices
+      integer, intent(inout) :: ITASK                                      !< Task identifier
+      integer, intent(inout) :: IOUTPRT                                    !< Output print flag
+      integer, intent(inout) :: NELTST                                     !< Number of test elements
+      integer, intent(inout) :: ITYPTST                                    !< Test type
+      integer, intent(inout) :: OFFSET                                     !< Memory offset
+      integer, intent(inout) :: NG                                         !< Group number
+      integer, intent(inout) :: NEL                                        !< Number of elements
+      integer, intent(inout) :: ICP                                        !< Compression parameter
+      integer, intent(inout) :: ISTRAIN                                    !< Strain flag
+      integer, intent(inout) :: H3D_STRAIN                                 !< 3D strain output flag
+      integer, intent(in) :: IEXPAN                                        !< Expansion flag
+      integer, intent(in) :: IFTHE                                         !< Thermal force flag
+      integer, intent(in) :: ICONDN                                        !< Thermal conduction flag
+       
+      real(kind=WP), intent(inout) :: DT2T                                 !< Time step parameter
+      real(kind=WP), dimension(NPROPM,NEL), intent(inout) :: PM            !< Material properties array
+      real(kind=WP), dimension(NEL), intent(inout) :: X                    !< Global coordinate array
+      real(kind=WP), dimension(NEL), intent(inout) :: A                    !< Nodal acceleration array
+      real(kind=WP), dimension(NEL), intent(inout) :: V                    !< Nodal velocity array
+      real(kind=WP), dimension(NEL), intent(inout) :: W                    !< Nodal rotation velocity array
+      real(kind=WP), dimension(6,NEL), intent(inout) :: FLUX               !< Heat flux array
+      real(kind=WP), dimension(NPROPG,NEL), intent(inout) :: GEO           !< Geometric properties array
+      real(kind=WP), dimension(NEL), intent(inout) :: FLU1                 !< Fluid properties array
+      real(kind=WP), dimension(NEL), intent(inout) :: TF                   !< Time function array
+      real(kind=WP), dimension(NEL), intent(inout) :: BUFMAT               !< Material buffer array
+      real(kind=WP), dimension(NEL), intent(inout) :: PARTSAV              !< Part save array
+      real(kind=WP), dimension(NEL), intent(inout) :: STIFN                !< Stiffness array
+      real(kind=WP), dimension(NEL), intent(inout) :: FSKY                 !< Skyline force array
+      real(kind=WP), dimension(NEL), intent(inout) :: F11                  !< Force component F11
+      real(kind=WP), dimension(NEL), intent(inout) :: F21                  !< Force component F21
+      real(kind=WP), dimension(NEL), intent(inout) :: F31                  !< Force component F31
+      real(kind=WP), dimension(NEL), intent(inout) :: F12                  !< Force component F12
+      real(kind=WP), dimension(NEL), intent(inout) :: F22                  !< Force component F22
+      real(kind=WP), dimension(NEL), intent(inout) :: F32                  !< Force component F32
+      real(kind=WP), dimension(NEL), intent(inout) :: F13                  !< Force component F13
+      real(kind=WP), dimension(NEL), intent(inout) :: F23                  !< Force component F23
+      real(kind=WP), dimension(NEL), intent(inout) :: F33                  !< Force component F33
+      real(kind=WP), dimension(NEL), intent(inout) :: F14                  !< Force component F14
+      real(kind=WP), dimension(NEL), intent(inout) :: F24                  !< Force component F24
+      real(kind=WP), dimension(NEL), intent(inout) :: F34                  !< Force component F34
+      real(kind=WP), dimension(NEL), intent(inout) :: F15                  !< Force component F15
+      real(kind=WP), dimension(NEL), intent(inout) :: F25                  !< Force component F25
+      real(kind=WP), dimension(NEL), intent(inout) :: F35                  !< Force component F35
+      real(kind=WP), dimension(NEL), intent(inout) :: F16                  !< Force component F16
+      real(kind=WP), dimension(NEL), intent(inout) :: F26                  !< Force component F26
+      real(kind=WP), dimension(NEL), intent(inout) :: F36                  !< Force component F36
+      real(kind=WP), dimension(NEL), intent(inout) :: GRESAV               !< Global result save array
+      real(kind=WP), dimension(NEL), intent(inout) :: MSSA                 !< Mass array
+      real(kind=WP), dimension(NEL), intent(inout) :: DMELS                !< Element damage array
+      real(kind=WP), dimension(NEL), intent(inout) :: VOLN                 !< Element volume array
+      real(kind=WP), dimension(NUMNOD), intent(inout) :: TEMP              !< Temperature array
+      real(kind=WP), dimension(IFTHE), intent(inout) :: FTHE               !< Thermal force array
+      real(kind=WP), dimension(LSKY), intent(inout) :: FTHESKY             !< Thermal force skyline array
+      real(kind=WP), dimension(ICONDN), intent(inout) :: CONDN             !< Thermal force array
+      real(kind=WP), dimension(LSKY), intent(inout) :: CONDNSKY            !< Thermal conduction skyline array
+      real(kind=WP), dimension(NEL,6), intent(inout) :: SVIS        !< Viscous stress array
+      real(kind=WP), dimension(3,NUMNOD), intent(in) :: XDP  
+
+      TYPE(TTABLE),dimension(NEL), INTENT(inout) :: TABLE
       TYPE (ELBUF_STRUCT_), TARGET, DIMENSION(NGROUP) :: ELBUF_TAB
       TYPE (NLOCAL_STR_)  , TARGET                    :: NLOC_DMG 
       TYPE(t_ale_connectivity), INTENT(IN)            :: ALE_CONNECT
@@ -209,88 +255,98 @@ C-----------------------------------------------
       TYPE(DT_)  , INTENT(INOUT)                      :: DT
       type (glob_therm_) ,intent(inout)   :: glob_therm
       type (sensors_),INTENT(INOUT) :: SENSORS
+
 C-----------------------------------------------
 C   L o c a l   V a r i a b l e s
 C-----------------------------------------------
-      INTEGER I,J,LCO,NF1,IFLAG,NUVAR,CURRENT_LAYER,IMAT,
-     .   ILAY,NLAY,IR,IS,IT,IP,IBID,MX,L_PLA,L_EPSD,Flag_write,hourglass
-      INTEGER MXT(MVSIZ),NGL(MVSIZ),NGEO(MVSIZ),IBIDON(1)
-c     Variables utilisees dans les routines solides uniquement (en arguments).
-      INTEGER NC1(MVSIZ), NC2(MVSIZ), NC3(MVSIZ), NC4(MVSIZ), 
-     .        NC5(MVSIZ), NC6(MVSIZ), NC7(MVSIZ), NC8(MVSIZ)
-C----------
-      my_real
-     .   C1,DTI, MBID(1)
-      my_real
-     . VD2(MVSIZ) , DVOL(MVSIZ),DELTAX(MVSIZ),
-     . VIS(MVSIZ) , QVIS(MVSIZ), CXX(MVSIZ) ,
-     . S1(MVSIZ)  , S2(MVSIZ)  , S3(MVSIZ)  ,
-     . S4(MVSIZ)  , S5(MVSIZ)  , S6(MVSIZ)  ,
-     . DXX(MVSIZ) , DYY(MVSIZ) , DZZ(MVSIZ) ,
-     . D4(MVSIZ)  , D5(MVSIZ)  , D6(MVSIZ)  , 
-     . JAC1(MVSIZ), JAC2(MVSIZ), JAC3(MVSIZ),
-     . JAC4(MVSIZ), JAC5(MVSIZ), JAC6(MVSIZ),
-     . VDX(MVSIZ) , VDY(MVSIZ) , VDZ(MVSIZ),SSP_EQ(MVSIZ),AIRE(MVSIZ)
-C-----
-      my_real
-     .   STI(MVSIZ),WXX(MVSIZ),WYY(MVSIZ),WZZ(MVSIZ),CONDE(MVSIZ)
-C
-      my_real
-     .   MUVOID(MVSIZ)
-      my_real
-     .   OFF(MVSIZ) , RHOO(MVSIZ), OFFG(MVSIZ) ,
-     .   X1(MVSIZ), X2(MVSIZ), X3(MVSIZ), X4(MVSIZ),
-     .   X5(MVSIZ), X6(MVSIZ), 
-     .   Y1(MVSIZ), Y2(MVSIZ), Y3(MVSIZ), Y4(MVSIZ),
-     .   Y5(MVSIZ), Y6(MVSIZ), 
-     .   Z1(MVSIZ), Z2(MVSIZ), Z3(MVSIZ), Z4(MVSIZ),
-     .   Z5(MVSIZ), Z6(MVSIZ), 
-     .  VX1(MVSIZ),VX2(MVSIZ),VX3(MVSIZ),VX4(MVSIZ),
-     .  VX5(MVSIZ),VX6(MVSIZ),
-     .  VY1(MVSIZ),VY2(MVSIZ),VY3(MVSIZ),VY4(MVSIZ),
-     .  VY5(MVSIZ),VY6(MVSIZ),
-     .  VZ1(MVSIZ),VZ2(MVSIZ),VZ3(MVSIZ),VZ4(MVSIZ),
-     .  VZ5(MVSIZ),VZ6(MVSIZ),
-     .  PX1(MVSIZ),PX2(MVSIZ),PX3(MVSIZ),PX4(MVSIZ),
-     .  PX5(MVSIZ),PX6(MVSIZ),
-     .  PY1(MVSIZ),PY2(MVSIZ),PY3(MVSIZ),PY4(MVSIZ),
-     .  PY5(MVSIZ),PY6(MVSIZ),
-     .  PZ1(MVSIZ),PZ2(MVSIZ),PZ3(MVSIZ),PZ4(MVSIZ),
-     .  PZ5(MVSIZ),PZ6(MVSIZ),
-     .  PX1H(MVSIZ),PX2H(MVSIZ),PX3H(MVSIZ),
-     .  PY1H(MVSIZ),PY2H(MVSIZ),PY3H(MVSIZ),
-     .  PZ1H(MVSIZ),PZ2H(MVSIZ),PZ3H(MVSIZ),
-     .  VGXA(MVSIZ),VGYA(MVSIZ),VGZA(MVSIZ), VGA2(MVSIZ),
-     .  XGXA(MVSIZ),XGYA(MVSIZ),XGZA(MVSIZ),
-     .  XGXYA(MVSIZ),XGYZA(MVSIZ),XGZXA(MVSIZ),
-     .  XGXA2(MVSIZ),XGYA2(MVSIZ),XGZA2(MVSIZ)
-      my_real
-     .  DXY(MVSIZ),DYX(MVSIZ),
-     .  DYZ(MVSIZ),DZY(MVSIZ),
-     .  DZX(MVSIZ),DXZ(MVSIZ),DIVDE(MVSIZ)
-      my_real
-     .   R11(MVSIZ),R12(MVSIZ),R13(MVSIZ),
-     .   R21(MVSIZ),R22(MVSIZ),R23(MVSIZ),
-     .   R31(MVSIZ),R32(MVSIZ),R33(MVSIZ),GAMA(MVSIZ,6)
-C                                                                     12
-      my_real
-     .   SIGYM(MVSIZ),G(MVSIZ),NU(MVSIZ),VOLG(MVSIZ),SIGY(MVSIZ),
-     .   B1122(MVSIZ),B1221(MVSIZ),B2212(MVSIZ),B1121(MVSIZ),
-     .   B1122H(MVSIZ),B1221H(MVSIZ),B2212H(MVSIZ),B1121H(MVSIZ),
-     .   B1X(MVSIZ,2),B1Y(MVSIZ,2),B2X(MVSIZ,2),B2Y(MVSIZ,2),
-     .   B1XH(MVSIZ,2),B1YH(MVSIZ,2),B2XH(MVSIZ,2),B2YH(MVSIZ,2),
-     .   DCXX(MVSIZ),DCXY(MVSIZ),DCXZ(MVSIZ),DCYX(MVSIZ),DCYY(MVSIZ),
-     .   DCYZ(MVSIZ),DCZX(MVSIZ),DCZY(MVSIZ),DCZZ(MVSIZ),DC4(MVSIZ),
-     .   DC5(MVSIZ),DC6(MVSIZ),VZL(MVSIZ),JACI33(MVSIZ),
-     .   DHXX(MVSIZ),DHXY(MVSIZ),DHYX(MVSIZ),DHYY(MVSIZ),DHYZ(MVSIZ),
-     .   DHZX(MVSIZ),DHZY(MVSIZ),DHZZ(MVSIZ),DH4(MVSIZ),DHXZ(MVSIZ),
-     .   DH5(MVSIZ),DH6(MVSIZ),EINTM(MVSIZ),DDHV(MVSIZ),DD(MVSIZ,6),
-     .   SIGZM(MVSIZ),VOLM(MVSIZ),USB(MVSIZ),ET(MVSIZ),
-     .   R1_FREE(MVSIZ),R3_FREE(MVSIZ),R4_FREE(MVSIZ),
-     .   STIN(MVSIZ),BID(MVSIZ),DSV(MVSIZ),ALPHA_E(MVSIZ),LLSH(MVSIZ)
+      ! Loop counters and flags
+      integer :: i, j, lco, nf1, iflag, nuvar, current_layer, imat
+      integer :: ilay, nlay, ir, is, it, ip, ibid, mx, l_pla, l_epsd
+      integer :: flag_write, hourglass
+      
+      ! Element connectivity and property arrays
+      integer :: mxt(mvsiz), ngl(mvsiz), ngeo(mvsiz), ibidon(1)
+      integer :: nc1(mvsiz), nc2(mvsiz), nc3(mvsiz), nc4(mvsiz)
+      integer :: nc5(mvsiz), nc6(mvsiz), nc7(mvsiz), nc8(mvsiz)
+! Local computation variables
+      real(kind=WP) :: c1, dti             !< Material and time step constants
+      real(kind=WP) :: mbid(1)             !< Dummy variable
+
+      ! Deformation and kinematic variables
+      real(kind=WP) :: vd2(mvsiz), dvol(mvsiz), deltax(mvsiz) !< Velocity divergence, volume change, element length
+      real(kind=WP) :: vis(mvsiz), qvis(mvsiz), cxx(mvsiz)    !< Viscosity, viscous pressure, sound speed
+
+      ! Stress components
+      real(kind=WP) :: s1(mvsiz), s2(mvsiz), s3(mvsiz)       !< Stress components S11, S22, S33
+      real(kind=WP) :: s4(mvsiz), s5(mvsiz), s6(mvsiz)       !< Stress components S12, S13, S23
+
+      ! Strain rate components
+      real(kind=WP) :: dxx(mvsiz), dyy(mvsiz), dzz(mvsiz)    !< Strain rate components D11, D22, D33
+      real(kind=WP) :: d4(mvsiz), d5(mvsiz), d6(mvsiz)       !< Strain rate components D12, D13, D23
+
+      ! Jacobian matrix components
+      real(kind=WP) :: jac1(mvsiz), jac2(mvsiz), jac3(mvsiz) !< Jacobian matrix components J11, J12, J13
+      real(kind=WP) :: jac4(mvsiz), jac5(mvsiz), jac6(mvsiz) !< Jacobian matrix components J21, J22, J23
+
+      ! Velocity gradients and additional variables
+      real(kind=WP) :: vdx(mvsiz), vdy(mvsiz), vdz(mvsiz)    !< Velocity gradient components
+      real(kind=WP) :: ssp_eq(mvsiz), aire(mvsiz)            !< Equivalent sound speed, element area
+! Additional stress and kinematic variables
+      real(kind=WP) :: sti(mvsiz), wxx(mvsiz), wyy(mvsiz), wzz(mvsiz), conde(mvsiz)
+    
+! Material parameters
+      real(kind=WP) :: muvoid(mvsiz)
+      real(kind=WP) :: off(mvsiz), rhoo(mvsiz), offg(mvsiz)
+      real(kind=WP) :: x1(mvsiz), x2(mvsiz), x3(mvsiz), x4(mvsiz)
+      real(kind=WP) :: x5(mvsiz), x6(mvsiz)
+      real(kind=WP) :: y1(mvsiz), y2(mvsiz), y3(mvsiz), y4(mvsiz)
+      real(kind=WP) :: y5(mvsiz), y6(mvsiz)
+      real(kind=WP) :: z1(mvsiz), z2(mvsiz), z3(mvsiz), z4(mvsiz)
+      real(kind=WP) :: z5(mvsiz), z6(mvsiz)
+      real(kind=WP) :: vx1(mvsiz), vx2(mvsiz), vx3(mvsiz), vx4(mvsiz)
+      real(kind=WP) :: vx5(mvsiz), vx6(mvsiz)
+      real(kind=WP) :: vy1(mvsiz), vy2(mvsiz), vy3(mvsiz), vy4(mvsiz)
+      real(kind=WP) :: vy5(mvsiz), vy6(mvsiz)
+      real(kind=WP) :: vz1(mvsiz), vz2(mvsiz), vz3(mvsiz), vz4(mvsiz)
+      real(kind=WP) :: vz5(mvsiz), vz6(mvsiz)
+      real(kind=WP) :: px1(mvsiz), px2(mvsiz), px3(mvsiz), px4(mvsiz)
+      real(kind=WP) :: px5(mvsiz), px6(mvsiz)
+      real(kind=WP) :: py1(mvsiz), py2(mvsiz), py3(mvsiz), py4(mvsiz)
+      real(kind=WP) :: py5(mvsiz), py6(mvsiz)
+      real(kind=WP) :: pz1(mvsiz), pz2(mvsiz), pz3(mvsiz), pz4(mvsiz)
+      real(kind=WP) :: pz5(mvsiz), pz6(mvsiz)
+      real(kind=WP) :: px1h(mvsiz), px2h(mvsiz), px3h(mvsiz)
+      real(kind=WP) :: py1h(mvsiz), py2h(mvsiz), py3h(mvsiz)
+      real(kind=WP) :: pz1h(mvsiz), pz2h(mvsiz), pz3h(mvsiz)
+      real(kind=WP) :: vgxa(mvsiz), vgya(mvsiz), vgza(mvsiz), vga2(mvsiz)
+      real(kind=WP) :: xgxa(mvsiz), xgya(mvsiz), xgza(mvsiz)
+      real(kind=WP) :: xgxya(mvsiz), xgyza(mvsiz), xgzxa(mvsiz)
+      real(kind=WP) :: xgxa2(mvsiz), xgya2(mvsiz), xgza2(mvsiz)
+      real(kind=WP) :: dxy(mvsiz), dyx(mvsiz)
+      real(kind=WP) :: dyz(mvsiz), dzy(mvsiz)
+      real(kind=WP) :: dzx(mvsiz), dxz(mvsiz), divde(mvsiz)
+      real(kind=WP) :: r11(mvsiz), r12(mvsiz), r13(mvsiz)
+      real(kind=WP) :: r21(mvsiz), r22(mvsiz), r23(mvsiz)
+      real(kind=WP) :: r31(mvsiz), r32(mvsiz), r33(mvsiz), gama(mvsiz,6)
+      real(kind=WP) :: sigym(mvsiz), g(mvsiz), nu(mvsiz), volg(mvsiz), sigy(mvsiz)
+      real(kind=WP) :: b1122(mvsiz), b1221(mvsiz), b2212(mvsiz), b1121(mvsiz)
+      real(kind=WP) :: b1122h(mvsiz), b1221h(mvsiz), b2212h(mvsiz), b1121h(mvsiz)
+      real(kind=WP) :: b1x(mvsiz,2), b1y(mvsiz,2), b2x(mvsiz,2), b2y(mvsiz,2)
+      real(kind=WP) :: b1xh(mvsiz,2), b1yh(mvsiz,2), b2xh(mvsiz,2), b2yh(mvsiz,2)
+      real(kind=WP) :: dcxx(mvsiz), dcxy(mvsiz), dcxz(mvsiz), dcyx(mvsiz), dcyy(mvsiz)
+      real(kind=WP) :: dcyz(mvsiz), dczx(mvsiz), dczy(mvsiz), dczz(mvsiz), dc4(mvsiz)
+      real(kind=WP) :: dc5(mvsiz), dc6(mvsiz), vzl(mvsiz), jaci33(mvsiz)
+      real(kind=WP) :: dhxx(mvsiz), dhxy(mvsiz), dhyx(mvsiz), dhyy(mvsiz), dhyz(mvsiz)
+      real(kind=WP) :: dhzx(mvsiz), dhzy(mvsiz), dhzz(mvsiz), dh4(mvsiz), dhxz(mvsiz)
+      real(kind=WP) :: dh5(mvsiz), dh6(mvsiz), eintm(mvsiz), ddhv(mvsiz), dd(mvsiz,6)
+      real(kind=WP) :: sigzm(mvsiz), volm(mvsiz), usb(mvsiz), et(mvsiz)
+      real(kind=WP) :: r1_free(mvsiz), r3_free(mvsiz), r4_free(mvsiz)
+      real(kind=WP) :: stin(mvsiz), bid(mvsiz), dsv(mvsiz), alpha_e(mvsiz), llsh(mvsiz)
 C     
-      INTEGER PID,MTN0,IPTHK,IPPOS,IPMAT,NLYMAX,MID,IPANG,IOFFS
-      INTEGER MXT0(MVSIZ),NN_DEL,IPRES,ISCTL,ISTAB(MVSIZ)
+      integer :: pid, mtn0, ipthk, ippos, ipmat, nlymax, mid, ipang, ioffs
+      integer :: nn_del, ipres, isctl
+      integer :: mxt0(mvsiz), istab(mvsiz)
+
       my_real
      .   DIR(MVSIZ,2),SIGN(NEL,6),SHF(MVSIZ),ZT,WT,OFFS(MVSIZ),
      .   RX(MVSIZ), RY(MVSIZ), RZ(MVSIZ),NU1(MVSIZ),FAC(MVSIZ),
@@ -302,20 +358,25 @@ C
      .   N4X(MVSIZ), N5X(MVSIZ), N6X(MVSIZ),
      .   N4Y(MVSIZ), N5Y(MVSIZ), N6Y(MVSIZ),
      .   N4Z(MVSIZ), N5Z(MVSIZ), N6Z(MVSIZ),AMU(MVSIZ),AREA(MVSIZ)
-      my_real THEM(MVSIZ,6),TEMPEL(MVSIZ),DIE(MVSIZ),CONDEN(MVSIZ)
-      my_real, dimension(mvsiz) :: fheat
-      DOUBLE PRECISION 
-     .   VOLDP(MVSIZ),FACDP
-      INTEGER INLOC,L_NLOC,IPOS(6),INOD(6)
-      iNTEGER SZ_R1_FREE,SZ_IX
-      my_real, DIMENSION(:,:), ALLOCATABLE :: VAR_REG
-      my_real, DIMENSION(:), POINTER :: DNL
-      my_real :: STI_C(MVSIZ),LL(MVSIZ),FLD(MVSIZ),
-     .           CNS2,FQMAX,DN
+
+      real(kind=WP) ::  THEM(MVSIZ,6),TEMPEL(MVSIZ),DIE(MVSIZ),CONDEN(MVSIZ),VOLDP(MVSIZ)
+
+      real(kind=WP), dimension(mvsiz) :: fheat
+
+
+
+      integer :: inloc, l_nloc, sz_r1_free, sz_ix
+      integer, dimension(6) :: ipos, inod
+
+      real(kind=WP), DIMENSION(:,:) ,ALLOCATABLE :: VAR_REG
+      real(kind=WP), DIMENSION(:), POINTER :: DNL
+
+      real(kind=WP) :: STI_C(MVSIZ),LL(MVSIZ),FLD(MVSIZ),
+     .           CNS2,FQMAX,DN,FACDP
 C-----
       TYPE(G_BUFEL_) ,POINTER :: GBUF
       TYPE(L_BUFEL_) ,POINTER :: LBUF     
-C-----------------------------------------------
+C-----------------------------------------------s
       my_real
      .  W_GAUSS(9,9),A_GAUSS(9,9)
       DATA W_GAUSS / 

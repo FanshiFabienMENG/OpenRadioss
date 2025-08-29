@@ -243,7 +243,7 @@ C-----------------------------------------------
      .   L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14,L15,L16,
      .   L17,L18,L19,L20,L21,L22,L23,L24,L25,L26,L27,L28,L29,L30,
      .   ICP,ICS,IMATVIS,IEXPAN,NPTS,MPT,NPTT,NPTR,NPT0,IG,OFF_IGRTH,
-     .   NCTRL,DIM6,IPARSENS,ISECT,GAMA(6),PX,PY,PZ,ISENS_ENERGY
+     .   NCTRL,DIM6,IPARSENS,ISECT,GAMA(6),PX,PY,PZ,ISENS_ENERGY,AAA
       my_real BID,QMVBID,PRELOAD1,STF_F
       my_real SBID
       my_real VOLN(MVSIZ)
@@ -255,6 +255,7 @@ C======================================================================|
        ALLOCATE(MX(MVSIZ,4),MY(MVSIZ,4),MZ(MVSIZ,4),STAT=IERROR)
        ALLOCATE(JFAC(MVSIZ,729)) ! for solid 8z
        SBID=1
+       AAA=1
 !
        IF(IERROR/=0)THEN
         CALL ANCMSG(MSGID=246,ANMODE=ANINFO)
@@ -1047,6 +1048,7 @@ C
      K         MAXFUNC,  USERL_AVAIL, GLOB_THERM, impl_s   ,idyna)
 C
                ELSEIF (ISOLNOD == 6) THEN
+               IF (AAA == 1) THEN 
                CALL S6FORC3_1(TIMERS,  OUTPUT, ELBUF_TAB,NG         ,
      1         PM   ,GEO   ,IXS    ,X            ,
      2         A           ,V    ,W      ,WA          ,
@@ -1068,6 +1070,29 @@ C
      I         MAXFUNC, IMON_MAT, USERL_AVAIL, 
      J         GLOB_THERM,XDP,SENSORS )
                ENDIF
+               IF (AAA == 2) THEN 
+               CALL S6FORC3_2(TIMERS,  OUTPUT, ELBUF_TAB,NG         ,
+     1         PM   ,GEO   ,IXS    ,X            ,
+     2         A           ,V    ,W      ,WA          ,
+     3         VAL2  ,ALE_CONNECT        ,IPARG       ,
+     4         TF    ,NPC    ,BUFMAT       ,PARTSAV     ,
+     5         DT2T ,NELTST,ITYPTST,STIFN        ,FSKY        ,
+     6         IADS    ,OFFSET  ,IPARTS(NF1) ,
+     7         FX(1,1) ,FY(1,1) ,FZ(1,1) ,FX(1,2) ,FY(1,2) ,
+     8         FZ(1,2) ,FX(1,3) ,FY(1,3) ,FZ(1,3) ,FX(1,4) ,
+     9         FY(1,4) ,FZ(1,4) ,FX(1,5) ,FY(1,5) ,FZ(1,5) ,
+     A         FX(1,6) ,FY(1,6) ,FZ(1,6) ,NEL     ,
+     B         ICP     ,NLOC_DMG,
+     C         IPM     ,ISTRA   ,IGEO    ,GRESAV  ,GRTH       ,
+     D         IGRTH(NF1),TABLE ,MSSA(NF1),DMELS(NF1)  ,VOLN  ,
+     E         ITASK ,IPRI      ,MAT_ELEM ,IBID,TEMP       ,
+     F         FTHE  ,FTHESKY   ,CONDN    ,CONDNSKY ,
+     G         IEXPAN,IFTHE ,ICONDN    ,DT      ,SNPC,STF,
+     H         SBUFMAT,SVIS,NSVOIS, IRESP, 
+     I         MAXFUNC, IMON_MAT, USERL_AVAIL, 
+     J         GLOB_THERM,XDP,SENSORS )
+               ENDIF
+              ENDIF
             ELSE
 C-------------------------
 C             STANDARD 8 NODE SOLID ELEMENT (JHBE = 1,2,101,102)
